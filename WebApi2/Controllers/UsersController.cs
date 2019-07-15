@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -16,11 +17,11 @@ namespace WebApi2.Controllers
     {
         private List<User> users = new List<User>
     {
-        new User { id = 1, Fname = "Hamed1"},
-        new User { id = 2, Fname = "Hadi2"},
-        new User { id = 3, Fname = "Reza3"},
-        new User { id = 4, Fname = "Omid4"},
-        new User { id = 5, Fname = "Saeed5"}
+        new User { SRL = 1, FNAME = "Hamed1"},
+        new User { SRL = 2, FNAME = "Hadi2"},
+        new User { SRL = 3, FNAME = "Reza3"},
+        new User { SRL = 4, FNAME = "Omid4"},
+        new User { SRL = 5, FNAME = "Saeed5"}
     };
         // GET: api/Users
         //[ResponseType(typeof(IEnumerable<User>))]
@@ -41,47 +42,75 @@ namespace WebApi2.Controllers
         [Obsolete]
         public User Get(decimal id)
         {
-            User userObject = (from user in users
-                               where user.id == id
-                               select user).SingleOrDefault();
-            string commandtext = string.Format(@"select vin from carid c where c.prodno ={0}",id.ToString()) ;
-            DataSet ds= clsDBHelper.ExecuteMyQuery(commandtext);
-            User u = new User();
-            u.id = id;
-            if ((ds != null) && (ds.Tables[0] != null) && (ds.Tables[0].Rows.Count > 0)) 
-                u.Fname= ds.Tables[0].Rows[0][0].ToString();
-            else
-                u.Fname= "Not Found";
-            //
-            //u.id = 6;
-            //u.name = "Ali";
-            //users.Add(u);
-            return u;
+            try
+            {
+                if ((id != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
+                {
+                    //string commandtext0 = string.Format(@"select vin from carid c where c.prodno ={0}", id.ToString());
+                    string commandtext = string.Format(@"select * from QCUSERT Where srl=4314");
+                    //DataSet ds = clsDBHelper.ExecuteMyQuery(commandtext);
+                    List<User> FoundUser = new List<User>();
+                    FoundUser = clsDBHelper.GetDBObjectByObj(new User(), null, commandtext).Cast<User>().ToList();
+                    if (FoundUser.Count == 1)
+                    {
+                        FoundUser[0].VALIDUSER = true;
+                        byte[] userByte = Encoding.UTF8.GetBytes("1000861");
+                        FoundUser[0].PSW = clsDBHelper.Cryptographer.CreateHash("8585", "MD5", userByte);
+                        return FoundUser[0];
+                    }
+                    else
+                        return null;
+                    
+                    
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
         // POST: api/Login
         [HttpPost]
-        public User Post([FromBody] User U)
+        public User Post([FromBody] User user)
         {
-            // int i =U.id;
-            if ((U != null) && (U.Macaddress == "48:13:7e:11:d7:1f"))
-            {
 
-                User U2 = new User();
-                U2.Username = "1000861";
-                U2.id = 4314;
-                U2.Fname = "hamiReza";
-                U2.Lname = "MT";
-                return U2;
-            }
-            else
+            try
             {
-                User U2 = new User();
-                U2.Username = "InvalidMac";
-                U2.id = 0;
-                U2.Fname = "InvalidMac";
-                U2.Lname = "InvalidMac";
-                return U2;
+                if ((user != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
+                {
+                    user.VALIDUSER = false;
+                    //string commandtext0 = string.Format(@"select vin from carid c where c.prodno ={0}", id.ToString());
+                    byte[] userByte = Encoding.UTF8.GetBytes(user.USERNAME);
+                    string strHashPSW = clsDBHelper.Cryptographer.CreateHash(user.PSW,"MD5", userByte);
+                    string commandtext = string.Format(@"select srl,fname,lname,username,psw from QCUSERT Where USERName='{0}'
+                                                    and PSW ='{1}' and (InUse=1 or InUse=-2)", user.USERNAME, strHashPSW);
+                    //DataSet ds = clsDBHelper.ExecuteMyQuery(commandtext);
+                    List<User> FoundUser = new List<User>();
+                    FoundUser = clsDBHelper.GetDBObjectByObj(new User(), null, commandtext).Cast<User>().ToList();
+                    if (FoundUser.Count == 1)
+                    {
+                        FoundUser[0].VALIDUSER = true;
+                        return FoundUser[0];
+                    }
+                    else
+                    {
+                        return user;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
             }
+            catch (Exception e)
+            {
+                return null;
+            }
+
         }
 
 
