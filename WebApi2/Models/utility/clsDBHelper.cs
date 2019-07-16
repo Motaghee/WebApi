@@ -160,26 +160,66 @@ namespace WebApi2.Models.utility
                 }
             }
 
-            //private void AddParameters(OracleCommand command, object[] parameters)
-            //{
+        [Obsolete]
+        public static int ExecuteQueryScalar(string commandText, bool BlnDispose)
+        {
+            //OracleDataAdapter da = new OracleDataAdapter();
+            //DataSet ds = new DataSet();
+            using (OracleConnection connection = DBConnection)
+            {
+                try
+                {
 
-            //    if (command == null)
-            //    {
-            //        throw new ApplicationException("null Command");
-            //    }
+                    if (DBConnection.State == ConnectionState.Closed)
+                    {
+                        DBConnection.ConnectionString = CnStr;
+                        DBConnection.Open();
+                    }
+                    using (OracleCommand command = new OracleCommand(commandText, connection))
+                    {
+                        command.CommandType = CommandType.Text;
+                        int result = command.ExecuteNonQuery();
+                        return result;
+                        //da.SelectCommand = command;
+                        //da.Fill(ds);
+                        //return ds;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    if ((BlnDispose) && (connection.State == ConnectionState.Open))
+                    {
+                        connection.Close();
+                        //connection.Dispose();
+                    }
+                }
+            }
+        }
 
-            //    if (parameters != null)
-            //    {
-            //        for (int i = 0; i < parameters.Length; i++)
-            //        {
-            //            command.Parameters.Add(parameters[i] as OracleParameter);
-            //        }
-            //    }
+        //private void AddParameters(OracleCommand command, object[] parameters)
+        //{
 
-            //}
+        //    if (command == null)
+        //    {
+        //        throw new ApplicationException("null Command");
+        //    }
+
+        //    if (parameters != null)
+        //    {
+        //        for (int i = 0; i < parameters.Length; i++)
+        //        {
+        //            command.Parameters.Add(parameters[i] as OracleParameter);
+        //        }
+        //    }
+
+        //}
 
 
-            public static DateTime GetServerDateTime()
+        public static DateTime GetServerDateTime()
             {
                 try
                 {
@@ -255,6 +295,8 @@ namespace WebApi2.Models.utility
                     throw ex;
                 }
             }
+
+
 
 
         public class Cryptographer

@@ -8,7 +8,7 @@ namespace WebApi2.Models
     public class User
     {
         public double SRL { get; set; } //double
-    public string FNAME { get; set; }
+        public string FNAME { get; set; }
         public string LNAME { get; set; }
         public string USERNAME { get; set; }
         public string PSW { get; set; }
