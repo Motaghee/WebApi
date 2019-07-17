@@ -72,7 +72,7 @@ namespace WebApi2.Controllers
                     car.VALIDFORMAT= Car.CheckFormatVin(car.VIN);
                     car.AUDITEDITABLE = false;
                     string commandtext = string.Format(@"update svaauditcar a set a.editabledefectorigin=1 ,a.editablemoduledefect=1 where a.vin in ('{0}')",Car.GetVinWithoutChar(car.VIN));
-                    int intResult= clsDBHelper.ExecuteQueryScalar(commandtext,true);
+                    int intResult= clsDBHelper.ExecuteQueryScalar(commandtext,false);
                     if (intResult > 0)
                     {
                         car.AUDITEDITABLE = true;
