@@ -165,39 +165,29 @@ namespace WebApi2.Models.utility
         {
             //OracleDataAdapter da = new OracleDataAdapter();
             //DataSet ds = new DataSet();
-            using (OracleConnection connection = DBConnection)
-            {
-                try
-                {
 
-                    if (DBConnection.State == ConnectionState.Closed)
-                    {
-                        DBConnection.ConnectionString = CnStr;
-                        DBConnection.Open();
-                    }
-                    using (OracleCommand command = new OracleCommand(commandText, connection))
-                    {
-                        command.CommandType = CommandType.Text;
-                        int result = command.ExecuteNonQuery();
-                        return result;
-                        //da.SelectCommand = command;
-                        //da.Fill(ds);
-                        //return ds;
-                    }
-                }
-                catch (Exception ex)
+            try
+            {
+
+                if (DBConnection.State == ConnectionState.Closed)
                 {
-                    throw ex;
+                    DBConnection.ConnectionString = CnStr;
+                    DBConnection.Open();
                 }
-                finally
-                {
-                    if ((BlnDispose) && (connection.State == ConnectionState.Open))
-                    {
-                        connection.Close();
-                        //connection.Dispose();
-                    }
-                }
+                OracleCommand command = new OracleCommand(commandText, DBConnection);
+                command.CommandType = CommandType.Text;
+                int result = command.ExecuteNonQuery();
+                return result;
+                //da.SelectCommand = command;
+                //da.Fill(ds);
+                //return ds;
+
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         //private void AddParameters(OracleCommand command, object[] parameters)

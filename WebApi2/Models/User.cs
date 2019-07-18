@@ -14,7 +14,13 @@ namespace WebApi2.Models
         public string PSW { get; set; }
         public string MACADDRESS { get; set; }
         public string QCAREATSRL { get; set; }
-        public bool VALIDUSER { get; set; }
+        public string SERVERREQVER { get; set; }
+        public string USERAPPVER { get; set; } = "0.0.1";
+        public bool USERATHENTICATION { get; set; } = false;
+        public bool USERAUTHORIZATION { get; set; } = false;
+        public bool MACISVALID { get; set; } = false;
+        public bool CLIENTVERISVALID { get; set; } = false;
+        
 
 
     }

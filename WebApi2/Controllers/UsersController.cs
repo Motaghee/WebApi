@@ -53,7 +53,7 @@ namespace WebApi2.Controllers
                     FoundUser = clsDBHelper.GetDBObjectByObj(new User(), null, commandtext).Cast<User>().ToList();
                     if (FoundUser.Count == 1)
                     {
-                        FoundUser[0].VALIDUSER = true;
+                        FoundUser[0].USERATHENTICATION = true;
                         byte[] userByte = Encoding.UTF8.GetBytes("1000861");
                         FoundUser[0].PSW = clsDBHelper.Cryptographer.CreateHash("8585", "MD5", userByte);
                         return FoundUser[0];
@@ -77,13 +77,11 @@ namespace WebApi2.Controllers
         [HttpPost]
         public User Post([FromBody] User user)
         {
-
             try
             {
                 if ((user != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
                 {
-                    user.VALIDUSER = false;
-                    //string commandtext0 = string.Format(@"select vin from carid c where c.prodno ={0}", id.ToString());
+                    user.USERATHENTICATION = false;
                     byte[] userByte = Encoding.UTF8.GetBytes(user.USERNAME);
                     string strHashPSW = clsDBHelper.Cryptographer.CreateHash(user.PSW,"MD5", userByte);
                     string commandtext = string.Format(@"select srl,fname,lname,username,psw from QCUSERT Where USERName='{0}'
@@ -91,9 +89,18 @@ namespace WebApi2.Controllers
                     //DataSet ds = clsDBHelper.ExecuteMyQuery(commandtext);
                     List<User> FoundUser = new List<User>();
                     FoundUser = clsDBHelper.GetDBObjectByObj(new User(), null, commandtext).Cast<User>().ToList();
+                    //---
+                    user.MACISVALID        = FoundUser[0].MACISVALID        = true;
+                    user.CLIENTVERISVALID  = FoundUser[0].CLIENTVERISVALID  = true;
+                    if ((FoundUser[0].USERNAME == "1000861") || (FoundUser[0].USERNAME == "257923") || (FoundUser[0].USERNAME == "464236"))
+                        FoundUser[0].USERAUTHORIZATION = user.USERAUTHORIZATION = true;
+                    else
+                        FoundUser[0].USERAUTHORIZATION = user.USERAUTHORIZATION = false;
+
+                    //---
                     if (FoundUser.Count == 1)
                     {
-                        FoundUser[0].VALIDUSER = true;
+                        user.USERATHENTICATION = FoundUser[0].USERATHENTICATION = true;
                         return FoundUser[0];
                     }
                     else

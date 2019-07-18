@@ -34,5 +34,6 @@ namespace WebApi2.Models
             return value;
 
         }
+        public string MSG { get; set; } = "";
     }
 }

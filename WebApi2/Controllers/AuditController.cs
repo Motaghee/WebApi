@@ -12,14 +12,7 @@ namespace WebApi2.Controllers
     public class AuditController : ApiController
     {
 
-        private List<User> users = new List<User>
-    {
-        new User { SRL = 1, FNAME = "Hamed1"},
-        new User { SRL = 2, FNAME = "Hadi2"},
-        new User { SRL = 3, FNAME = "Reza3"},
-        new User { SRL = 4, FNAME = "Omid4"},
-        new User { SRL = 5, FNAME = "Saeed5"}
-    };
+
  
         [HttpGet]
         [Obsolete]
@@ -72,7 +65,7 @@ namespace WebApi2.Controllers
                     car.VALIDFORMAT= Car.CheckFormatVin(car.VIN);
                     car.AUDITEDITABLE = false;
                     string commandtext = string.Format(@"update svaauditcar a set a.editabledefectorigin=1 ,a.editablemoduledefect=1 where a.vin in ('{0}')",Car.GetVinWithoutChar(car.VIN));
-                    int intResult= clsDBHelper.ExecuteQueryScalar(commandtext,false);
+                    int intResult= clsDBHelper.ExecuteQueryScalar(commandtext,true);
                     if (intResult > 0)
                     {
                         car.AUDITEDITABLE = true;
@@ -90,6 +83,7 @@ namespace WebApi2.Controllers
             }
             catch (Exception e)
             {
+                car.MSG = "exc1:" + e.Message;
                 return car;
             }
 
