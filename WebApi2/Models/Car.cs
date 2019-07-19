@@ -39,6 +39,8 @@ namespace WebApi2.Models
         public string COMPANYCODE { get; set; }
         public string TOAREAENTERNUM { get; set; }
         public string CARTYPEDESC { get; set; }
+        public string PTTRACE { get; set; }
+        public string QCTRACE { get; set; }
 
 
     }
