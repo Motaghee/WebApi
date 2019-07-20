@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -15,7 +16,6 @@ namespace WebApi2.Controllers
         [Obsolete]
         public Car get()
         {
-
             return null;
         }
 
@@ -49,7 +49,15 @@ namespace WebApi2.Controllers
                                                              else
                                                               'Other'
                                                              end as JoinaryTeamDesc,
-                                                             'NAS'||vin as nasvin
+                                                             'NAS'||vin as nasvin,
+                                                                              (select listagg(fn_getvinshopproddates(vin))from (select distinct sh.shopname,shopgrpcode
+                                          from cartrace c
+                                          join station s
+                                            on s.stncode = c.stncode
+                                          join shop sh on sh.shopcode = s.shopcode
+                                         where vin = z.vin and c.statecode=1
+                                            )) as pttrace                                                            
+
                                                from 
                                             (select c.vin,c.prodno,c.joinerydate,c.bdmdlcode,c.bdstlcode ,c.fitypecode,c.finqccode,c.clrcode,
                                                    pt.FNI_GetAsmProdShopCodeByVin (c.vin) as shopCode
@@ -77,6 +85,29 @@ namespace WebApi2.Controllers
                         {
                             carinfo[0].VALIDFORMAT = car.VALIDFORMAT;
                             car.VINWITHOUTCHAR = car.VINWITHOUTCHAR;
+                            //
+                            commandtext = string.Format(@"select q.*,
+                                           a1.areacode || ' ' || a1.areadesc  as FromAreaCodeDesc,
+                                           a2.areacode || ' ' || a2.areadesc  as ToAreaCodeDesc
+                                      from qcqctrt q
+                                      join qcareat a1
+                                        on a1.srl = q.fromareasrl
+                                      join qcareat a2
+                                        on a2.srl = q.toareasrl
+                                     where q.vin = '{0}'
+                                     order by seq
+                                     ", car.VINWITHOUTCHAR);
+                            string strQCTrace = "";
+                            DataSet dsQCTrace = clsDBHelper.ExecuteMyQuery(commandtext, false);
+                            for (int i = 0; i < dsQCTrace.Tables[0].Rows.Count; i++)
+                            {
+                                strQCTrace = strQCTrace + dsQCTrace.Tables[0].Rows[i]["FromAreaCodeDesc"].ToString() + "_";
+                                if (i == dsQCTrace.Tables[0].Rows.Count - 1)
+                                    strQCTrace = strQCTrace + dsQCTrace.Tables[0].Rows[i]["ToAreaCodeDesc"].ToString() + "_";
+                            }
+
+                            //
+                            carinfo[0].QCTRACE = strQCTrace;
                             return carinfo[0];
                         }
                         else
@@ -94,12 +125,14 @@ namespace WebApi2.Controllers
                 }
                 else
                 {
-                    return null;
+                    car.MSG = "Car Is Null";
+                    return car;
                 }
             }
             catch (Exception e)
             {
-                return null;
+                car.MSG = e.Message.ToString();
+                return car;
             }
 
         }
