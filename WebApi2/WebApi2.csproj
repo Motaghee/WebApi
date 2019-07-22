@@ -174,12 +174,14 @@
     <Compile Include="Controllers\AuditController.cs" />
     <Compile Include="Controllers\CarController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\QccasttController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Car.cs" />
+    <Compile Include="Models\Qccastt.cs" />
     <Compile Include="Models\utility\CarUtility.cs" />
     <Compile Include="Models\QCSrv.cs" />
     <Compile Include="Models\User.cs" />

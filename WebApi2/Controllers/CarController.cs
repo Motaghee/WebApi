@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -26,12 +28,19 @@ namespace WebApi2.Controllers
         [Obsolete]
         public Car Post([FromBody] Car car)
         {
+            string ct = "*";
             try
             {
+                
+                ct += "0";
                 if ((car != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
                 {
+                    //Value cannot be null.
+                    
                     car.VALIDFORMAT = CarUtility.CheckFormatVin(car.VIN);
+                    
                     car.VINWITHOUTCHAR= CarUtility.GetVinWithoutChar(car.VIN);
+                    
                     if (car.VALIDFORMAT)
                     {
                         List<Car> carinfo = new List<Car>();
@@ -50,7 +59,7 @@ namespace WebApi2.Controllers
                                                               'Other'
                                                              end as JoinaryTeamDesc,
                                                              'NAS'||vin as nasvin,
-                                                                              (select listagg(fn_getvinshopproddates(vin))from (select distinct sh.shopname,shopgrpcode
+                                                                              (select distinct fn_getvinshopproddates(vin) from (select distinct sh.shopname,shopgrpcode
                                           from cartrace c
                                           join station s
                                             on s.stncode = c.stncode
@@ -80,11 +89,16 @@ namespace WebApi2.Controllers
                                                    join pt.gearboxtype gbt on gbt.gearboxtypecode=bds.gearboxtypecode
                                                    where c.vin ='{0}') z", car.VINWITHOUTCHAR);
                         // 
+                        ct += "1";
                         carinfo = clsDBHelper.GetDBObjectByObj(new Car(), null, commandtext).Cast<Car>().ToList();
+                        ct += "2";
                         if (carinfo.Count == 1)
                         {
+                            ct += "3";
                             carinfo[0].VALIDFORMAT = car.VALIDFORMAT;
+                            carinfo[0].VIN = car.VIN;
                             car.VINWITHOUTCHAR = car.VINWITHOUTCHAR;
+                            ct += "4";
                             //
                             commandtext = string.Format(@"select q.*,
                                            a1.areacode || ' ' || a1.areadesc  as FromAreaCodeDesc,
@@ -97,45 +111,73 @@ namespace WebApi2.Controllers
                                      where q.vin = '{0}'
                                      order by seq
                                      ", car.VINWITHOUTCHAR);
-                            string strQCTrace = "";
-                            DataSet dsQCTrace = clsDBHelper.ExecuteMyQuery(commandtext, false);
+                            ct += "5";
+                            string strQCTrace = "**";
+                            DataSet dsQCTrace = clsDBHelper.GetDBObjectByDataSet(car,commandtext);
+                            //--
+                            //string JSONresult;
+                            //JSONresult = JsonConvert.SerializeObject(dt);
+                            //Response.Write(JSONresult);
+                            //--
+                            ct += "6";
                             for (int i = 0; i < dsQCTrace.Tables[0].Rows.Count; i++)
                             {
-                                strQCTrace = strQCTrace + dsQCTrace.Tables[0].Rows[i]["FromAreaCodeDesc"].ToString() + "_";
+                               strQCTrace = strQCTrace + dsQCTrace.Tables[0].Rows[i]["FromAreaCodeDesc"].ToString() + "_";
                                 if (i == dsQCTrace.Tables[0].Rows.Count - 1)
-                                    strQCTrace = strQCTrace + dsQCTrace.Tables[0].Rows[i]["ToAreaCodeDesc"].ToString() + "_";
-                            }
-
+                                     strQCTrace = strQCTrace + dsQCTrace.Tables[0].Rows[i]["ToAreaCodeDesc"].ToString() + "_";
+                             }
+                            ct += "7";
                             //
                             carinfo[0].QCTRACE = strQCTrace;
+                            ct += "8";
                             return carinfo[0];
                         }
                         else
                         {
-                            car.MSG ="car not found";
+                            car.MSG ="car not found" + ct + commandtext;
                             return car;
                         }
 
                     }
                     else
                     {
-                        car.MSG = "vin is not valid format";
+                        car.MSG = "vin is not valid format" + ct;
                         return car;
                     }
                 }
                 else
                 {
-                    car.MSG = "Car Is Null";
+                    car.MSG = "Car Is Null"+ct;
                     return car;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                car.MSG = e.Message.ToString();
+                car.MSG = ex.Message.ToString()+ct;
+                string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+                message += Environment.NewLine;
+                message += "-----------------------------------------------------------";
+                message += Environment.NewLine;
+                message += string.Format("Message: {0}", ex.Message);
+                message += Environment.NewLine;
+                message += string.Format("StackTrace: {0}", ex.StackTrace);
+                message += Environment.NewLine;
+                message += string.Format("Source: {0}", ex.Source);
+                message += Environment.NewLine;
+                message += string.Format("TargetSite: {0}", ex.TargetSite.ToString());
+                message += Environment.NewLine;
+                message += "-----------------------------------------------------------";
+                message += Environment.NewLine;
+                string path = @"C:/ErrorLog/ErrorLog.txt";
+                StreamWriter writer = new StreamWriter(path,true);
+                writer.WriteLine(message);
+                writer.Close();
                 return car;
             }
 
         }
 
     }
+
+
 }

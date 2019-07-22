@@ -9,6 +9,8 @@ using System.IO;
 using System.Security.Cryptography;
 using Oracle.ManagedDataAccess.Client;
 using System.Text;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace WebApi2.Models.utility
 {
@@ -147,7 +149,7 @@ namespace WebApi2.Models.utility
                     }
                     catch (Exception ex)
                     {
-
+                        LogFile(ex);
                         throw ex;
                     }
                     finally
@@ -233,60 +235,136 @@ namespace WebApi2.Models.utility
                     return null;
                 }
             }
-            public static object[] GetDBObjectByObj(object _Obj, DataSet _ds, string _CommandText)
-            {
-                try
-                {
-                    if (_ds == null)
+       
+                    public static object[] GetDBObjectByObj(object _Obj, DataSet _ds, string _CommandText)
                     {
-                        _ds = clsDBHelper.ExecuteMyQuery(_CommandText);
-                    }
-                    object[] lstObj = null;
-                    if (_ds != null)
-                    {
-                        lstObj = new object[_ds.Tables[0].Rows.Count];
-                        for (int i = 0; i < _ds.Tables[0].Rows.Count; i++)
+                        try
                         {
-                            _Obj = Activator.CreateInstance(_Obj.GetType());
-                            string strFieldName = "";
-                            foreach (DataColumn column in _ds.Tables[0].Columns)
+                            if (_ds == null)
                             {
-                                strFieldName = column.ColumnName;
+                                _ds = clsDBHelper.ExecuteMyQuery(_CommandText);
+                            }
+                            object[] lstObj = null;
+                            if (_ds != null)
+                            {
+                                lstObj = new object[_ds.Tables[0].Rows.Count];
+
+                                for (int i = 0; i < _ds.Tables[0].Rows.Count; i++)
+                                {
+                                    _Obj = Activator.CreateInstance(_Obj.GetType());
+                                    string strFieldName = "";
+                                    foreach (DataColumn column in _ds.Tables[0].Columns)
+                                    {
+
+                                        strFieldName = column.ColumnName;
+                                    try
+                                    {
+                                        if (_ds.Tables[0].Rows[i][strFieldName] != DBNull.Value)
+                                        {
+
+                                            if (column.DataType == Type.GetType("System.Byte[]"))
+                                            {
+                                                byte[] b = (byte[])_ds.Tables[0].Rows[i][strFieldName];
+                                                MemoryStream mstream = new MemoryStream(b);
+                                                _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Image.FromStream(mstream), null);
+                                            }
+                                            else
+                                            {
+                                                if (column.DataType.ToString() == "System.Decimal")
+                                                    _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj,Convert.ToDouble(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                                else
+                                                    _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, _ds.Tables[0].Rows[i][strFieldName], null);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, null, null);
+                                        }
+                                        lstObj[i] = _Obj;
+                                    }
+                                    catch (Exception e)
+                                        {
+                                        LogFile(e);
+                                        }
+                                    }
+
+                                }
+                            }
+                            return lstObj;
+                        }
+                        catch (Exception ex)
+                        {
+                            LogFile(ex);
+                            throw ex;
+                        }
+                    }
+
+        
+        public static object[] GetDBObjectByObj2(object _Obj, DataSet _ds, string _CommandText)
+        {
+            try
+            {
+                if (_ds == null)
+                {
+                    _ds = clsDBHelper.ExecuteMyQuery(_CommandText);
+                }
+                object[] lstObj = null;
+                if (_ds != null)
+                {
+                    lstObj = new object[_ds.Tables[0].Rows.Count];
+
+                    for (int i = 0; i < _ds.Tables[0].Rows.Count; i++)
+                    {
+                        _Obj = Activator.CreateInstance(_Obj.GetType());
+                        string strFieldName = "";
+                        Type myType = _Obj.GetType();
+                        IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
+                        foreach (PropertyInfo prop in props)
+                        {
+                            strFieldName = prop.Name.ToString();
+
+                            //DataColumn column = _ds.Tables[0].Rows[0][strFieldName];
                             try
                             {
                                 if (_ds.Tables[0].Rows[i][strFieldName] != DBNull.Value)
                                 {
 
-                                    if (column.DataType == Type.GetType("System.Byte[]"))
+                                    if (_ds.Tables[0].Rows[0][strFieldName].GetType() == Type.GetType("System.Byte[]"))
                                     {
                                         byte[] b = (byte[])_ds.Tables[0].Rows[i][strFieldName];
                                         MemoryStream mstream = new MemoryStream(b);
                                         _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Image.FromStream(mstream), null);
                                     }
                                     else
-                                        _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, _ds.Tables[0].Rows[i][strFieldName], null);
+                                    {
+                                        if (_ds.Tables[0].Rows[0][strFieldName].GetType().ToString() == "System.Decimal")
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToDouble(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                        else
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, _ds.Tables[0].Rows[i][strFieldName], null);
+                                    }
                                 }
                                 else
                                 {
                                     _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, null, null);
                                 }
+                                lstObj[i] = _Obj;
                             }
                             catch (Exception e)
-                                {
-                                }
+                            {
+                                LogFile(e);
                             }
-                            lstObj[i] = _Obj;
                         }
+
                     }
-                    return lstObj;
                 }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                return lstObj;
             }
-
-
+            catch (Exception ex)
+            {
+                LogFile(ex);
+                throw ex;
+            }
+        }
 
 
         public class Cryptographer
@@ -392,8 +470,71 @@ namespace WebApi2.Models.utility
 
         }
 
+
+        public static void LogFile(Exception ex)
+        {
+            string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+            message += Environment.NewLine;
+            message += "-----------------------------------------------------------";
+            message += Environment.NewLine;
+            message += string.Format("Message: {0}", ex.Message);
+            message += Environment.NewLine;
+            message += string.Format("StackTrace: {0}", ex.StackTrace);
+            message += Environment.NewLine;
+            message += string.Format("Source: {0}", ex.Source);
+            message += Environment.NewLine;
+            message += string.Format("TargetSite: {0}", ex.TargetSite.ToString());
+            message += Environment.NewLine;
+            message += "-----------------------------------------------------------";
+            message += Environment.NewLine;
+            string path = @"C:/ErrorLog/ErrorLog.txt";
+            StreamWriter writer = new StreamWriter(path, true);
+            writer.WriteLine(message);
+            writer.Close();
+        }
+
+        public static void LogtxtToFile(string txt)
+        {
+            string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+            message += Environment.NewLine;
+            message += txt;
+            string path = @"C:/ErrorLog/TraceLog.txt";
+            StreamWriter writer = new StreamWriter(path, true);
+            writer.WriteLine(message);
+            writer.Close();
+        }
+
+        public static List<T> ConvertDataTable<T>(DataTable dt)
+        {
+            List<T> data = new List<T>();
+            foreach (DataRow row in dt.Rows)
+            {
+                T item = GetItem<T>(row);
+                data.Add(item);
+            }
+            return data;
+        }
+        private static T GetItem<T>(DataRow dr)
+        {
+            Type temp = typeof(T);
+            T obj = Activator.CreateInstance<T>();
+
+            foreach (DataColumn column in dr.Table.Columns)
+            {
+                foreach (PropertyInfo pro in temp.GetProperties())
+                {
+                    if (pro.Name == column.ColumnName)
+                        pro.SetValue(obj, dr[column.ColumnName].ToString(), null);
+                    else
+                        continue;
+                }
+            }
+            return obj;
+        }
+
+
     }
 
 
 
-    }
+}

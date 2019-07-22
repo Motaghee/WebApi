@@ -92,7 +92,7 @@ namespace WebApi2.Controllers
                     //---
                     user.MACISVALID        = FoundUser[0].MACISVALID        = true;
                     user.CLIENTVERISVALID  = FoundUser[0].CLIENTVERISVALID  = true;
-                    if ((FoundUser[0].USERNAME == "1000861") || (FoundUser[0].USERNAME == "257923") || (FoundUser[0].USERNAME == "464236"))
+                    if ((FoundUser[0].USERNAME == "1000861") || (FoundUser[0].USERNAME == "257923"))
                         FoundUser[0].USERAUTHORIZATION = user.USERAUTHORIZATION = true;
                     else
                         FoundUser[0].USERAUTHORIZATION = user.USERAUTHORIZATION = false;
