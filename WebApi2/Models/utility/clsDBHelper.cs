@@ -304,6 +304,7 @@ namespace WebApi2.Models.utility
         {
             try
             {
+                clsDBHelper.LogtxtToFile("1-GetDBObjectByObj2");
                 if (_ds == null)
                 {
                     _ds = clsDBHelper.ExecuteMyQuery(_CommandText);
@@ -311,6 +312,7 @@ namespace WebApi2.Models.utility
                 object[] lstObj = null;
                 if (_ds != null)
                 {
+                    clsDBHelper.LogtxtToFile("2-GetDBObjectByObj2");
                     lstObj = new object[_ds.Tables[0].Rows.Count];
 
                     for (int i = 0; i < _ds.Tables[0].Rows.Count; i++)
@@ -321,6 +323,7 @@ namespace WebApi2.Models.utility
                         IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
                         foreach (PropertyInfo prop in props)
                         {
+                            clsDBHelper.LogtxtToFile("3-GetDBObjectByObj2");
                             strFieldName = prop.Name.ToString();
 
                             //DataColumn column = _ds.Tables[0].Rows[0][strFieldName];
@@ -328,7 +331,7 @@ namespace WebApi2.Models.utility
                             {
                                 if (_ds.Tables[0].Rows[i][strFieldName] != DBNull.Value)
                                 {
-
+                                    clsDBHelper.LogtxtToFile("4-GetDBObjectByObj2");
                                     if (_ds.Tables[0].Rows[0][strFieldName].GetType() == Type.GetType("System.Byte[]"))
                                     {
                                         byte[] b = (byte[])_ds.Tables[0].Rows[i][strFieldName];
@@ -352,6 +355,7 @@ namespace WebApi2.Models.utility
                             catch (Exception e)
                             {
                                 LogFile(e);
+                                clsDBHelper.LogtxtToFile("err1-GetDBObjectByObj2");
                             }
                         }
 
@@ -362,6 +366,7 @@ namespace WebApi2.Models.utility
             catch (Exception ex)
             {
                 LogFile(ex);
+                clsDBHelper.LogtxtToFile("err2-GetDBObjectByObj2");
                 throw ex;
             }
         }
@@ -499,6 +504,17 @@ namespace WebApi2.Models.utility
             message += Environment.NewLine;
             message += txt;
             string path = @"C:/ErrorLog/TraceLog.txt";
+            StreamWriter writer = new StreamWriter(path, true);
+            writer.WriteLine(message);
+            writer.Close();
+        }
+
+        public static void LogtLoginUser(string txt)
+        {
+            string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+            //message += Environment.NewLine;
+            message +="__"+ txt;
+            string path = @"C:/ErrorLog/UserLog.txt";
             StreamWriter writer = new StreamWriter(path, true);
             writer.WriteLine(message);
             writer.Close();

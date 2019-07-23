@@ -101,6 +101,7 @@ namespace WebApi2.Controllers
                     if (FoundUser.Count == 1)
                     {
                         user.USERATHENTICATION = FoundUser[0].USERATHENTICATION = true;
+                        clsDBHelper.LogtLoginUser(FoundUser[0].USERNAME+"_"+ FoundUser[0].LNAME + "__"+user.MACADDRESS+ "_AppVer:"+user.USERAPPVER);
                         return FoundUser[0];
                     }
                     else

@@ -72,6 +72,10 @@ namespace WebApi2.Controllers
                         clsDBHelper.LogtxtToFile("6 count=" + FoundDefects.Count);
                         if (FoundDefects.Count > 0)
                         {
+                            FoundDefects[0].ValidFormat = qccastt.ValidFormat;
+                            FoundDefects[0].VinWithoutChar = qccastt.VinWithoutChar;
+                            FoundDefects[0].Msg = qccastt.Msg = "";
+                            clsDBHelper.LogtxtToFile("return List"+ FoundDefects.ToString());
                             return FoundDefects;
                         }
                         else
@@ -115,19 +119,19 @@ namespace WebApi2.Controllers
             return "value";
         }
 
-        // POST: api/Qccastt
-        public void Post([FromBody]string value)
-        {
-        }
 
         // POST: api/qccastt
         [HttpPost]
         public List<Qccastt> Post([FromBody] Qccastt qccastt)
         {
+            clsDBHelper.LogtxtToFile("postStart");
+            clsDBHelper.LogtxtToFile("p1");
             try
             {
+                
                 if ((qccastt != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
                 {
+                    clsDBHelper.LogtxtToFile("p2");
                     qccastt.ValidFormat = CarUtility.CheckFormatVin(qccastt.Vin);
                     if (qccastt.ValidFormat)
                     {
@@ -168,10 +172,14 @@ namespace WebApi2.Controllers
                         //---
                         if (FoundDefects.Count > 0)
                         {
+                            FoundDefects[0].ValidFormat = qccastt.ValidFormat;
+                            FoundDefects[0].VinWithoutChar = qccastt.VinWithoutChar;
+                            FoundDefects[0].Msg = qccastt.Msg="";
                             return FoundDefects;
                         }
                         else
                         {
+                            clsDBHelper.LogtxtToFile("vin not found");
                             List<Qccastt> q = new List<Qccastt>();
                             qccastt.Msg = "اطلاعاتی یافت نشد";
                             q.Add(qccastt);
@@ -180,6 +188,7 @@ namespace WebApi2.Controllers
                     }
                     else
                     {
+                        clsDBHelper.LogtxtToFile("vin invalid");
                         List<Qccastt> q = new List<Qccastt>();
                         qccastt.Msg = "شاسی غیر مجاز است";
                         q.Add(qccastt);
@@ -189,6 +198,7 @@ namespace WebApi2.Controllers
                 }
                 else
                 {
+                    clsDBHelper.LogtxtToFile("z null");
                     return null;
                 }
             }
