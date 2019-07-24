@@ -17,6 +17,7 @@ namespace WebApi2.Models
         public string DefectDesc { get; set; }
         public string CreatedDateFa { get; set; }
         public string StrenghtDesc { get; set; }
+        public string IsRepaired { get; set; }
         public string Msg  = "";
         
 

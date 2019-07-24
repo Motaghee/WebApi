@@ -59,7 +59,8 @@ namespace WebApi2.Controllers
                                                             on q.qcstrgt_srl = s.srl
                                                           join cargroup cg on cg.grpcode=bm.grpcode
                                                           join qccabdt t on t.srl = d.qccabdt_srl
-                                                         where q.vin= '411100K1146021'", qccastt.VinWithoutChar);
+                                                         where q.inuse=1 and q.recordowner=1 and q.isdefected=1  
+                                                        and q.vin= '411100K1146021'", qccastt.VinWithoutChar);
                         //DataSet ds = clsDBHelper.ExecuteMyQuery(commandtext);
                         //List<Qccastt> lst = new List<Qccastt>();
                         //DataTable dt = new DataTable();
@@ -146,10 +147,11 @@ namespace WebApi2.Controllers
                                                                bm.grpcode,
                                                                cg.grpname,
                                                                t.title,
-                                                               q.inuse,
+                                                               q.inuse,q.
                                                                a.areacode||a.areadesc as AreaDesc,
                                                                u.lname as inspector,
-                                                               TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa
+                                                               TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa,
+                                                               q.isrepaired
        
                                                           from qccastt q
                                                           join qcusert u on u.srl = q.createdby
@@ -165,7 +167,8 @@ namespace WebApi2.Controllers
                                                             on q.qcstrgt_srl = s.srl
                                                           join cargroup cg on cg.grpcode=bm.grpcode
                                                           join qccabdt t on t.srl = d.qccabdt_srl
-                                                         where q.vin= '411100K1146021'", qccastt.VinWithoutChar);
+                                                         where q.inuse=1 and q.recordowner=1 and q.isdefected=1 
+                                                         And q.vin= '{0}' order by createddate desc", qccastt.VinWithoutChar);
                         //DataSet ds = clsDBHelper.ExecuteMyQuery(commandtext);
                         List<Qccastt> FoundDefects = new List<Qccastt>();
                         FoundDefects = clsDBHelper.GetDBObjectByObj2(new Qccastt(), null, commandtext).Cast<Qccastt>().ToList();
