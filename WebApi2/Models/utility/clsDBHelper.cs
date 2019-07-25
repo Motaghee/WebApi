@@ -355,11 +355,15 @@ namespace WebApi2.Models.utility
                             catch (Exception e)
                             {
                                 LogFile(e);
-                                clsDBHelper.LogtxtToFile("err1-GetDBObjectByObj2");
+                                clsDBHelper.LogtxtToFile("err1-GetDBObjectByObj2" + e.ToString() + e.InnerException.Message + e.Message.ToString());
                             }
                         }
 
                     }
+                }
+                else
+                {
+                    clsDBHelper.LogtxtToFile("ds is Null-GetDBObjectByObj2_"+ _CommandText);
                 }
                 return lstObj;
             }

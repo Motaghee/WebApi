@@ -12,12 +12,15 @@ namespace WebApi2.Models
         public string Vin { get; set; } = ""; //double
         public string VinWithoutChar = ""; //{ get; set; } = ""; //double
         public string AreaDesc { get; set; }
-        public string Inspector { get; set; }
         public string ModuleName { get; set; }
         public string DefectDesc { get; set; }
         public string CreatedDateFa { get; set; }
         public string StrenghtDesc { get; set; }
-        public string IsRepaired { get; set; }
+        public double IsRepaired { get; set; } = 0;
+        public double CreatedBy { get; set; } = 0;
+        public string CreatedByDesc { get; set; }
+        public double RepairedByDesc { get; set; } = 0;
+
         public string Msg  = "";
         
 

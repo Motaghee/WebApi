@@ -16,7 +16,7 @@ namespace WebApi2.Controllers
         public List<Qccastt> Get()
         {
             Qccastt qccastt = new Qccastt();
-            qccastt.Vin = "NAS411100K1146021";
+            qccastt.Vin = "NAS411100G1205277";
             clsDBHelper.LogtxtToFile("Get");
             clsDBHelper.LogtxtToFile("1");
             try
@@ -147,7 +147,7 @@ namespace WebApi2.Controllers
                                                                bm.grpcode,
                                                                cg.grpname,
                                                                t.title,
-                                                               q.inuse,q.
+                                                               q.inuse,
                                                                a.areacode||a.areadesc as AreaDesc,
                                                                u.lname as inspector,
                                                                TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa,
@@ -168,7 +168,7 @@ namespace WebApi2.Controllers
                                                           join cargroup cg on cg.grpcode=bm.grpcode
                                                           join qccabdt t on t.srl = d.qccabdt_srl
                                                          where q.inuse=1 and q.recordowner=1 and q.isdefected=1 
-                                                         And q.vin= '{0}' order by createddate desc", qccastt.VinWithoutChar);
+                                                         And q.vin= '{0}' order by q.createddate desc", qccastt.VinWithoutChar);
                         //DataSet ds = clsDBHelper.ExecuteMyQuery(commandtext);
                         List<Qccastt> FoundDefects = new List<Qccastt>();
                         FoundDefects = clsDBHelper.GetDBObjectByObj2(new Qccastt(), null, commandtext).Cast<Qccastt>().ToList();
@@ -207,6 +207,7 @@ namespace WebApi2.Controllers
             }
             catch (Exception e)
             {
+                //string err = e.ToString() + e.InnerException.Message + e.Message.ToString();
                 clsDBHelper.LogFile(e);
                 List<Qccastt> q = new List<Qccastt>();
                 qccastt.Msg = e.Message;
