@@ -42,11 +42,13 @@ namespace WebApi2.Controllers
                                                                t.title,
                                                                q.inuse,
                                                                a.areacode||a.areadesc as AreaDesc,
-                                                               u.lname as inspector,
+                                                               u.lname as CreatedByDesc,
+                                                               u2.lname as RepairedByDesc,
                                                                TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa
                                                                ,q.isrepaired
                                                           from qccastt q
                                                           join qcusert u on u.srl = q.createdby
+                                                          join qcusert ur on u.srl = q.RepairedBy
                                                           join carid c on c.vin = q.vin 
                                                           join bodymodel bm on bm.bdmdlcode=c.bdmdlcode
                                                           join qcareat a

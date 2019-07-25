@@ -18,8 +18,9 @@ namespace WebApi2.Models
         public string StrenghtDesc { get; set; }
         public double IsRepaired { get; set; } = 0;
         public double CreatedBy { get; set; } = 0;
+        public double RepairedBy { get; set; } = 0;
         public string CreatedByDesc { get; set; }
-        public double RepairedByDesc { get; set; } = 0;
+        public string RepairedByDesc { get; set; } 
 
         public string Msg  = "";
         
