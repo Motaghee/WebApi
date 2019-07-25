@@ -44,7 +44,7 @@ namespace WebApi2.Controllers
                                                                a.areacode||a.areadesc as AreaDesc,
                                                                u.lname as inspector,
                                                                TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa
-       
+                                                               ,q.isrepaired
                                                           from qccastt q
                                                           join qcusert u on u.srl = q.createdby
                                                           join carid c on c.vin = q.vin 
