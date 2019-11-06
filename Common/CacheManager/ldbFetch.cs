@@ -44,7 +44,7 @@ namespace Common.CacheManager
         {
             try
             {
-                LogManager.SetCommonLog("GetArchiveLdbProductStatistics start");
+                //LogManager.SetCommonLog("GetArchiveLdbProductStatistics start");
                 List<ProductStatistics> lstPS = new List<ProductStatistics>();
                 // generate new statistic
                 //List<ProductStatistics> lstNewPS = StatisticsActs.GetYearProdStatistics();
@@ -61,7 +61,7 @@ namespace Common.CacheManager
                     }
                 }
                 // insetr new lst
-                LogManager.SetCommonLog("GetArchiveLdbProductStatistics="+ dbPS.Count());
+                //LogManager.SetCommonLog("GetArchiveLdbProductStatistics="+ dbPS.Count());
                 return lstPS;
             }
             catch (Exception ex)

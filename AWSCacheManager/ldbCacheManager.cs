@@ -36,11 +36,6 @@ namespace AWSCacheManager
                 PSCreatorTimer.Interval = 900000; //15 Min
                 PSCreatorTimer.Elapsed += new ElapsedEventHandler(this.OnPSCreatorTimer);
                 PSCreatorTimer.Start();
-                // set archive schedule
-                _SetArchiveTimer.Enabled = true;
-                _SetArchiveTimer.Interval = _scheduleTime.Subtract(DateTime.Now).TotalSeconds * 1000;
-                _SetArchiveTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnArchivePS);
-
             }
             catch (Exception ex)
             {
@@ -87,12 +82,20 @@ namespace AWSCacheManager
                 bool RefRsltO30D = ldbRefresh.RefreshLiveLdbProductStatistics("O30D");
                 bool RefRsltO90D = ldbRefresh.RefreshLiveLdbProductStatistics("O90D");
                 bool RefRsltO180D = ldbRefresh.RefreshLiveLdbProductStatistics("O180D");
-                LogManager.SetWindowsServiceLog("OnPSInitialTimer Initialise cache db= " + RefRsltY + RefRsltM + RefRsltD + RefRsltYD + RefRsltO30D + RefRsltO90D + RefRsltO180D);
+                bool RefRsltA = ldbRefresh.RefreshArchiveLdbProductStatistics();
+                LogManager.SetWindowsServiceLog("OnPSInitialTimer Initialise cache db= " + RefRsltY + RefRsltM + RefRsltD + RefRsltYD + RefRsltO30D + RefRsltO90D + RefRsltO180D + RefRsltA);
                 //LogManager.SetWindowsServiceLog("OnPSCreatorTimer_ result RefreshLdb.RefreshLdbProductStatistics()Result=" + RefRslt.ToString());
             }
             catch (Exception ex)
             {
                 LogManager.SetWindowsServiceLog("OnPSInitialTimer" + ex.Message.ToString());
+            }
+            finally
+            {
+                // set archive schedule
+                _SetArchiveTimer.Enabled = true;
+                _SetArchiveTimer.Interval = _scheduleTime.Subtract(DateTime.Now).TotalSeconds * 1000;
+                _SetArchiveTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnArchivePS);
             }
 
         }
@@ -102,6 +105,8 @@ namespace AWSCacheManager
             try
             {
                 //run every day on 04:00 am
+                bool RefRsltA = ldbRefresh.RefreshArchiveLdbProductStatistics();
+                LogManager.SetWindowsServiceLog("OnArchivePS cache db= " + RefRsltA );
             }
             catch (Exception ex)
             {
