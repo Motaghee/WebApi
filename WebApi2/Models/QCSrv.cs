@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Oracle.ManagedDataAccess.Client;
 using System.Data;
-
-using WebApi2.Models.utility;
-using Oracle.ManagedDataAccess.Client;
 
 namespace WebApi2.Models
 {
     public class QCSrv
     {
         #region Variables
-        
-        OracleConnection cntMain = clsDBHelper.DBConnection;
+
+        //OracleConnection cntMain = clsDBHelper.DBConnectionIns;
+        //OracleConnection cntMain = clsDBHelper.DBConnectionPT;
+        //OracleConnection cntMain = clsDBHelper.DBConnectionIns;
         OracleCommand cmdMain = new OracleCommand();
         OracleDataAdapter daMain = new OracleDataAdapter();
         string[] msg = new string[1];

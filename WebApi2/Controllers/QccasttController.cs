@@ -1,222 +1,104 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
+using WebApi2.Controllers.Utility;
 using WebApi2.Models;
-using WebApi2.Models.utility;
 
 namespace WebApi2.Controllers
 {
     public class QccasttController : ApiController
     {
-        // GET: api/Qccastt
-        public List<Qccastt> Get()
-        {
-            Qccastt qccastt = new Qccastt();
-            qccastt.Vin = "NAS411100G1205277";
-            clsDBHelper.LogtxtToFile("Get");
-            clsDBHelper.LogtxtToFile("1");
-            try
-            {
-                clsDBHelper.LogtxtToFile("2");
-                if ((qccastt != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
-                {
-                    clsDBHelper.LogtxtToFile("3");
-                    qccastt.ValidFormat = CarUtility.CheckFormatVin(qccastt.Vin);
-                    if (qccastt.ValidFormat)
-                    {
-                        qccastt.VinWithoutChar = CarUtility.GetVinWithoutChar(qccastt.Vin);
-                        clsDBHelper.LogtxtToFile("4");
-                        string commandtext = string.Format(@"select q.srl,q.vin,
-                                                               a.areacode,
-                                                               s.strenghtdesc,
-                                                               m.modulecode,
-                                                               d.defectcode,
-                                                               m.modulename,
-                                                               d.defectdesc,
-                                                               bm.grpcode,
-                                                               cg.grpname,
-                                                               t.title,
-                                                               q.inuse,
-                                                               a.areacode||a.areadesc as AreaDesc,
-                                                               u.lname as CreatedByDesc,
-                                                               u2.lname as RepairedByDesc,
-                                                               TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa
-                                                               ,q.isrepaired
-                                                          from qccastt q
-                                                          join qcusert u on u.srl = q.createdby
-                                                          join qcusert ur on u.srl = q.RepairedBy
-                                                          join carid c on c.vin = q.vin 
-                                                          join bodymodel bm on bm.bdmdlcode=c.bdmdlcode
-                                                          join qcareat a
-                                                            on q.qcareat_srl = a.srl
-                                                          join qcmdult m
-                                                            on q.qcmdult_srl = m.srl
-                                                          join qcbadft d
-                                                            on q.qcbadft_srl = d.srl
-                                                          join qcstrgt s
-                                                            on q.qcstrgt_srl = s.srl
-                                                          join cargroup cg on cg.grpcode=bm.grpcode
-                                                          join qccabdt t on t.srl = d.qccabdt_srl
-                                                         where q.inuse=1 and q.recordowner=1 and q.isdefected=1  
-                                                        and q.vin= '411100K1146021'", qccastt.VinWithoutChar);
-                        //DataSet ds = clsDBHelper.ExecuteMyQuery(commandtext);
-                        //List<Qccastt> lst = new List<Qccastt>();
-                        //DataTable dt = new DataTable();
-                        //clsDBHelper.ConvertDataTable(ds);
-                        List<Qccastt> FoundDefects = new List<Qccastt>();
-                        clsDBHelper.LogtxtToFile("5" + commandtext);
-                        FoundDefects = clsDBHelper.GetDBObjectByObj2(new Qccastt(), null, commandtext).Cast<Qccastt>().ToList();
-                        clsDBHelper.LogtxtToFile("6");
-                        //---
-                        clsDBHelper.LogtxtToFile("6 count=" + FoundDefects.Count);
-                        if (FoundDefects.Count > 0)
-                        {
-                            FoundDefects[0].ValidFormat = qccastt.ValidFormat;
-                            FoundDefects[0].VinWithoutChar = qccastt.VinWithoutChar;
-                            FoundDefects[0].Msg = qccastt.Msg = "";
-                            clsDBHelper.LogtxtToFile("return List"+ FoundDefects.ToString());
-                            return FoundDefects;
-                        }
-                        else
-                        {
-                            List<Qccastt> q = new List<Qccastt>();
-                            qccastt.Msg = "اطلاعاتی یافت نشد";
-                            q.Add(qccastt);
-                            return q;
-                        }
-                    }
-                    else
-                    {
-                        List<Qccastt> q = new List<Qccastt>();
-                        qccastt.Msg = "شاسی غیر مجاز است";
-                        q.Add(qccastt);
-                        return q;
-                    }
-
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception e)
-            {
-                clsDBHelper.LogFile(e);
-                List<Qccastt> q = new List<Qccastt>();
-                qccastt.Msg = e.Message;
-                q.Add(qccastt);
-                return q;
-            }
-
-            //return new string[] { "value1", "value2" };
-
-        }
-
-        // GET: api/Qccastt/5
-        public string Get(int id)
-        {
-            return "value";
-        }
 
 
-        // POST: api/qccastt
         [HttpPost]
-        public List<Qccastt> Post([FromBody] Qccastt qccastt)
+        [Route("api/Qccastt/CarDefect")]
+        public List<Qccastt> CarDefect([FromBody] Qccastt qccastt)
         {
-            clsDBHelper.LogtxtToFile("postStart");
-            clsDBHelper.LogtxtToFile("p1");
+            return QccasttUtility.GetCarDefect(qccastt);
+        }
+
+        [HttpPost]
+        [Route("api/Qccastt/CarSend")]
+        public ResultMsg CarSend([FromBody] CarSend carsend)
+        {
+            return QccasttUtility.InsertQcqctrt(carsend);
+        }
+
+
+        [HttpPost]
+        [Route("api/Qccastt/UpdateCarImage")]
+        public CarImage UpdateCarImage([FromBody] CarImage carImage)
+        {
+            return QccasttUtility.UpdateCarImage(carImage);
+        }
+
+        [HttpPost]
+        [Route("api/Qccastt/GetCarImages")]
+        public List<CarImage> GetCarImages([FromBody] CarImage car)
+        {
+            return QccasttUtility.GetCarImages(car);
+        }
+
+        [HttpGet]
+        [Route("api/Qccastt/GetBaseModuleList")]
+        public List<Module> GetBaseModuleList()
+        {
+            List<Module> lstM = new List<Module>();
             try
             {
-                
-                if ((qccastt != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
-                {
-                    clsDBHelper.LogtxtToFile("p2");
-                    qccastt.ValidFormat = CarUtility.CheckFormatVin(qccastt.Vin);
-                    if (qccastt.ValidFormat)
-                    {
-                        qccastt.VinWithoutChar = CarUtility.GetVinWithoutChar(qccastt.Vin);
-                        string commandtext = string.Format(@"select q.srl,q.vin,
-                                                               a.areacode,
-                                                               s.strenghtdesc,
-                                                               m.modulecode,
-                                                               d.defectcode,
-                                                               m.modulename,
-                                                               d.defectdesc,
-                                                               bm.grpcode,
-                                                               cg.grpname,
-                                                               t.title,
-                                                               q.inuse,
-                                                               a.areacode||a.areadesc as AreaDesc,
-                                                               u.lname as inspector,
-                                                               TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa,
-                                                               q.isrepaired
-       
-                                                          from qccastt q
-                                                          join qcusert u on u.srl = q.createdby
-                                                          join carid c on c.vin = q.vin 
-                                                          join bodymodel bm on bm.bdmdlcode=c.bdmdlcode
-                                                          join qcareat a
-                                                            on q.qcareat_srl = a.srl
-                                                          join qcmdult m
-                                                            on q.qcmdult_srl = m.srl
-                                                          join qcbadft d
-                                                            on q.qcbadft_srl = d.srl
-                                                          join qcstrgt s
-                                                            on q.qcstrgt_srl = s.srl
-                                                          join cargroup cg on cg.grpcode=bm.grpcode
-                                                          join qccabdt t on t.srl = d.qccabdt_srl
-                                                         where q.inuse=1 and q.recordowner=1 and q.isdefected=1 
-                                                         And q.vin= '{0}' order by q.createddate desc", qccastt.VinWithoutChar);
-                        //DataSet ds = clsDBHelper.ExecuteMyQuery(commandtext);
-                        List<Qccastt> FoundDefects = new List<Qccastt>();
-                        FoundDefects = clsDBHelper.GetDBObjectByObj2(new Qccastt(), null, commandtext).Cast<Qccastt>().ToList();
-                        //---
-                        if (FoundDefects.Count > 0)
-                        {
-                            FoundDefects[0].ValidFormat = qccastt.ValidFormat;
-                            FoundDefects[0].VinWithoutChar = qccastt.VinWithoutChar;
-                            FoundDefects[0].Msg = qccastt.Msg="";
-                            return FoundDefects;
-                        }
-                        else
-                        {
-                            clsDBHelper.LogtxtToFile("vin not found");
-                            List<Qccastt> q = new List<Qccastt>();
-                            qccastt.Msg = "اطلاعاتی یافت نشد";
-                            q.Add(qccastt);
-                            return q;
-                        }
-                    }
-                    else
-                    {
-                        clsDBHelper.LogtxtToFile("vin invalid");
-                        List<Qccastt> q = new List<Qccastt>();
-                        qccastt.Msg = "شاسی غیر مجاز است";
-                        q.Add(qccastt);
-                        return q;
-                    }
-
-                }
-                else
-                {
-                    clsDBHelper.LogtxtToFile("z null");
-                    return null;
-                }
+                lstM = QccasttUtility.GetBaseModuleList();
+                return lstM;
             }
             catch (Exception e)
             {
-                //string err = e.ToString() + e.InnerException.Message + e.Message.ToString();
-                clsDBHelper.LogFile(e);
-                List<Qccastt> q = new List<Qccastt>();
-                qccastt.Msg = e.Message;
-                q.Add(qccastt);
-                return q;
+                Module m = new Module();
+                m.ModuleName = e.Message + "__" + e.InnerException.Message.ToString();
+                m.ModuleCode = 0;
+                m.Srl = 0;
+                lstM.Add(m);
+                return lstM;
             }
-
         }
+
+        [HttpGet]
+        [Route("api/Qccastt/GetBaseDefectList")]
+        public List<Defect> GetBaseDefectList()
+        {
+            return QccasttUtility.GetBaseDefectList();
+        }
+
+        [HttpGet]
+        [Route("api/Qccastt/GetBaseStrengthList")]
+        public List<Strength> GetBaseStrengthList()
+        {
+            return QccasttUtility.GetBaseStrengthList();
+        }
+
+
+        [HttpPost]
+        [Route("api/Qccastt/GetAreaCheckList")]
+        public List<Qcdfctt> GetAreaCheckList([FromBody]Area _area)
+        {
+            return QccasttUtility.GetAreaCheckList(_area);
+        }
+
+        [HttpGet]
+        [Route("api/Qccastt/GetQcdsart")]
+        public List<Qcdsart> GetQcdsart()
+        {
+            return QccasttUtility.GetQcdsart();
+        }
+
+        [HttpGet]
+        [Route("api/Qccastt/GetBaseAreaList")]
+        public List<Area> GetArea()
+        {
+            return QccasttUtility.GetBaseAreaList();
+        }
+
+
+
+
+
     }
 }

@@ -1,44 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
+using WebApi2.Controllers.Utility;
 using WebApi2.Models;
-using WebApi2.Models.utility;
 
 namespace WebApi2.Controllers
 {
     public class AuditController : ApiController
     {
 
-
- 
-        [HttpGet]
-        [Obsolete]
-        public Car get()
+        [HttpPost]
+        [Route("api/audit/AuditUnLockCar")]
+        public Car UnLockCar([FromBody] Car car)
         {
-            Car car = new Car();
             try
             {
-                
-                car.VIN = "";
                 if ((car != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
                 {
-                    car.VALIDFORMAT = CarUtility.CheckFormatVin(car.VIN);
-                    car.AUDITEDITABLE = false;
-                    string commandtext = string.Format(@"update svaauditcar a set a.editabledefectorigin=1 ,a.editablemoduledefect=1 where a.vin in ('{0}')", CarUtility.GetVinWithoutChar(car.VIN));
+                    car.ValidFormat = CarUtility.CheckFormatVin(car.Vin);
 
-                    int intResult = clsDBHelper.ExecuteQueryScalar(commandtext, true);
-                    if (intResult > 0)
+                    car.AuditEditable = false;
+                    if (car.ValidFormat)
                     {
-                        car.AUDITEDITABLE = true;
-                        return car;
+                        car.VinWithoutChar = CarUtility.GetVinWithoutChar(car.Vin);
+                        ResultMsg rm = AuditUtility.UnLockCar(car.VinWithoutChar);
+                        if (rm.title != "error")
+                        {
+                            int intResult = Convert.ToInt32(rm.Message);
+                            if (intResult > 0)
+                            {
+                                car.AuditEditable = true;
+                                return car;
+                            }
+                            else
+                            {
+                                return car;
+                            }
+                        }
+                        else
+                        {
+                            car.msg = rm.Message;
+                            return car;
+                        }
                     }
                     else
-                    {
                         return car;
-                    }
                 }
                 else
                 {
@@ -47,47 +53,18 @@ namespace WebApi2.Controllers
             }
             catch (Exception e)
             {
+                car.msg = "exc1:" + e.Message;
                 return car;
             }
-            //return users;
+
         }
 
-        // GET: api/Users/5
 
-        // POST: api/Audit
         [HttpPost]
-        [Obsolete]
-        public Car Post([FromBody] Car car)
+        [Route("api/audit/GetAuditCarCheckList")]
+        public List<AuditCarDetail> AuditCarCheckList([FromBody] AuditCarDetail auditcardetails)
         {
-            try
-            {
-                if ((car != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
-                {
-                    car.VALIDFORMAT= CarUtility.CheckFormatVin(car.VIN);
-                    car.AUDITEDITABLE = false;
-                    string commandtext = string.Format(@"update svaauditcar a set a.editabledefectorigin=1 ,a.editablemoduledefect=1 where a.vin in ('{0}')", CarUtility.GetVinWithoutChar(car.VIN));
-                    int intResult= clsDBHelper.ExecuteQueryScalar(commandtext,true);
-                    if (intResult > 0)
-                    {
-                        car.AUDITEDITABLE = true;
-                        return car;
-                    }
-                    else
-                    {
-                        return car;
-                    }
-                }
-                else
-                {
-                    return car;
-                }
-            }
-            catch (Exception e)
-            {
-                car.MSG = "exc1:" + e.Message;
-                return car;
-            }
-
+            return AuditUtility.GetAuditCarCheckList(auditcardetails);
         }
 
     }

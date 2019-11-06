@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace WebApi2.Models
+﻿namespace WebApi2.Models
 {
     public class User
     {
@@ -13,14 +8,15 @@ namespace WebApi2.Models
         public string USERNAME { get; set; }
         public string PSW { get; set; }
         public string MACADDRESS { get; set; }
-        public string QCAREATSRL { get; set; }
+        public double QCAREATSRL { get; set; }
+        public double CHECKDEST { get; set; }
+        public double VALIDQCAREACODE { get; set; }
+        public string QCAREACODE { get; set; }
         public string SERVERREQVER { get; set; }
-        public string USERAPPVER { get; set; } = "0.0.1";
-        public bool USERATHENTICATION { get; set; } = false;
-        public bool USERAUTHORIZATION { get; set; } = false;
+        public string USERAPPVER { get; set; }
         public bool MACISVALID { get; set; } = false;
         public bool CLIENTVERISVALID { get; set; } = false;
-        
+
 
 
     }

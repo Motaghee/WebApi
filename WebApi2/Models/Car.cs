@@ -1,46 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace WebApi2.Models
 {
     public class Car
     {
-        public string VIN { get; set; }
-        public string PRODNO { get; set; }
-        public string VINWITHOUTCHAR { get; set; }
-        public bool VALIDFORMAT { get; set; } = false;
-        public bool AUDITEDITABLE { get; set; } = false;
-        public string MSG { get; set; } = "";
-        public string JOINERYDATE_FA { get; set; }
-        public string JOINERYDATE  { get; set; }
-        public string BDMDLCODE { get; set; }
-        public string CARMDLCODE { get; set; }
-        public string ALIASNAME { get; set; }
-        public string FOREXPORT { get; set; }
-        public string FITYPECODE  { get; set; }
-        public string FITYPENAME { get; set; }
-        public string GEARBOXTYPECODE { get; set; }
-        public string GEARBOXTYPEDESC { get; set; }
-        public string SHOPCODE { get; set; }
-        public string SHOPNAME { get; set; }
-        public string FINQCCODE { get; set; }
-        public string CLRALIAS { get; set; }
-        public string JOINARYTEAMDESC { get; set; } //--
-        public string JOINARYTEAM { get; set; } //--
-        public string PRODENDDATE_FA { get; set; } //--
-        public string GRPCODE { get; set; }
-        public string GRPNAME { get; set; }
-        public string RECALLDESC { get; set; } //--
-        public string LENDDESC { get; set; } // --
-        public string ASMSHOPCODE { get; set; } //--
-        public string PTCURRENTSHOPCODE { get; set; } //--
-        public string COMPANYCODE { get; set; }
-        public string TOAREAENTERNUM { get; set; }
-        public string CARTYPEDESC { get; set; }
-        public string PTTRACE { get; set; }
-        public string QCTRACE { get; set; }
+        public string Vin { get; set; }
+        public double Prodno { get; set; }
+        public string VinWithoutChar;
+        public bool ValidFormat = false;
+        public bool AuditEditable = false;
+        public string msg = "";
+        public string JoineryDate_Fa { get; set; }
+        public DateTime JoineryDate { get; set; }
+        public double bdmdlCode { get; set; }
+        //public double CarMdlCode { get; set; }
+        public string AliasName { get; set; }
+        public double ForExport { get; set; }
+        public double FiTypeCode { get; set; }
+        public string FiTypeName { get; set; }
+        public double GearBoxTypeCode { get; set; }
+        public string GearBoxTypeDesc { get; set; }
+        public double ShopCode { get; set; }
+        public string ShopName { get; set; }
+        public double FinQcCode { get; set; }
+        public string ClrAlias { get; set; }
+        public string JoinaryTeamDesc { get; set; }
+        public string JoinaryTeam { get; set; }
+        public string ProdEndDate_Fa { get; set; }
+        public double GrpCode { get; set; }
+        public double CarImageCount { get; set; }
+        public string CarImageSrls { get; set; }
+        public string GrpName { get; set; }
+        //public string ReCallDesc { get; set; } 
+        //public string LendDesc { get; set; } 
+        //public string AsmShopCode { get; set; } 
+        //public string PTCurrentShopCode { get; set; } 
+        public double CompanyCode { get; set; }
+        //public string ToAreaEnterNum { get; set; }
+        //public string CarTypeDesc { get; set; }
+        public string PTTrace { get; set; }
+        public string QCTrace;
+        public double CurAreaSrl { get; set; }
+
 
 
     }
