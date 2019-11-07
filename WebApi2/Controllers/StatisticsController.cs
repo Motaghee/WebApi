@@ -38,7 +38,6 @@ namespace WebApi2.Controllers
 
         }
         [HttpGet]
-        [Authorize]
         [CacheOutput(ClientTimeSpan = 60, ServerTimeSpan = 60)]
         [Route("api/Statistics/GetMonthProdStatistics")]
         public List<ProductStatistics> GetMonthProdStatistics()//[FromBody] ProductStatistics _ps
@@ -68,10 +67,9 @@ namespace WebApi2.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [CacheOutput(ClientTimeSpan = 60, ServerTimeSpan = 60)]
         [Route("api/Statistics/GetDayProdStatistics")]
-        public static List<ProductStatistics> GetDayProdStatistics()//[FromBody] ProductStatistics _ps
+        public  List<ProductStatistics> GetDayProdStatistics()//[FromBody] ProductStatistics _ps
         {
             try
             {
@@ -97,10 +95,9 @@ namespace WebApi2.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [CacheOutput(ClientTimeSpan = 60, ServerTimeSpan = 60)]
         [Route("api/Statistics/GetYDProdStatistics")]
-        public static List<ProductStatistics> GetYDProdStatistics()//[FromBody] ProductStatistics _ps
+        public List<ProductStatistics> GetYDProdStatistics()//[FromBody] ProductStatistics _ps
         {
             try
             {
@@ -126,10 +123,9 @@ namespace WebApi2.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [CacheOutput(ClientTimeSpan = 60, ServerTimeSpan = 60)]
         [Route("api/Statistics/GetO30DProdStatistics")]
-        public static List<ProductStatistics> GetO30DProdStatistics()//[FromBody] ProductStatistics _ps
+        public List<ProductStatistics> GetO30DProdStatistics()//[FromBody] ProductStatistics _ps
         {
             try
             {
@@ -155,10 +151,9 @@ namespace WebApi2.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [CacheOutput(ClientTimeSpan = 60, ServerTimeSpan = 60)]
         [Route("api/Statistics/GetO90DProdStatistics")]
-        public static List<ProductStatistics> GetO90DProdStatistics()//[FromBody] ProductStatistics _ps
+        public List<ProductStatistics> GetO90DProdStatistics()//[FromBody] ProductStatistics _ps
         {
             try
             {
@@ -184,10 +179,9 @@ namespace WebApi2.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [CacheOutput(ClientTimeSpan = 60, ServerTimeSpan = 60)]
         [Route("api/Statistics/GetO180DProdStatistics")]
-        public static List<ProductStatistics> GetO180DProdStatistics()//[FromBody] ProductStatistics _ps
+        public List<ProductStatistics> GetO180DProdStatistics()//[FromBody] ProductStatistics _ps
         {
             try
             {
@@ -213,10 +207,9 @@ namespace WebApi2.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [CacheOutput(ClientTimeSpan = 3600, ServerTimeSpan = 3600)]
         [Route("api/Statistics/GetArchiveProdStatistics")]
-        public static List<ProductStatistics> GetArchiveProdStatistics()//[FromBody] ProductStatistics _ps
+        public List<ProductStatistics> GetArchiveProdStatistics()//[FromBody] ProductStatistics _ps
         {
             try
             {
@@ -244,7 +237,6 @@ namespace WebApi2.Controllers
 
 
         [HttpGet]
-        [Authorize]
         [CacheOutput(ClientTimeSpan = 60, ServerTimeSpan = 60)]
         [Route("api/Statistics/GetProdStatistics")]
         public List<ProductStatistics> GetProdStatistics()//[FromBody] ProductStatistics _ps
