@@ -195,5 +195,69 @@ namespace Common.Actions
             }
         }
 
+
+        public static List<CompanyProductStatistics> GetArchiveCompanyProdStatistics()
+        {
+            try
+            {
+                PersianCalendar pc = new PersianCalendar();
+                DateTime dtN = DateTime.Now;
+                string Y = pc.GetYear(dtN).ToString();
+                string M = pc.GetMonth(dtN).ToString().PadLeft(2, '0');
+                string D = pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
+                string strTodayCondition0 = Y + M + D; ;
+                string strTodayCondition1 = Y + "/" + M + "/" + D;
+
+                // ---
+                string strDateCondition0 = "13980101";
+                string strDateCondition1 = "1398/01/01";
+                // create Archive commande
+                string commandtext = string.Format(@"select SYS_GUID() as Id,ProdDateFa,companycode,companyname,sum(ProductCount) as ProductCount,sysdate as U_DateTime,TO_char(sysdate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as U_DateTimeFa 
+                                                    from 
+                                                    (
+                                                    --brand saipa
+                                                    select substr(s.pProdDate,0,4)||'/'||substr(s.pProdDate,5,2)||'/'||substr(s.pProdDate,7,2) as ProdDateFa,s.companycode,case when companycode=82 then 'سایپا'  when companycode=83 then 'سایپا سیتروئن'   when companycode=90 then 'بن رو' when companycode=81 then 'پارس خودرو' else 'other' end as CompanyName,gs.name,bm.aliasname,case when bm.aliasname='تيبا 211' then 'تیبا2' when bm.aliasname='تيبا 212' then NAME else bm.aliasname end as CommonBodyModelName 
+                                                    ,count(vin)as ProductCount 
+                                                                from pt.VW_LFD_ProdJoin s
+                                                                JOIN BODYMODEL bm on s.bdmdlcode=bm.bdmdlcode 
+                                                                JOIN groupsproductsmsgroup gs on gs.smsgrpid=bm.smsgrpid 
+                                                    where companycode not in (92,97)
+                                                        group by companycode,gs.name,bm.aliasname,s.pProdDate having  s.pProdDate >=({0}) and s.pProdDate <({2})
+
+                                                    union
+                                                    --parskhodro
+                                                    select prod_date as ProdDateFa,companycode,CompanyName,NAME,NAME as ALIASNAME,NAME as CommonBodyModelName,sum(prod_qty) as cnt from 
+                                                    (
+                                                    select s.prod_date,case when comp_code=002 then 81 when comp_code=004 then 86 end as companycode,case when comp_code=002  then 'پارس خودرو' when comp_code=004 then 'زامیاد' else 'other' end as CompanyName
+                                                    ,(case when s.pubrnd_id =36 then 'H220 برليانس' when s.pubrnd_id = 41 then 'کوئيک' when s.pubrnd_id = 35 then 'برليانس CROSS' when (s.pubrnd_id =  4)OR(s.pubrnd_id =  25) then 'تندر' when s.pubrnd_id = 12 then 'ريچ' when s.pubrnd_id = 4 then 'کاميونت پادرا' when s.pubrnd_id = 1 then 'نيسان' else s.pubrnd_name end)
+                                                    as name ,s.prod_qty,s.pubrnd_id,s.comp_code
+                                                    from saipagroup.group_products_data s 
+                                                    where comp_code in (002,004) and   s.prod_date >= '{1}' and s.prod_date < '{3}'
+                                                    ) q
+                                                    group by q.NAME,prod_date,companycode,CompanyName,NAME having sum(prod_qty)<>0 
+                                                    union
+                                                    -- diesel
+                                                    select s.prod_date as ProdDateFa,89 as companycode,'سایپا دیزل' as CompanyName,'خودروهای سنگین' As NAME,'خودروهای سنگین' As ALIASNAME,'خودروهای سنگین' As CommonBodyModelName,sum(s.prod_qty) as cnt
+                                                        from   saipagroup.diesel_products_data s 
+                                                    group by s.prod_date  having s.prod_date >= '{1}' and s.prod_date < '{3}'  and sum(s.prod_qty) <>0
+                                                    order by ProdDateFa,companycode
+                                                    ) z 
+                                                    group by ProdDateFa,companycode,companyname
+                                                    order by ProdDateFa,companycode
+                                                    ", strDateCondition0, strDateCondition1, strTodayCondition0, strTodayCondition1);
+
+                List<CompanyProductStatistics> lst = new List<CompanyProductStatistics>();
+                lst = clsDBHelper.GetDBObjectByObj2(new CompanyProductStatistics(), null, commandtext, "pt").Cast<CompanyProductStatistics>().ToList();
+                return lst;
+            }
+            catch (Exception ex)
+            {
+                LogManager.SetCommonLog("GetArchiveProdStatistics_Error_" + ex.Message.ToString());
+                return null;
+
+
+            }
+        }
+
     }
 }

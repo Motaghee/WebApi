@@ -83,7 +83,8 @@ namespace AWSCacheManager
                 bool RefRsltO90D = ldbRefresh.RefreshLiveLdbProductStatistics("O90D");
                 bool RefRsltO180D = ldbRefresh.RefreshLiveLdbProductStatistics("O180D");
                 bool RefRsltA = ldbRefresh.RefreshArchiveLdbProductStatistics();
-                LogManager.SetWindowsServiceLog("OnPSInitialTimer Initialise cache db= " + RefRsltY + RefRsltM + RefRsltD + RefRsltYD + RefRsltO30D + RefRsltO90D + RefRsltO180D + RefRsltA);
+                bool RefRsltAC = ldbRefresh.RefreshArchiveLdbCompanyProductStatistics();
+                LogManager.SetWindowsServiceLog("OnPSInitialTimer Initialise cache db= " + RefRsltY + RefRsltM + RefRsltD + RefRsltYD + RefRsltO30D + RefRsltO90D + RefRsltO180D + RefRsltA+ RefRsltAC);
                 //LogManager.SetWindowsServiceLog("OnPSCreatorTimer_ result RefreshLdb.RefreshLdbProductStatistics()Result=" + RefRslt.ToString());
             }
             catch (Exception ex)
@@ -106,7 +107,8 @@ namespace AWSCacheManager
             {
                 //run every day on 04:00 am
                 bool RefRsltA = ldbRefresh.RefreshArchiveLdbProductStatistics();
-                LogManager.SetWindowsServiceLog("OnArchivePS cache db= " + RefRsltA );
+                bool RefRsltAC = ldbRefresh.RefreshArchiveLdbCompanyProductStatistics();
+                LogManager.SetWindowsServiceLog("OnArchivePS cache db= " + RefRsltA + RefRsltAC);
             }
             catch (Exception ex)
             {

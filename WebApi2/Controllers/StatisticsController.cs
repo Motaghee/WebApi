@@ -263,11 +263,68 @@ namespace WebApi2.Controllers
         }
 
 
+        [HttpGet]
+        [CacheOutput(ClientTimeSpan = 3600, ServerTimeSpan = 3600)]
+        [Route("api/Statistics/GetCompanyArchiveProdStatistics")]
+        public List<CompanyProductStatistics> GetCompanyArchiveProdStatistics()//[FromBody] ProductStatistics _ps
+        {
+            try
+            {
+                List<CompanyProductStatistics> ListPS;
+                MemoryCacher mc = new MemoryCacher();
+                // ---
+                ListPS = (List<CompanyProductStatistics>)mc.GetValue("CompanyArchiveProductStatistics");
+                if (ListPS == null)
+                {
+                    ListPS = ldbFetch.GetArchiveLdbCompanyProductStatistics(365);
+                    if (ListPS == null)
+                        return null; // ListPS = StatisticsActs.GetArchiveProdStatistics("");
+                    mc.Add("CompanyArchiveProductStatistics", ListPS, DateTimeOffset.Now.AddMinutes(60));
+                }
+                // ---
+                return ListPS;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        }
+
+        [HttpGet]
+        [CacheOutput(ClientTimeSpan = 3600, ServerTimeSpan = 3600)]
+        [Route("api/Statistics/GetCompanyArchiveO30DProdStatistics")]
+        public List<CompanyProductStatistics> GetCompanyArchiveO30DProdStatistics()//[FromBody] ProductStatistics _ps
+        {
+            try
+            {
+                List<CompanyProductStatistics> ListPS;
+                MemoryCacher mc = new MemoryCacher();
+                // ---
+                ListPS = (List<CompanyProductStatistics>)mc.GetValue("CompanyArchiveO30DProductStatistics");
+                if (ListPS == null)
+                {
+                    ListPS = ldbFetch.GetArchiveLdbCompanyProductStatistics(30);
+                    if (ListPS == null)
+                        return null; // ListPS = StatisticsActs.GetArchiveProdStatistics("");
+                    mc.Add("CompanyArchiveO30DProductStatistics", ListPS, DateTimeOffset.Now.AddMinutes(60));
+                }
+                // ---
+                return ListPS;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        }
+
+
 
         [HttpGet]
         [CacheOutput(ClientTimeSpan = 60, ServerTimeSpan = 60)]
-        [Route("api/Statistics/GetProdStatistics")]
-        public List<ProductStatistics> GetProdStatistics()//[FromBody] ProductStatistics _ps
+        [Route("api/Statistics/GetLiveProdStatistics")]
+        public List<ProductStatistics> GetLiveProdStatistics()//[FromBody] ProductStatistics _ps
         {
             try
             {

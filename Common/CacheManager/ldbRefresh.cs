@@ -56,10 +56,37 @@ namespace Common.CacheManager
             }
             catch (Exception ex)
             {
-                LogManager.SetCommonLog("RefreshLdbProductStatistics_" + ex.Message.ToString());
+                LogManager.SetCommonLog("RefreshArchiveLdbProductStatistics" + ex.Message.ToString());
                 return false;
             }
         }
+
+        public static bool RefreshArchiveLdbCompanyProductStatistics()
+        {
+            try
+            {
+                //LogManager.SetCommonLog("RefreshLdbProductStatistics_ starting..." );
+                // generate new statistic
+                List<CompanyProductStatistics> lstNewPS = StatisticsActs.GetArchiveCompanyProdStatistics();
+                // get instanse of ldb
+                LiteDatabase db = new LiteDatabase(ldbConfig.ldbArchiveConnectionString);
+                // get old ldb ps lst
+                LiteCollection<CompanyProductStatistics> dbPS = db.GetCollection<CompanyProductStatistics>("CompanyProductStatistics");
+                // delete old lst
+                dbPS.Delete(Query.All());
+                // insetr new lst
+                dbPS.Insert(lstNewPS);
+                //LogManager.SetCommonLog("RefreshLdbProductStatistics_ insert successfully" + lstNewPS.Count);
+                db.Dispose();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogManager.SetCommonLog("RefreshArchiveLdbCompanyProductStatistics" + ex.Message.ToString());
+                return false;
+            }
+        }
+
     }
 }
 

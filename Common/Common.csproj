@@ -59,6 +59,7 @@
     <Compile Include="CacheManager\ldbFetch.cs" />
     <Compile Include="CacheManager\ldbRefresh.cs" />
     <Compile Include="db\dbHelper.cs" />
+    <Compile Include="Models\CompanyProductStatistics.cs" />
     <Compile Include="Models\ProductStatistics.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
