@@ -3,6 +3,7 @@ using Common.Models;
 using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Common.CacheManager
 {
@@ -40,10 +41,17 @@ namespace Common.CacheManager
         }
 
 
-        public static List<ProductStatistics> GetArchiveLdbProductStatistics()
+        public static List<ProductStatistics> GetArchiveLdbProductStatistics(int FromLastDay)
         {
             try
             {
+                string Y, M, D;
+                DateTime dtOldDay = DateTime.Now.AddDays(-FromLastDay);
+                PersianCalendar pc = new PersianCalendar();
+                Y = pc.GetYear(dtOldDay).ToString();
+                M = pc.GetMonth(dtOldDay).ToString().PadLeft(2, '0');
+                D = pc.GetDayOfMonth(dtOldDay).ToString().PadLeft(2, '0');
+                string strFromLastDayCondition = Y + "/" + M + "/" + D;
                 //LogManager.SetCommonLog("GetArchiveLdbProductStatistics start");
                 List<ProductStatistics> lstPS = new List<ProductStatistics>();
                 // generate new statistic
@@ -55,7 +63,7 @@ namespace Common.CacheManager
                 // Get old lst
                 if (dbPS.Count() != 0)
                 {
-                    foreach (var item in dbPS.Find(Query.All()))
+                    foreach (var item in dbPS.Find(Query.GT("ProdDateFa", strFromLastDayCondition)))
                     {
                         lstPS.Add(item);
                     }

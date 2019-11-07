@@ -219,10 +219,38 @@ namespace WebApi2.Controllers
                 ListPS = (List<ProductStatistics>)mc.GetValue("ArchiveProductStatistics");
                 if (ListPS == null)
                 {
-                    ListPS = ldbFetch.GetArchiveLdbProductStatistics();
+                    ListPS = ldbFetch.GetArchiveLdbProductStatistics(365);
                     if (ListPS == null)
                         return null; // ListPS = StatisticsActs.GetArchiveProdStatistics("");
                     mc.Add("ArchiveProductStatistics", ListPS, DateTimeOffset.Now.AddMinutes(60));
+                }
+                // ---
+                return ListPS;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        }
+
+        [HttpGet]
+        [CacheOutput(ClientTimeSpan = 3600, ServerTimeSpan = 3600)]
+        [Route("api/Statistics/GetArchiveO30DProdStatistics")]
+        public List<ProductStatistics> GetArchiveO30DProdStatistics()//[FromBody] ProductStatistics _ps
+        {
+            try
+            {
+                List<ProductStatistics> ListPS;
+                MemoryCacher mc = new MemoryCacher();
+                // ---
+                ListPS = (List<ProductStatistics>)mc.GetValue("ArchiveO30DProductStatistics");
+                if (ListPS == null)
+                {
+                    ListPS = ldbFetch.GetArchiveLdbProductStatistics(30);
+                    if (ListPS == null)
+                        return null; // ListPS = StatisticsActs.GetArchiveProdStatistics("");
+                    mc.Add("ArchiveO30DProductStatistics", ListPS, DateTimeOffset.Now.AddMinutes(60));
                 }
                 // ---
                 return ListPS;
