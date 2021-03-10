@@ -1,0 +1,61 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <script src="~/Scripts/popper.min.js"></script>
+
+
+    @Styles.Render("~/Content/css")
+    <link href="~/Content/persian-datepicker.css" rel="stylesheet" />
+    <script src="~/Scripts/persian-date.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/persian-datepicker.js"></script>
+    <link href="~/Content/bootstrap-select.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/bootstrap-select.js"></script>
+
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand navbar-dark bg-primary fixed-top">
+        <a href="#menu-toggle" id="menu-toggle" class="navbar-brand"><span class="navbar-toggler-icon"></span></a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExample02">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"></li>
+                <li class="nav-item" style="padding-top:9px;vertical-align:middle">@Session["FNAME"] عزیز به سیستم کیفیت محصول خوش آمدید</li>
+                <li class="nav-item"> <a class="nav-link" href="#">پروفایل </a> </li>
+                <li class="nav-item"> <a class="nav-link" href="@Url.Action("Logout", "User")">خروج </a> </li>
+            </ul>
+            <form class="form-inline my-2 my-md-0"> </form>
+        </div>
+    </nav>
+    @*<a>test</a>*@
+    <div id="wrapper" class="toggled" style="position: sticky">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand"> <a href='@Url.Action("Index", "Home")'> صفحه اول </a> </li>
+                <li> <a href='@Url.Action("Qccard", "Qccastt")'>کارت کیفی</a> </li>
+                <li> <a href='@Url.Action("QCReport", "Qccastt")'>گزارشات</a> </li>
+                <li> <a href="#">چک لیست آدیت</a> </li>
+                <li> <a href="#">داشبورد</a> </li>
+            </ul>
+        </div> <!-- /#sidebar-wrapper -->
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div>
+                    @RenderBody()
+                </div>
+            </div>
+        </div> <!-- /#page-content-wrapper -->
+    </div>
+
+
+
+    @RenderSection("scripts", required: false)
+
+</body>
+
+
+</html>

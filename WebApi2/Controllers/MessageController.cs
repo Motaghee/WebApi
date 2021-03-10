@@ -98,7 +98,7 @@ namespace WebApi2.Controllers
                     //DataSet ds = clsDBHelper.ExecuteMyQueryStp(commandtext);
                     // --
                     List<Message> lst = new List<Message>();
-                    lst = clsDBHelper.GetDBObjectByObj2(new Message(), null, commandtext, "stopage").Cast<Message>().ToList();
+                    lst = DBHelper.GetDBObjectByObj2(new Message(), null, commandtext, "stopage").Cast<Message>().ToList();
                     //---
                     if (lst.Count > 0)
                     {

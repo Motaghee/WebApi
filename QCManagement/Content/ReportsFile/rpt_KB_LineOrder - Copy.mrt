@@ -1,0 +1,641 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="0" />
+    <DataSources isList="true" count="1">
+      <DataSource1 Ref="2" type="DataTableSource" isKey="true">
+        <Alias>DataSource1</Alias>
+        <Columns isList="true" count="19">
+          <value>STN_ID,System.String</value>
+          <value>ITEM_ID,System.String</value>
+          <value>KANBAN,System.String</value>
+          <value>Status,System.String</value>
+          <value>QtyOrder,System.String</value>
+          <value>QtyReceived,System.String</value>
+          <value>Ntl_id,System.String</value>
+          <value>EquipCode,System.String</value>
+          <value>BarCode,System.String</value>
+          <value>lineOrder_Id,System.String</value>
+          <value>P_REQID,System.String</value>
+          <value>line_id,System.String</value>
+          <value>ItemName,System.String</value>
+          <value>REQBARCODE,System.String</value>
+          <value>REQDATE,System.String</value>
+          <value>RecTime,System.String</value>
+          <value>UserName,System.String</value>
+          <value>ntd,System.String</value>
+          <value>CurDate,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <IsCloud>False</IsCloud>
+        <Name>DataSource1</Name>
+        <NameInSource />
+      </DataSource1>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Variables isList="true" count="0" />
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="3" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="3">
+        <PageFooterBand1 Ref="4" type="PageFooterBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,10.59,7.47,0.3</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Name>PageFooterBand1</Name>
+          <Page isRef="3" />
+          <Parent isRef="3" />
+        </PageFooterBand1>
+        <HeaderBand1 Ref="5" type="HeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,0.2,7.47,2</ClientRectangle>
+          <Components isList="true" count="8">
+            <Text4 Ref="6" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>[239:211:210]</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>3.1,1.6,0.6,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,9</Font>
+              <Guid>84b397dee4fb44dbb8c220c480e7e1a7</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text4</Name>
+              <Page isRef="3" />
+              <Parent isRef="5" />
+              <Text>تعداد رسید</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text4>
+            <Text5 Ref="7" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>[239:211:210]</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>3.7,1.6,0.6,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,8</Font>
+              <Guid>54a9a271d54d459e808c1bea279a38eb</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text5</Name>
+              <Page isRef="3" />
+              <Parent isRef="5" />
+              <Text>تعداد درخواستی</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text5>
+            <Text6 Ref="8" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>[239:211:210]</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>5.6,1.6,0.9,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Guid>527cc6fe4fd145618ba4e8157361f3ea</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text6</Name>
+              <Page isRef="3" />
+              <Parent isRef="5" />
+              <Text>کد کالا</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text6>
+            <Text10 Ref="9" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>[239:211:210]</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0,1.6,2.4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Guid>81d27875a42a4e73ad0f43039fd9a6a9</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text10</Name>
+              <Page isRef="3" />
+              <Parent isRef="5" />
+              <Text>بارکد</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text10>
+            <Panel1 Ref="10" type="Panel" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>[230:238:215]</Brush>
+              <ClientRectangle>0,0.1,7.4,1.4</ClientRectangle>
+              <Components isList="true" count="12">
+                <Text3 Ref="11" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>2.9,0.2,2,0.6</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,22,Bold</Font>
+                  <HorAlignment>Center</HorAlignment>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text3</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>درخواست خط</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>Expression</Type>
+                  <VertAlignment>Center</VertAlignment>
+                </Text3>
+                <Text8 Ref="12" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>6.1,0.2,1.2,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,12</Font>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text8</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>: شماره درخواست</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>Expression</Type>
+                </Text8>
+                <Text13 Ref="13" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>1.9,0.1,0.6,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,12</Font>
+                  <Guid>285d104d1d574945b9c9e9d2ec809862</Guid>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text13</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>: فرستنده</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>Expression</Type>
+                </Text13>
+                <Text18 Ref="14" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>1.9,0.4,0.6,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,12</Font>
+                  <Guid>4b8f1ae03d12400ca77b6f8f92eaa883</Guid>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text18</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>: گیرنده</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>Expression</Type>
+                </Text18>
+                <Text23 Ref="15" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>4.9,0.2,1.2,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,15</Font>
+                  <Guid>5e4a50440a61424495a35da9c90a8ab9</Guid>
+                  <HorAlignment>Right</HorAlignment>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text23</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>{DataSource1.P_REQID}</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>Expression</Type>
+                </Text23>
+                <Text11 Ref="16" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>0.1,0.4,1.7,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,13</Font>
+                  <Guid>35fef80e69f14f2db698c3323021aa0f</Guid>
+                  <HorAlignment>Right</HorAlignment>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text11</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>{DataSource1.Ntl_id}</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>DataColumn</Type>
+                </Text11>
+                <BarCode2 Ref="17" type="Stimulsoft.Report.BarCodes.StiBarCode" isKey="true">
+                  <BackColor>Transparent</BackColor>
+                  <BarCodeType Ref="18" type="Stimulsoft.Report.BarCodes.StiCode128aBarCodeType" isKey="true">
+                    <Module>10</Module>
+                  </BarCodeType>
+                  <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+                  <ClientRectangle>5,0.5,2.23,0.45</ClientRectangle>
+                  <Code>{DataSource1.REQBARCODE}</Code>
+                  <Conditions isList="true" count="0" />
+                  <Font>Arial,8,Bold,Pixel</Font>
+                  <ForeColor>Black</ForeColor>
+                  <Guid>ca9c04d6e34341c496d1b064126ea445</Guid>
+                  <Name>BarCode2</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                </BarCode2>
+                <Text1 Ref="19" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>0.1,0.1,1.7,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,13</Font>
+                  <Guid>2fe5fa818a754da78b77b595ab8c791c</Guid>
+                  <HorAlignment>Right</HorAlignment>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text1</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>{DataSource1.line_id}</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>DataColumn</Type>
+                </Text1>
+                <Text7 Ref="20" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>1.9,0.7,0.9,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,12</Font>
+                  <Guid>f068d6f7502c474a89e173e25aa0fea5</Guid>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text7</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>:زمان درخواست</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>Expression</Type>
+                </Text7>
+                <Text9 Ref="21" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>0.1,0.7,1.7,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,13</Font>
+                  <Guid>6711c98bf9aa40e89869c7627b3d9c89</Guid>
+                  <HorAlignment>Right</HorAlignment>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text9</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>{DataSource1.REQDATE}</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>DataColumn</Type>
+                </Text9>
+                <Text24 Ref="22" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>1.9,1,0.9,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,12</Font>
+                  <Guid>9ef7b89bc7dc45918ade72b11ce0ce31</Guid>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text24</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>: زمان گزارش</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>Expression</Type>
+                </Text24>
+                <Text25 Ref="23" type="Text" isKey="true">
+                  <Border>None;[0:0:0];1;Solid;False;4;Black</Border>
+                  <Brush>Transparent</Brush>
+                  <ClientRectangle>0.1,1,1.7,0.3</ClientRectangle>
+                  <Conditions isList="true" count="0" />
+                  <Font>B Nazanin,13</Font>
+                  <Guid>a89bc06781e94fe8970936ec6eadbb23</Guid>
+                  <HorAlignment>Right</HorAlignment>
+                  <Margins>0,0,0,0</Margins>
+                  <Name>Text25</Name>
+                  <Page isRef="3" />
+                  <Parent isRef="10" />
+                  <Text>{DataSource1.CurDate}</Text>
+                  <TextBrush>Black</TextBrush>
+                  <Type>DataColumn</Type>
+                </Text25>
+              </Components>
+              <Conditions isList="true" count="0" />
+              <Name>Panel1</Name>
+              <Page isRef="3" />
+              <Parent isRef="5" />
+            </Panel1>
+            <Text21 Ref="24" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>[239:211:210]</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>6.5,1.6,0.9,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Guid>467d6f409348477ba30349c78c958ebc</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text21</Name>
+              <Page isRef="3" />
+              <Parent isRef="5" />
+              <Text>شماره سفارش</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text21>
+            <Text2 Ref="25" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>[239:211:210]</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>4.3,1.6,1.3,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Guid>20b36230d77e4ddcad767f92cbbcac44</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text2</Name>
+              <Page isRef="3" />
+              <Parent isRef="5" />
+              <Text>نام کالا</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text2>
+            <Text26 Ref="26" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>[239:211:210]</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>2.4,1.6,0.7,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,9</Font>
+              <Guid>7e91a8abf2d643308d90b370f59f2822</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text26</Name>
+              <Page isRef="3" />
+              <Parent isRef="5" />
+              <Text>ntl آدرس</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text26>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Name>HeaderBand1</Name>
+          <Page isRef="3" />
+          <Parent isRef="3" />
+        </HeaderBand1>
+        <DataBand1 Ref="27" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <CanGrow>False</CanGrow>
+          <ClientRectangle>0,2.6,7.47,0.6</ClientRectangle>
+          <Components isList="true" count="8">
+            <Text14 Ref="28" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>Transparent</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>3.1,0,0.6,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Guid>2219130f7f994573b5903d4bf4da322c</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text14</Name>
+              <Page isRef="3" />
+              <Parent isRef="27" />
+              <Text>{DataSource1.QtyReceived}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text14>
+            <Text15 Ref="29" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>Transparent</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>3.7,0,0.6,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Guid>5fc23ec06035498e9e63780d7555d436</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text15</Name>
+              <Page isRef="3" />
+              <Parent isRef="27" />
+              <Text>{DataSource1.QtyOrder}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text15>
+            <Text16 Ref="30" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>Transparent</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>5.6,0,0.9,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Guid>56f37356a8ab40cea039e76b7b8c377a</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text16</Name>
+              <Page isRef="3" />
+              <Parent isRef="27" />
+              <Text>{DataSource1.ITEM_ID}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text16>
+            <Text20 Ref="31" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,2.4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text20</Name>
+              <Page isRef="3" />
+              <Parent isRef="27" />
+              <TextBrush>Black</TextBrush>
+            </Text20>
+            <BarCode1 Ref="32" type="Stimulsoft.Report.BarCodes.StiBarCode" isKey="true">
+              <BackColor>Transparent</BackColor>
+              <BarCodeType Ref="33" type="Stimulsoft.Report.BarCodes.StiCode128aBarCodeType" isKey="true">
+                <Module>10</Module>
+              </BarCodeType>
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <ClientRectangle>0.1,0.1,2.23,0.45</ClientRectangle>
+              <Code>{DataSource1.BarCode}</Code>
+              <Conditions isList="true" count="0" />
+              <Font>Arial,8,Bold,Pixel</Font>
+              <ForeColor>Black</ForeColor>
+              <Guid>5319a32827204c66ba324a1ad3d3bab7</Guid>
+              <Name>BarCode1</Name>
+              <Page isRef="3" />
+              <Parent isRef="27" />
+            </BarCode1>
+            <Text22 Ref="34" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>Transparent</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>6.5,0,0.9,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Guid>1d3cd5bc46b84f729dc8d908a0394b54</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text22</Name>
+              <Page isRef="3" />
+              <Parent isRef="27" />
+              <Text>{DataSource1.lineOrder_Id}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text22>
+            <Text12 Ref="35" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>Transparent</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>4.3,0,1.3,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,10</Font>
+              <Guid>9eb6f2e25f4d40a6bb614a81e8e0ee5f</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text12</Name>
+              <Page isRef="3" />
+              <Parent isRef="27" />
+              <Text>{DataSource1.ItemName}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>HotkeyPrefix=None, LineLimit=False, RightToLeft=False, Trimming=None, WordWrap=True, Angle=0, FirstTabOffset=40, DistanceBetweenTabs=20,</TextOptions>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text12>
+            <Text27 Ref="36" type="Text" isKey="true">
+              <Border>All;[105:105:105];1;Solid;False;4;[105:105:105]</Border>
+              <Brush>Transparent</Brush>
+              <CanBreak>True</CanBreak>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>2.4,0,0.7,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Tornado Tahoma,12</Font>
+              <Guid>d35be3ccad224204a4e26c675570054f</Guid>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text27</Name>
+              <Page isRef="3" />
+              <Parent isRef="27" />
+              <Text>{DataSource1.ntd}</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>DataColumn</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text27>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>DataSource1</DataSourceName>
+          <Filters isList="true" count="0" />
+          <Name>DataBand1</Name>
+          <OddStyle>Style2</OddStyle>
+          <Page isRef="3" />
+          <Parent isRef="3" />
+          <Sort isList="true" count="0" />
+        </DataBand1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Guid>94fd8737075f40a19427fcbaa64af8d0</Guid>
+      <Margins>0.4,0.4,0.4,0.4</Margins>
+      <Name>Page1</Name>
+      <PageHeight>11.69</PageHeight>
+      <PageWidth>8.27</PageWidth>
+      <PaperSize>A4</PaperSize>
+      <Report isRef="0" />
+      <Watermark Ref="37" type="Stimulsoft.Report.Components.StiWatermark" isKey="true">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </Page1>
+  </Pages>
+  <PrinterSettings Ref="38" type="Stimulsoft.Report.Print.StiPrinterSettings" isKey="true" />
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>5/15/2016 11:35:30 AM</ReportChanged>
+  <ReportCreated>7/22/2014 10:29:52 AM</ReportCreated>
+  <ReportFile>E:\Tfs\KanbanNew\MVCWebKanban\WebKanban\Content\report\rpt_KB_LineOrder.mrt</ReportFile>
+  <ReportGuid>55609ceb65ac4b03a636a126eb7d9e96</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Inches</ReportUnit>
+  <ReportVersion>2014.3.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="2">
+    <Style1 Ref="39" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Brush>LightBlue</Brush>
+      <Conditions isList="true" count="0" />
+      <Description />
+      <Font>Arial,8</Font>
+      <Name>Style1</Name>
+      <TextBrush>Black</TextBrush>
+    </Style1>
+    <Style2 Ref="40" type="Stimulsoft.Report.StiStyle" isKey="true">
+      <Brush>[230:245:252]</Brush>
+      <Conditions isList="true" count="0" />
+      <Description />
+      <Font>Arial,8</Font>
+      <Name>Style2</Name>
+      <TextBrush>Black</TextBrush>
+    </Style2>
+  </Styles>
+</StiSerializer>

@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "کارت کیفیت";
+}
+@using Stimulsoft.Report.Mvc;
+@using QCManagement.Models
+@model QccasttModels
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div>
+        <h1 class="MyTitle">
+            کارت کیفیت
+        </h1>
+    </div>
+    <div>
+    </div>
+    @using (Html.BeginForm("Back", "Qccastt", FormMethod.Post, new { @class = "form", role = "form" }))
+    {
+        <div class="MyContent">
+            <div align="center">
+            <button type="submit" value="Submit" class="Mybutton">
+                بازگشت
+            </button>
+            </div>
+            <a style="display: none">
+                @Html.EditorFor(model => model.Vin, new { htmlAttributes = new { id = "MyVin", @class = "Myform-control" } })
+            </a>
+            <div dir="ltr">
+                @Html.Stimulsoft().StiMvcViewer(new StiMvcViewerOptions()
+           {
+               Actions = { GetReportSnapshot = "FromLoadFileReport", ViewerEvent = "ViewerEvent", PrintReport = "PrintReport", ExportReport = "ExportReport" },
+               Appearance = { ScrollbarsMode = true /*,FullScreenMode = true*/ },
+               Toolbar = { ShowZoomButton = false, ShowFullScreenButton = false, ShowCurrentPageControl = false, ShowEditorButton = false, ShowParametersButton = false, ShowDesignButton = false, ShowButtonCaptions = false, ShowAboutButton = false, ShowFindButton = false, ShowSendEmailButton = false } //Localization = "~/content/reports/fa.xml",
+               ,
+               Server = { PassFormValues = true, CacheTimeout = 10, RequestTimeout = 300 }
+           })
+
+            </div>
+
+        </div>
+    }
+</body>
+</html>
+

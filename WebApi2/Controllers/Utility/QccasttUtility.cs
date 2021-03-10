@@ -1,4 +1,6 @@
 ﻿using Common.db;
+using Common.Models;
+using Common.Models.Qccastt;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -22,13 +24,13 @@ namespace WebApi2.Controllers.Utility
                     if (qccastt.ValidFormat)
                     {
                         qccastt.VinWithoutChar = CarUtility.GetVinWithoutChar(qccastt.Vin);
-                        string commandtext = string.Format(@"select q.srl,q.vin,
-                                                               a.areacode,
+                        string commandtext = string.Format(@"select SYS_GUID() as Id,q.srl,'NAS'||q.vin as vin,q.vin as VinWithoutChar,q.qcmdult_srl,q.qcbadft_srl,
+                                                               q.qcareat_srl,a.areacode,a.areatype,p.shopcode,
                                                                s.strenghtdesc,
                                                                m.modulecode,
                                                                d.defectcode,
                                                                m.modulename,
-                                                               d.defectdesc,
+                                                               d.defectdesc,c.bdmdlcode,
                                                                bm.grpcode,
                                                                cg.grpname,
                                                                t.title,
@@ -36,8 +38,10 @@ namespace WebApi2.Controllers.Utility
                                                                a.areacode||a.areadesc as AreaDesc,
                                                                u.lname as CreatedByDesc,q.CreatedBy,
                                                                ur.lname as RepairedByDesc,q.RepairedBy,
-                                                               TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa
-                                                               ,q.isrepaired
+                                                               TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa,
+                                                               TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as repaireddateFa,
+                                                               to_char(q.createddate,'yyyy/mm/dd','nls_calendar=persian') as CreatedDayFa,
+                                                               q.isrepaired
                                                           from qccastt q
                                                           join qcusert u on u.srl = q.createdby
                                                           left join qcusert ur on ur.srl = q.RepairedBy
@@ -45,6 +49,7 @@ namespace WebApi2.Controllers.Utility
                                                           join bodymodel bm on bm.bdmdlcode=c.bdmdlcode
                                                           join qcareat a
                                                             on q.qcareat_srl = a.srl
+                                                     left join pcshopt p on p.srl = a.pcshopt_srl
                                                           join qcmdult m
                                                             on q.qcmdult_srl = m.srl
                                                           join qcbadft d
@@ -62,7 +67,7 @@ namespace WebApi2.Controllers.Utility
                         //return jsonString;
                         // --
                         List<Qccastt> FoundDefects = new List<Qccastt>();
-                        FoundDefects = clsDBHelper.GetDBObjectByObj2(new Qccastt(), null, commandtext, "inspector").Cast<Qccastt>().ToList();
+                        FoundDefects = DBHelper.GetDBObjectByObj2(new Qccastt(), null, commandtext, "inspector").Cast<Qccastt>().ToList();
                         //---
                         if (FoundDefects.Count > 0)
                         {
@@ -87,14 +92,15 @@ namespace WebApi2.Controllers.Utility
                 }
                 else
                 {
-                    clsDBHelper.LogtxtToFile("z null");
+                    DBHelper.LogtxtToFile("z null");
                     return null;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 //string err = e.ToString() + e.InnerException.Message + e.Message.ToString();
                 //clsDBHelper.LogFile(e);
+                DBHelper.LogFile(ex);
                 List<Qccastt> q = new List<Qccastt>();
                 q.Add(qccastt);
                 return q;
@@ -161,7 +167,7 @@ namespace WebApi2.Controllers.Utility
 
                 // --
                 List<CarImage> FoundCarImages = new List<CarImage>();
-                FoundCarImages = clsDBHelper.GetDBObjectByObj2(new CarImage(), null, commandtext, "inspector").Cast<CarImage>().ToList();
+                FoundCarImages = DBHelper.GetDBObjectByObj2(new CarImage(), null, commandtext, "inspector").Cast<CarImage>().ToList();
                 //---
                 if (FoundCarImages.Count > 0)
                 {
@@ -169,14 +175,14 @@ namespace WebApi2.Controllers.Utility
                 }
                 else
                 {
-                    clsDBHelper.LogtxtToFile("count 0");
+                    DBHelper.LogtxtToFile("count 0");
                     return null;
                 }
             }
             catch (Exception e)
             {
                 //string err = e.ToString() + e.InnerException.Message + e.Message.ToString();
-                clsDBHelper.LogFile(e);
+                DBHelper.LogFile(e);
                 return null;
             }
         }
@@ -241,12 +247,12 @@ namespace WebApi2.Controllers.Utility
                                                    where srl={0}
                                                 ", carImage.Srl, carImage.UpdatedBy);
                 }
-                if (clsDBHelper.DBConnectionIns.State == ConnectionState.Closed)
+                if (DBHelper.DBConnectionIns.State == ConnectionState.Closed)
                 {
-                    clsDBHelper.DBConnectionIns.ConnectionString = clsDBHelper.CnStrIns;
-                    clsDBHelper.DBConnectionIns.Open();
+                    DBHelper.DBConnectionIns.ConnectionString = DBHelper.CnStrIns;
+                    DBHelper.DBConnectionIns.Open();
                 }
-                cmd.Connection = clsDBHelper.DBConnectionIns;
+                cmd.Connection = DBHelper.DBConnectionIns;
                 cmd.ExecuteNonQuery();
                 // ---
                 //cmd.Parameters.Clear();
@@ -289,13 +295,13 @@ namespace WebApi2.Controllers.Utility
                                                             on a.srl = i.qcareatsrl
                                                             Where i.Srl ={0}", carImage.Srl);
                 }
-                CarImage InsertedCarImage = clsDBHelper.GetDBObjectByObj2(new CarImage(), null, commandtext, "inspector").Cast<CarImage>().ToList()[0];
+                CarImage InsertedCarImage = DBHelper.GetDBObjectByObj2(new CarImage(), null, commandtext, "inspector").Cast<CarImage>().ToList()[0];
                 return InsertedCarImage;
             }
             catch (Exception e)
             {
-                clsDBHelper.LogtxtToFile("err_UpdateCarImage_" + errTrc);
-                clsDBHelper.LogFile(e);
+                DBHelper.LogtxtToFile("err_UpdateCarImage_" + errTrc);
+                DBHelper.LogFile(e);
 
 
                 return null;
@@ -308,9 +314,9 @@ namespace WebApi2.Controllers.Utility
             try
             {
                 string commandtext = string.Format(@"select srl,modulename,modulecode from qcmdult m ");
-                DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                 List<Module> ModuleList = new List<Module>();
-                ModuleList = clsDBHelper.GetDBObjectByObj2(new Module(), null, commandtext, "inspector").Cast<Module>().ToList();
+                ModuleList = DBHelper.GetDBObjectByObj2(new Module(), null, commandtext, "inspector").Cast<Module>().ToList();
                 //---
                 if (ModuleList.Count > 0)
                 {
@@ -323,7 +329,7 @@ namespace WebApi2.Controllers.Utility
             }
             catch (Exception e)
             {
-                clsDBHelper.LogFile(e);
+                DBHelper.LogFile(e);
                 return null;
             }
         }
@@ -334,9 +340,9 @@ namespace WebApi2.Controllers.Utility
             try
             {
                 string commandtext = string.Format(@"select srl,defectcode,defectdesc from qcbadft d");
-                DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                 List<Defect> DefectList = new List<Defect>();
-                DefectList = clsDBHelper.GetDBObjectByObj2(new Defect(), null, commandtext, "inspector").Cast<Defect>().ToList();
+                DefectList = DBHelper.GetDBObjectByObj2(new Defect(), null, commandtext, "inspector").Cast<Defect>().ToList();
                 //---
                 if (DefectList.Count > 0)
                 {
@@ -347,8 +353,10 @@ namespace WebApi2.Controllers.Utility
                     return null;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+
+                DBHelper.LogFile(ex);
                 return null;
             }
         }
@@ -358,9 +366,9 @@ namespace WebApi2.Controllers.Utility
             try
             {
                 string commandtext = string.Format(@"select  s.srl,s.strenghtcode,s.strenghtdesc from qcstrgt s");
-                DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                 List<Strength> StrengthList = new List<Strength>();
-                StrengthList = clsDBHelper.GetDBObjectByObj2(new Strength(), null, commandtext, "inspector").Cast<Strength>().ToList();
+                StrengthList = DBHelper.GetDBObjectByObj2(new Strength(), null, commandtext, "inspector").Cast<Strength>().ToList();
                 //---
                 if (StrengthList.Count > 0)
                 {
@@ -371,8 +379,9 @@ namespace WebApi2.Controllers.Utility
                     return null;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                DBHelper.LogFile(ex);
                 return null;
             }
         }
@@ -386,9 +395,9 @@ namespace WebApi2.Controllers.Utility
                                                         q.qcbadft_srl,q.qcstrgt_srl,q.grpcode  from qcdfctt q 
 				                                        where q.qcareat_srl = {0}",
                                                     _area.Srl);
-                DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                 List<Qcdfctt> CheckList = new List<Qcdfctt>();
-                CheckList = clsDBHelper.GetDBObjectByObj2(new Qcdfctt(), null, commandtext, "inspector").Cast<Qcdfctt>().ToList();
+                CheckList = DBHelper.GetDBObjectByObj2(new Qcdfctt(), null, commandtext, "inspector").Cast<Qcdfctt>().ToList();
                 //---
                 if (CheckList.Count > 0)
                 {
@@ -401,7 +410,7 @@ namespace WebApi2.Controllers.Utility
             }
             catch (Exception e)
             {
-                clsDBHelper.LogFile(e);
+                DBHelper.LogFile(e);
                 return null;
             }
         }
@@ -412,10 +421,12 @@ namespace WebApi2.Controllers.Utility
         {
             try
             {
-                string commandtext = string.Format(@"select  a.srl,a.areacode,a.areadesc,a.CheckDest from qcareat a");
-                DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
+                string commandtext = string.Format(@"select  a.srl,a.areacode,a.areadesc,a.CheckDest,
+                                        decode(a.areatype,35,(decode(p.shopcode,14,30,17,40)),a.areatype) as areatype
+                                        from qcareat a join pcshopt p on p.srl = a.pcshopt_srl ");
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                 List<Area> AreaList = new List<Area>();
-                AreaList = clsDBHelper.GetDBObjectByObj2(new Area(), null, commandtext, "inspector").Cast<Area>().ToList();
+                AreaList = DBHelper.GetDBObjectByObj2(new Area(), null, commandtext, "inspector").Cast<Area>().ToList();
                 //---
                 if (AreaList.Count > 0)
                 {
@@ -426,8 +437,134 @@ namespace WebApi2.Controllers.Utility
                     return null;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                DBHelper.LogFile(ex);
+                return null;
+            }
+        }
+
+        public static List<Shop> GetBaseShopList()
+        {
+            try
+            {
+                string commandtext = string.Format(@"select p.shopcode,p.shopname from pcshopt p join pt.shop s on s.shopcode=p.ptshopcode where companycode=82");
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
+                List<Shop> List = new List<Shop>();
+                List = DBHelper.GetDBObjectByObj2(new Shop(), null, commandtext, "inspector").Cast<Shop>().ToList();
+                //---
+                if (List.Count > 0)
+                {
+                    return List;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LogFile(ex);
+                return null;
+            }
+        }
+
+        public static List<CarGroup> GetBaseCarGroupList()
+        {
+            try
+            {
+                string commandtext = string.Format(@"select GrpCode,GrpName,SmsTitle from pt.cargroup cg");
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
+                List<CarGroup> List = new List<CarGroup>();
+                List = DBHelper.GetDBObjectByObj2(new CarGroup(), null, commandtext, "inspector").Cast<CarGroup>().ToList();
+                //---
+                if (List.Count > 0)
+                {
+                    return List;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LogFile(ex);
+                return null;
+            }
+        }
+
+        public static List<BodyModel> GetBaseBodyModelList()
+        {
+            try
+            {
+                string commandtext = string.Format(@"select bdmdlcode,grpcode,aliasname,case when bm.aliasname='تيبا 211' then 'تیبا2' when bm.aliasname='تيبا 212'  or bm.aliasname='تيبا 232'  then gs.name else bm.aliasname end  as CommonBodyModelName  from pt.bodymodel bm JOIN pt.groupsproductsmsgroup gs on gs.smsgrpid=bm.smsgrpid");
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
+                List<BodyModel> List = new List<BodyModel>();
+                List = DBHelper.GetDBObjectByObj2(new BodyModel(), null, commandtext, "inspector").Cast<BodyModel>().ToList();
+                //---
+                if (List.Count > 0)
+                {
+                    return List;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LogFile(ex);
+                return null;
+            }
+        }
+
+        public static List<SaleStatus> GetBaseSaleStatusList()
+        {
+            try
+            {
+                string commandtext = string.Format(@"select * from sale.car_status@saleguard_priprctl s where s.Status_Code in (select distinct Status_Code from sale.car_id@saleguard_priprctl p where p.prod_date> 980101)");
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
+                List<SaleStatus> List = new List<SaleStatus>();
+                List = DBHelper.GetDBObjectByObj2(new SaleStatus(), null, commandtext, "inspector").Cast<SaleStatus>().ToList();
+                //---
+                if (List.Count > 0)
+                {
+                    return List;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LogFile(ex);
+                return null;
+            }
+        }
+
+        public static List<FinalQC> GetBaseFinalQCList()
+        {
+            try
+            {
+                string commandtext = string.Format(@"select finqccode,finqcname from finalqc f where f.isactive=1");
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
+                List<FinalQC> List = new List<FinalQC>();
+                List = DBHelper.GetDBObjectByObj2(new FinalQC(), null, commandtext, "inspector").Cast<FinalQC>().ToList();
+                //---
+                if (List.Count > 0)
+                {
+                    return List;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LogFile(ex);
                 return null;
             }
         }
@@ -437,9 +574,9 @@ namespace WebApi2.Controllers.Utility
             try
             {
                 string commandtext = string.Format(@"select  d.fromareasrl,d.toareasrl,d.IsDefault,d.grpcode from Qcdsart d");
-                DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                 List<Qcdsart> PathList = new List<Qcdsart>();
-                PathList = clsDBHelper.GetDBObjectByObj2(new Qcdsart(), null, commandtext, "inspector").Cast<Qcdsart>().ToList();
+                PathList = DBHelper.GetDBObjectByObj2(new Qcdsart(), null, commandtext, "inspector").Cast<Qcdsart>().ToList();
                 //---
                 if (PathList.Count > 0)
                 {
@@ -450,8 +587,9 @@ namespace WebApi2.Controllers.Utility
                     return null;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                DBHelper.LogFile(ex);
                 return null;
             }
         }
@@ -462,14 +600,14 @@ namespace WebApi2.Controllers.Utility
             ResultMsg rm = new ResultMsg();
             try
             {
-                if (clsDBHelper.DBConnectionIns.State == ConnectionState.Closed)
+                if (DBHelper.DBConnectionIns.State == ConnectionState.Closed)
                 {
-                    clsDBHelper.DBConnectionIns.ConnectionString = clsDBHelper.CnStrIns;
-                    clsDBHelper.DBConnectionIns.Open();
+                    DBHelper.DBConnectionIns.ConnectionString = DBHelper.CnStrIns;
+                    DBHelper.DBConnectionIns.Open();
                 }
                 OracleCommand cmd = new OracleCommand();
                 OracleDataAdapter da = new OracleDataAdapter();
-                cmd.Connection = clsDBHelper.DBConnectionIns;
+                cmd.Connection = DBHelper.DBConnectionIns;
                 da.SelectCommand = cmd;
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandText = "qcinsertqcqctrt";
@@ -487,6 +625,42 @@ namespace WebApi2.Controllers.Utility
                 rm.title = rm.Message = result;
                 return rm;
 
+            }
+            catch (Exception ex)
+            {
+                rm.title = "error";
+                rm.Message = ex.Message.ToString();
+                return rm;
+            }
+
+        }
+
+        public static ResultMsg Delete_QCCASTT(int QCCASTTSRL, int areaSRL, int userSRL)
+        {
+            ResultMsg rm = new ResultMsg();
+            try
+            {
+                if (DBHelper.DBConnectionIns.State == ConnectionState.Closed)
+                {
+                    DBHelper.DBConnectionIns.ConnectionString = DBHelper.CnStrIns;
+                    DBHelper.DBConnectionIns.Open();
+                }
+                OracleCommand cmd = new OracleCommand();
+                OracleDataAdapter da = new OracleDataAdapter();
+                cmd.Connection = DBHelper.DBConnectionIns;
+                da.SelectCommand = cmd;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "QCP_QCCASTT_Delete";
+                cmd.Parameters.Clear();
+                cmd.Parameters.Add("pQCCASTT_SRL", OracleDbType.Double).Value = QCCASTTSRL;
+                cmd.Parameters.Add("pQCAREAT_SRL", OracleDbType.Double).Value = areaSRL;
+                cmd.Parameters.Add("pQCUSERT_SRL", OracleDbType.Double).Value = userSRL;
+                cmd.Parameters.Add("pMessage", OracleDbType.Varchar2, 2048);
+                cmd.Parameters["pMessage"].Direction = ParameterDirection.Output;
+                cmd.ExecuteNonQuery();
+                string result = cmd.Parameters["pMessage"].Value.ToString();
+                rm.title = rm.Message = result;
+                return rm;
             }
             catch (Exception ex)
             {

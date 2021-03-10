@@ -24,6 +24,7 @@ namespace WebApi2
             config.Formatters.JsonFormatter.MediaTypeMappings.Add(
                 new QueryStringMapping("type", "json", new MediaTypeHeaderValue("application/json")));
             //h
+
         }
     }
 }

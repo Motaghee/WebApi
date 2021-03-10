@@ -12,6 +12,6 @@
         public string CommonBodyModelName { get; set; }
         public string AliasName { get; set; }
         public string Name { get; set; }
-        public double ProductCount { get; set; }
+        public int ProductCount { get; set; }
     }
 }

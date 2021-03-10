@@ -15,19 +15,21 @@ namespace WebApi2.Controllers.Utility
             ResultMsg rm = new ResultMsg();
             try
             {
-                if (clsDBHelper.DBConnectionIns.State == ConnectionState.Closed)
+                if (DBHelper.DBConnectionIns.State == ConnectionState.Open)
+                    DBHelper.DBConnectionIns.Close();
+                if (DBHelper.DBConnectionIns.State == ConnectionState.Closed)
                 {
-                    clsDBHelper.DBConnectionIns.ConnectionString = clsDBHelper.CnStrIns;
-                    clsDBHelper.DBConnectionIns.Open();
+                    DBHelper.DBConnectionIns.ConnectionString = DBHelper.CnStrInsLive;
+                    DBHelper.DBConnectionIns.Open();
                 }
                 OracleCommand cmd = new OracleCommand();
                 OracleDataAdapter da = new OracleDataAdapter();
-                cmd.Connection = clsDBHelper.DBConnectionIns;
+                cmd.Connection = DBHelper.DBConnectionIns;
                 da.SelectCommand = cmd;
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandText = "SP_AuditUnlockCar";
                 cmd.Parameters.Clear();
-                cmd.Parameters.Add("pVin", OracleDbType.Varchar2).Value = _Vin;
+                cmd.Parameters.Add("pVin", OracleDbType.Varchar2).Value = _Vin.ToUpper();
                 cmd.Parameters.Add("pMsgResult", OracleDbType.Varchar2, 2048);
                 cmd.Parameters["pMsgResult"].Direction = ParameterDirection.Output;
                 cmd.ExecuteNonQuery();
@@ -41,6 +43,10 @@ namespace WebApi2.Controllers.Utility
                 rm.title = "error";
                 rm.Message = ex.Message.ToString();
                 return rm;
+            }
+            finally 
+            {
+                DBHelper.DBConnectionIns.Close();
             }
 
         }
@@ -74,14 +80,14 @@ namespace WebApi2.Controllers.Utility
                                                                    left join sva_v_auditcar a on a.srl = d.svaauditcar_srl
                                                               where a.vin = '{0}'
                                                             ", auditcardetails.Vin);
-                        DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
+                        DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                         // --
                         //string jsonString = string.Empty;
                         //jsonString = JsonConvert.SerializeObject(ds.Tables[0]);
                         //return jsonString;
                         // --
                         List<AuditCarDetail> FoundDefects = new List<AuditCarDetail>();
-                        FoundDefects = clsDBHelper.GetDBObjectByObj2(new AuditCarDetail(), null, commandtext, "inspector").Cast<AuditCarDetail>().ToList();
+                        FoundDefects = DBHelper.GetDBObjectByObj2(new AuditCarDetail(), null, commandtext, "inspector").Cast<AuditCarDetail>().ToList();
                         //---
                         if (FoundDefects.Count > 0)
                         {
@@ -109,14 +115,14 @@ namespace WebApi2.Controllers.Utility
                 }
                 else
                 {
-                    clsDBHelper.LogtxtToFile("z null");
+                    DBHelper.LogtxtToFile("z null");
                     return null;
                 }
             }
             catch (Exception e)
             {
                 //string err = e.ToString() + e.InnerException.Message + e.Message.ToString();
-                clsDBHelper.LogFile(e);
+                DBHelper.LogFile(e);
                 List<AuditCarDetail> q = new List<AuditCarDetail>();
                 auditcardetails.Msg = e.Message;
                 q.Add(auditcardetails);
@@ -124,6 +130,8 @@ namespace WebApi2.Controllers.Utility
             }
 
         }
+
+       
 
     }
 }

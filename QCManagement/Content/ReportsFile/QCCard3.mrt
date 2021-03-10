@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="1">
+      <DriverReport Ref="2" type="Stimulsoft.Report.Dictionary.StiXmlDatabase" isKey="true">
+        <Alias>DriverReport</Alias>
+        <Key />
+        <Name>DriverReport</Name>
+        <PathData />
+        <PathSchema>D:\QCV2 Files\CarDefects.xsd</PathSchema>
+      </DriverReport>
+    </Databases>
+    <DataSources isList="true" count="1">
+      <CarDefects Ref="3" type="DataTableSource" isKey="true">
+        <Alias>CarDefects</Alias>
+        <Columns isList="true" count="21">
+          <value>Id,System.String</value>
+          <value>Srl,System.Double</value>
+          <value>Vin,System.String</value>
+          <value>AreaDesc,System.String</value>
+          <value>ModuleName,System.String</value>
+          <value>QCMdult_Srl,System.Double</value>
+          <value>QCBadft_Srl,System.Double</value>
+          <value>DefectDesc,System.String</value>
+          <value>CreatedDateFa,System.String</value>
+          <value>CreatedDayFa,System.String</value>
+          <value>StrenghtDesc,System.String</value>
+          <value>IsRepaired,System.Double</value>
+          <value>CreatedBy,System.Double</value>
+          <value>RepairedBy,System.Double</value>
+          <value>CreatedByDesc,System.String</value>
+          <value>RepairedByDesc,System.String</value>
+          <value>GrpCode,System.Double</value>
+          <value>BdMdlCode,System.Double</value>
+          <value>AreaType,System.Double</value>
+          <value>ShopCode,System.Double</value>
+          <value>QCAreat_Srl,System.Double</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Name>CarDefects</Name>
+        <NameInSource>DriverReport.CarDefects</NameInSource>
+      </CarDefects>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Variables isList="true" count="0" />
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="4" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="3">
+        <HeaderBand1 Ref="5" type="HeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,0.2,7.72,0.3</ClientRectangle>
+          <Components isList="true" count="1">
+            <Text1 Ref="6" type="Text" isKey="true">
+              <Border>None;Navy;2;Solid;False;4;Black</Border>
+              <Brush>White</Brush>
+              <ClientRectangle>2.9,0,1.9,0.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>B Koodak,10,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text1</Name>
+              <Page isRef="4" />
+              <Parent isRef="5" />
+              <Text>سایپا</Text>
+              <TextBrush>[192:0:0]</TextBrush>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text1>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Name>HeaderBand1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </HeaderBand1>
+        <HeaderCarDefects Ref="7" type="HeaderBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,0.9,7.72,0.3</ClientRectangle>
+          <Components isList="true" count="4">
+            <HeaderCarDefects_Vin Ref="8" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,0,1.9,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>HeaderCarDefects_Vin</Name>
+              <Page isRef="4" />
+              <Parent isRef="7" />
+              <Text>Vin</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </HeaderCarDefects_Vin>
+            <HeaderCarDefects_AreaDesc Ref="9" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>1.9,0,1.9,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>HeaderCarDefects_AreaDesc</Name>
+              <Page isRef="4" />
+              <Parent isRef="7" />
+              <Text>AreaDesc</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </HeaderCarDefects_AreaDesc>
+            <HeaderCarDefects_ModuleName Ref="10" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>3.8,0,1.9,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>HeaderCarDefects_ModuleName</Name>
+              <Page isRef="4" />
+              <Parent isRef="7" />
+              <Text>ModuleName</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </HeaderCarDefects_ModuleName>
+            <HeaderCarDefects_DefectDesc Ref="11" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>5.7,0,2,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>HeaderCarDefects_DefectDesc</Name>
+              <Page isRef="4" />
+              <Parent isRef="7" />
+              <Text>DefectDesc</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </HeaderCarDefects_DefectDesc>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Name>HeaderCarDefects</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </HeaderCarDefects>
+        <DataCarDefects Ref="12" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <ClientRectangle>0,1.6,7.72,0.3</ClientRectangle>
+          <Components isList="true" count="4">
+            <DataCarDefects_Vin Ref="13" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0,0,1.9,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>DataCarDefects_Vin</Name>
+              <Page isRef="4" />
+              <Parent isRef="12" />
+              <Text>{CarDefects.Vin}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </DataCarDefects_Vin>
+            <DataCarDefects_AreaDesc Ref="14" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>1.9,0,1.9,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>DataCarDefects_AreaDesc</Name>
+              <Page isRef="4" />
+              <Parent isRef="12" />
+              <Text>{CarDefects.AreaDesc}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </DataCarDefects_AreaDesc>
+            <DataCarDefects_ModuleName Ref="15" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>3.8,0,1.9,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>DataCarDefects_ModuleName</Name>
+              <Page isRef="4" />
+              <Parent isRef="12" />
+              <Text>{CarDefects.ModuleName}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </DataCarDefects_ModuleName>
+            <DataCarDefects_DefectDesc Ref="16" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>5.7,0,2,0.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>DataCarDefects_DefectDesc</Name>
+              <Page isRef="4" />
+              <Parent isRef="12" />
+              <Text>{CarDefects.DefectDesc}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </DataCarDefects_DefectDesc>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataSourceName>CarDefects</DataSourceName>
+          <Filters isList="true" count="0" />
+          <Name>DataCarDefects</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+          <Sort isList="true" count="0" />
+        </DataCarDefects>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Guid>435073945768436ca8bc9c89b076596e</Guid>
+      <Margins>0.39,0.39,0.39,0.39</Margins>
+      <Name>Page1</Name>
+      <PageHeight>11</PageHeight>
+      <PageWidth>8.5</PageWidth>
+      <PaperSize>Letter</PaperSize>
+      <Report isRef="0" />
+      <Watermark Ref="17" type="Stimulsoft.Report.Components.StiWatermark" isKey="true">
+        <Font>Arial,100</Font>
+        <TextBrush>[50:0:0:0]</TextBrush>
+      </Watermark>
+    </Page1>
+  </Pages>
+  <PrinterSettings Ref="18" type="Stimulsoft.Report.Print.StiPrinterSettings" isKey="true" />
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>7/5/2020 9:42:03 AM</ReportChanged>
+  <ReportCreated>7/5/2020 8:31:28 AM</ReportCreated>
+  <ReportFile>C:\Users\1000861\source\repos\WebApi\QCManagement\Content\ReportsFile\QCCard3.mrt</ReportFile>
+  <ReportGuid>c762bf09ad31441e83acd0ac17e515f3</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Inches</ReportUnit>
+  <ReportVersion>2015.3.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

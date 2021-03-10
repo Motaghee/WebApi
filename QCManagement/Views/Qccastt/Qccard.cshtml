@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "کارت کیفیت" + ViewBag.Vin;
+}
+
+@using QCManagement.Models
+@model CarModels
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div>
+        <h1 class="MyTitle">
+            کارت کیفیت
+        </h1>
+    </div>
+    @using (Html.BeginForm("ReportShow", "Qccastt", FormMethod.Post, new { @class = "form", role = "form" }))
+    {
+        <div class="MyContent">
+            <h4 class="MyTitle2">
+                جستجوی خودرو
+            </h4>
+            <b>
+                شماره شاسی:
+            </b>
+            @Html.EditorFor(model => model.Vin, new { htmlAttributes = new { id = "MyVin", @class = "Myform-control", placeholder = "شماره شاسی" } })
+            <a style="display: flex; justify-content: flex-end;">
+                @*@Html.ActionLink("جستجو", "ReportShow", new { @Model }, new { @class = "Mybutton" })*@
+                @*@Html.ActionLink("جستجو", "ReportShow2", new { Vin = this.Model.Vin })*@
+                <button type="submit" value="Submit" class="Mybutton">
+                    جستجو
+                </button>
+                </a>
+        </div>
+    }
+</body>
+</html>

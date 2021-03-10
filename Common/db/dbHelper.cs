@@ -10,35 +10,74 @@ using System.Reflection;
 //using System.Text;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Common.db
 {
-    public class clsDBHelper
+
+    public class DBHelper
     {
-        public static string CnStrIns = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = prctlxdbscan.saipacorp.com)(PORT = 1521))   (CONNECT_DATA =
+
+        public static string CnStrIns, CnStrStp, CnStrPT;
+        //Guard cnstring
+        public static string CnStrInsGuard = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 172.20.5.169)(PORT = 1521))   (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = prctlb.saipacorp.com)
+    )  ) 
+            ;User ID=inspector; Password =fpvhk92";
+
+
+
+        public static string CnStrStpGuard = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 172.20.5.169)(PORT = 1521))   (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = prctlb.saipacorp.com)
+    )  ) 
+            ;User ID=stopage; Password =dodkesh92";
+
+        public static string CnStrPTGuard = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 172.20.5.169)(PORT = 1521))   (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = prctlb.saipacorp.com)
+    )  ) 
+            ;User ID=pt; Password =laygi94";
+
+        // Live cnstring
+        public static string CnStrInsLive = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = prctlxdbscan.saipacorp.com)(PORT = 1521))   (CONNECT_DATA =
       (SERVER = DEDICATED)
       (SERVICE_NAME = prctla.saipacorp.com)
     )  ) 
             ;User ID=inspector; Password =fpvhk92";
 
-        public static string CnStrStp = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = prctlxdbscan.saipacorp.com)(PORT = 1521))   (CONNECT_DATA =
+        public static string CnStrStpLive = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = prctlxdbscan.saipacorp.com)(PORT = 1521))   (CONNECT_DATA =
       (SERVER = DEDICATED)
       (SERVICE_NAME = prctla.saipacorp.com)
     )  ) 
             ;User ID=stopage; Password =dodkesh92";
 
-        public static string CnStrPT = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = prctlxdbscan.saipacorp.com)(PORT = 1521))   (CONNECT_DATA =
+        public static string CnStrPTLive = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = prctlxdbscan.saipacorp.com)(PORT = 1521))   (CONNECT_DATA =
       (SERVER = DEDICATED)
       (SERVICE_NAME = prctla.saipacorp.com)
     )  ) 
             ;User ID=pt; Password =laygi94";
 
         //"Data Source = PRIPRCTL.SAIPACORP.COM; Persist Security Info = True; User ID = inspector; Password = fpvhk92";
-        static clsDBHelper()
+
+        static DBHelper()
         {
+            bool Live = false;
+            //===
+            if (Live)
+            { CnStrIns = CnStrInsLive; CnStrStp = CnStrStpLive; CnStrPT = CnStrPTLive; }
+            else
+            { CnStrIns = CnStrInsGuard; CnStrStp = CnStrStpGuard; CnStrPT = CnStrPTGuard; }
+
             DBConnectionIns = new OracleConnection(CnStrIns);
             DBConnectionStp = new OracleConnection(CnStrStp);
             DBConnectionPT = new OracleConnection(CnStrPT);
+            //--
+            LiveDBConnectionIns = new OracleConnection(CnStrInsLive);
+            LiveDBConnectionStp = new OracleConnection(CnStrStpLive);
+            LiveDBConnectionPT = new OracleConnection(CnStrPTLive);
         }
 
 
@@ -46,11 +85,14 @@ namespace Common.db
         public static OracleConnection DBConnectionPT;
         public static OracleConnection DBConnectionStp;
 
+        public static OracleConnection LiveDBConnectionIns;
+        public static OracleConnection LiveDBConnectionPT;
+        public static OracleConnection LiveDBConnectionStp;
+
         public static DataSet ExecuteMyQueryIns(string _CommandText)   // Execute Cmd
         {
             try
             {
-
                 if (DBConnectionIns.State == ConnectionState.Closed)
                 {
                     DBConnectionIns.ConnectionString = CnStrIns;
@@ -70,6 +112,34 @@ namespace Common.db
             }
             catch (Exception ex)
             {
+                string strExceptMSG = ex.Message;
+                return null;
+            }
+        }
+        public static DataSet ExecuteMyQueryInsOnLive(string _CommandText)   // Execute Cmd
+        {
+            try
+            {
+                if (LiveDBConnectionIns.State == ConnectionState.Closed)
+                {
+                    LiveDBConnectionIns.ConnectionString = CnStrInsLive;
+                    LiveDBConnectionIns.Open();
+                }
+                OracleCommand cmd = new OracleCommand();
+                OracleDataAdapter da = new OracleDataAdapter();
+                cmd.Connection = LiveDBConnectionIns;
+                cmd.CommandText = _CommandText;
+                da.SelectCommand = cmd;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                DataSet ds = new DataSet();
+                ds.Tables.Add(dt);
+                return ds;
+                //int i=ds.Tables[0].Rows.Count;
+            }
+            catch (Exception ex)
+            {
+                string strExceptMSG = ex.Message;
                 return null;
             }
         }
@@ -98,6 +168,35 @@ namespace Common.db
             }
             catch (Exception ex)
             {
+                DBHelper.LogFile(ex);
+                return null;
+            }
+        }
+        public static DataSet ExecuteMyQueryStpOnLive(string _CommandText)   // Execute Cmd
+        {
+            try
+            {
+
+                if (LiveDBConnectionStp.State == ConnectionState.Closed)
+                {
+                    LiveDBConnectionStp.ConnectionString = CnStrStpLive;
+                    LiveDBConnectionStp.Open();
+                }
+                OracleCommand cmd = new OracleCommand();
+                OracleDataAdapter da = new OracleDataAdapter();
+                cmd.Connection = LiveDBConnectionStp;
+                cmd.CommandText = _CommandText;
+                da.SelectCommand = cmd;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                DataSet ds = new DataSet();
+                ds.Tables.Add(dt);
+                return ds;
+                //int i=ds.Tables[0].Rows.Count;
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LogFile(ex);
                 return null;
             }
         }
@@ -124,9 +223,37 @@ namespace Common.db
             }
             catch (Exception ex)
             {
+                string strExceptMSG = ex.Message;
                 return null;
             }
         }
+        public static DataSet ExecuteMyQueryPTOnLive(string _CommandText)   // Execute Cmd
+        {
+            try
+            {
+                if (LiveDBConnectionPT.State == ConnectionState.Closed)
+                {
+                    LiveDBConnectionPT.ConnectionString = CnStrPTLive;
+                    LiveDBConnectionPT.Open();
+                }
+                OracleCommand cmd = new OracleCommand();
+                OracleDataAdapter da = new OracleDataAdapter();
+                cmd.Connection = LiveDBConnectionPT;
+                cmd.CommandText = _CommandText;
+                da.SelectCommand = cmd;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                DataSet ds = new DataSet();
+                ds.Tables.Add(dt);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                string strExceptMSG = ex.Message;
+                return null;
+            }
+        }
+
         [Obsolete]
         public static DataSet ExecuteMyQuery(string commandText, bool BlnDispose)
         {
@@ -277,11 +404,12 @@ namespace Common.db
         {
             try
             {
-                DataSet _ds = clsDBHelper.ExecuteMyQueryIns(_CommandText);
+                DataSet _ds = DBHelper.ExecuteMyQueryIns(_CommandText);
                 return _ds;
             }
             catch (Exception ex)
             {
+                string strExceptMSG = ex.Message;
                 return null;
             }
         }
@@ -292,7 +420,7 @@ namespace Common.db
             {
                 if (_ds == null)
                 {
-                    _ds = clsDBHelper.ExecuteMyQueryIns(_CommandText);
+                    _ds = DBHelper.ExecuteMyQueryIns(_CommandText);
                 }
                 object[] lstObj = null;
                 if (_ds != null)
@@ -361,11 +489,117 @@ namespace Common.db
                 if (_ds == null)
                 {
                     if (strSchema.ToLower() == "stopage")
-                        _ds = clsDBHelper.ExecuteMyQueryStp(_CommandText);
+                        _ds = DBHelper.ExecuteMyQueryStp(_CommandText);
                     else if (strSchema.ToLower() == "pt")
-                        _ds = clsDBHelper.ExecuteMyQueryPT(_CommandText);
+                        _ds = DBHelper.ExecuteMyQueryPT(_CommandText);
                     else
-                        _ds = clsDBHelper.ExecuteMyQueryIns(_CommandText);
+                        _ds = DBHelper.ExecuteMyQueryIns(_CommandText);
+
+                }
+                object[] lstObj = null;
+                if (_ds != null)
+                {
+                    //clsDBHelper.LogtxtToFile("2-GetDBObjectByObj2");
+                    lstObj = new object[_ds.Tables[0].Rows.Count];
+
+                    for (int i = 0; i < _ds.Tables[0].Rows.Count; i++)
+                    {
+                        _Obj = Activator.CreateInstance(_Obj.GetType());
+                        strFieldName = "";
+                        Type myType = _Obj.GetType();
+                        IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
+                        foreach (PropertyInfo prop in props)
+                        {
+                            //clsDBHelper.LogtxtToFile("3-GetDBObjectByObj2"+ prop.Name);
+                            strFieldName = prop.Name.ToString();
+
+                            //DataColumn column = _ds.Tables[0].Rows[0][strFieldName];
+                            try
+                            {
+                                if ((!strFieldName.ToLower().StartsWith("lst"))&&(_ds.Tables[0].Rows[i][strFieldName] != DBNull.Value))
+                                {
+                                    //clsDBHelper.LogtxtToFile("4-GetDBObjectByObj2_"+ strFieldName + _ds.Tables[0].Rows[0][strFieldName].GetType().ToString());
+                                    if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Byte[]")
+                                    {
+                                        //clsDBHelper.LogtxtToFile("GetDBObjectByObj2____Byte Detected_" + strFieldName);
+                                        //byte[] b = (byte[])_ds.Tables[0].Rows[i][strFieldName];
+                                        //sbyte[] sb = (sbyte[])(Array)b;
+                                        //int i = BitConverter.ToInt32(bytes, 0);
+                                        //int[] ib = b.Select(x => (int)x).ToArray(); ;
+                                        //string s=Convert.ToBase64String((byte[])_ds.Tables[0].Rows[i][strFieldName]);
+                                        //MemoryStream mstream = new MemoryStream(b);
+                                        _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToBase64String((byte[])_ds.Tables[0].Rows[i][strFieldName]), null);
+                                    }
+                                    else
+                                    {
+                                        if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Decimal")
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToInt32(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                        else
+                                        {
+                                            if ((_ds.Tables[0].Rows[i][strFieldName].ToString() == "FALSE") || (_ds.Tables[0].Rows[i][strFieldName].ToString() == "TRUE"))
+                                            {
+                                                _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToBoolean(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                            }
+                                            else
+                                                _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj,_ds.Tables[0].Rows[i][strFieldName], null);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //clsDBHelper.LogtxtToFile("Null value-GetDBObjectByObj2" + strFieldName+ "_is null");// Thumbnail
+                                    _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, null, null);
+                                }
+                                lstObj[i] = _Obj;
+                            }
+                            catch (Exception e)
+                            {
+                                LogFile(e);
+                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj2" + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
+                            }
+                        }
+
+                    }
+                    //DBHelper.LogtxtToFile("Succeed-GetDBObjectByObj2");
+                }
+                else
+                {
+                    //DBHelper.LogtxtToFile("ds is Null-GetDBObjectByObj2_"+ _CommandText);
+                    //await Task.Delay(10000);
+                    //DateTime Tthen = DateTime.Now;
+                    //do
+                    //{
+
+                    //} while (Tthen.AddSeconds(5) > DateTime.Now);
+                    Thread.Sleep(10000);
+                    return GetDBObjectByObj22(_Obj, _ds, _CommandText, strSchema);
+                }
+                return lstObj;
+            }
+            catch (Exception ex)
+            {
+                LogFile(ex);
+                //DBHelper.LogtxtToFile("err2-GetDBObjectByObj2_Err:"+ex);
+                throw ex;
+            }
+        }
+
+        public static object[] GetDBObjectByObj22(object _Obj, DataSet _ds, string _CommandText, string strSchema)
+        {
+
+            string strFieldName = "";
+            try
+            {
+                //clsDBHelper.LogtxtToFile("GetDBObjectByObj2_ds-cmd-txt_ " + _CommandText);
+                // clsDBHelper.LogtxtToFile("1-GetDBObjectByObj2");
+                if (_ds == null)
+                {
+                    if (strSchema.ToLower() == "stopage")
+                        _ds = DBHelper.ExecuteMyQueryStpOnLive(_CommandText);
+                    else if (strSchema.ToLower() == "pt")
+                        _ds = DBHelper.ExecuteMyQueryPTOnLive(_CommandText);
+                    else
+                        _ds = DBHelper.ExecuteMyQueryInsOnLive(_CommandText);
 
                 }
                 object[] lstObj = null;
@@ -405,7 +639,7 @@ namespace Common.db
                                     else
                                     {
                                         if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Decimal")
-                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToInt64(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToInt32(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
                                         else
                                             _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, _ds.Tables[0].Rows[i][strFieldName], null);
                                     }
@@ -420,28 +654,209 @@ namespace Common.db
                             catch (Exception e)
                             {
                                 LogFile(e);
-                                clsDBHelper.LogtxtToFile("err1-GetDBObjectByObj2" + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
+                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj22_SecondTry_PTOnLive => " + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
                             }
                         }
 
                     }
-                    clsDBHelper.LogtxtToFile("Succeed-GetDBObjectByObj2");
+                    //DBHelper.LogtxtToFile("Succeed-GetDBObjectByObj2");
                 }
                 else
                 {
-                    //clsDBHelper.LogtxtToFile("ds is Null-GetDBObjectByObj2_"+ _CommandText);
+                    DBHelper.LogtxtToFile("*ds is Null- GetDBObjectByObj22_SecondTry_PTOnLive => " + _CommandText);
                 }
                 return lstObj;
             }
             catch (Exception ex)
             {
                 LogFile(ex);
-                clsDBHelper.LogtxtToFile("err2-GetDBObjectByObj2");
+                //DBHelper.LogtxtToFile("err2-GetDBObjectByObj2_Err:"+ex);
                 throw ex;
             }
         }
 
+        public static object[] GetDBObjectByObj3(object _Obj, DataSet _ds, string _CommandText, string strSchema)
+        {
 
+            string strFieldName = "";
+            try
+            {
+                //clsDBHelper.LogtxtToFile("GetDBObjectByObj2_ds-cmd-txt_ " + _CommandText);
+                // clsDBHelper.LogtxtToFile("1-GetDBObjectByObj2");
+                if (_ds == null)
+                {
+                    if (strSchema.ToLower() == "stopage")
+                        _ds = DBHelper.ExecuteMyQueryStp(_CommandText);
+                    else if (strSchema.ToLower() == "pt")
+                        _ds = DBHelper.ExecuteMyQueryPT(_CommandText);
+                    else
+                        _ds = DBHelper.ExecuteMyQueryIns(_CommandText);
+
+                }
+                object[] lstObj = null;
+                if (_ds != null)
+                {
+                    //clsDBHelper.LogtxtToFile("2-GetDBObjectByObj2");
+                    lstObj = new object[_ds.Tables[0].Rows.Count];
+
+                    for (int i = 0; i < _ds.Tables[0].Rows.Count; i++)
+                    {
+                        _Obj = Activator.CreateInstance(_Obj.GetType());
+                        strFieldName = "";
+                        Type myType = _Obj.GetType();
+                        IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
+                        foreach (PropertyInfo prop in props)
+                        {
+                            //clsDBHelper.LogtxtToFile("3-GetDBObjectByObj2"+ prop.Name);
+                            strFieldName = prop.Name.ToString();
+
+                            //DataColumn column = _ds.Tables[0].Rows[0][strFieldName];
+                            try
+                            {
+                                if (_ds.Tables[0].Rows[i][strFieldName] != DBNull.Value)
+                                {
+                                    //clsDBHelper.LogtxtToFile("4-GetDBObjectByObj2_"+ strFieldName + _ds.Tables[0].Rows[0][strFieldName].GetType().ToString());
+                                    if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Byte[]")
+                                    {
+                                        //clsDBHelper.LogtxtToFile("GetDBObjectByObj2____Byte Detected_" + strFieldName);
+                                        //byte[] b = (byte[])_ds.Tables[0].Rows[i][strFieldName];
+                                        //sbyte[] sb = (sbyte[])(Array)b;
+                                        //int i = BitConverter.ToInt32(bytes, 0);
+                                        //int[] ib = b.Select(x => (int)x).ToArray(); ;
+                                        //string s=Convert.ToBase64String((byte[])_ds.Tables[0].Rows[i][strFieldName]);
+                                        //MemoryStream mstream = new MemoryStream(b);
+                                        _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToBase64String((byte[])_ds.Tables[0].Rows[i][strFieldName]), null);
+                                    }
+                                    else
+                                    {
+                                        if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Decimal")
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToDouble(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                        else
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, _ds.Tables[0].Rows[i][strFieldName], null);
+                                    }
+                                }
+                                else
+                                {
+                                    //clsDBHelper.LogtxtToFile("Null value-GetDBObjectByObj2" + strFieldName+ "_is null");// Thumbnail
+                                    _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, null, null);
+                                }
+                                lstObj[i] = _Obj;
+                            }
+                            catch (Exception e)
+                            {
+                                LogFile(e);
+                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj3" + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
+                            }
+                        }
+
+                    }
+                    //DBHelper.LogtxtToFile("Succeed-GetDBObjectByObj2");
+                }
+                else
+                {
+                    Thread.Sleep(10000);
+                    return GetDBObjectByObj33(_Obj, _ds, _CommandText, strSchema);
+                    //DBHelper.LogtxtToFile("ds is Null-GetDBObjectByObj3_" + _CommandText);
+                }
+                return lstObj;
+            }
+            catch (Exception ex)
+            {
+                LogFile(ex);
+                //DBHelper.LogtxtToFile("err2-GetDBObjectByObj2_Err:"+ex);
+                throw ex;
+            }
+        }
+        public static object[] GetDBObjectByObj33(object _Obj, DataSet _ds, string _CommandText, string strSchema)
+        {
+
+            string strFieldName = "";
+            try
+            {
+                //clsDBHelper.LogtxtToFile("GetDBObjectByObj2_ds-cmd-txt_ " + _CommandText);
+                // clsDBHelper.LogtxtToFile("1-GetDBObjectByObj2");
+                if (_ds == null)
+                {
+                    if (strSchema.ToLower() == "stopage")
+                        _ds = DBHelper.ExecuteMyQueryStpOnLive(_CommandText);
+                    else if (strSchema.ToLower() == "pt")
+                        _ds = DBHelper.ExecuteMyQueryPTOnLive(_CommandText);
+                    else
+                        _ds = DBHelper.ExecuteMyQueryInsOnLive(_CommandText);
+
+                }
+                object[] lstObj = null;
+                if (_ds != null)
+                {
+                    //clsDBHelper.LogtxtToFile("2-GetDBObjectByObj2");
+                    lstObj = new object[_ds.Tables[0].Rows.Count];
+
+                    for (int i = 0; i < _ds.Tables[0].Rows.Count; i++)
+                    {
+                        _Obj = Activator.CreateInstance(_Obj.GetType());
+                        strFieldName = "";
+                        Type myType = _Obj.GetType();
+                        IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
+                        foreach (PropertyInfo prop in props)
+                        {
+                            //clsDBHelper.LogtxtToFile("3-GetDBObjectByObj2"+ prop.Name);
+                            strFieldName = prop.Name.ToString();
+
+                            //DataColumn column = _ds.Tables[0].Rows[0][strFieldName];
+                            try
+                            {
+                                if (_ds.Tables[0].Rows[i][strFieldName] != DBNull.Value)
+                                {
+                                    //clsDBHelper.LogtxtToFile("4-GetDBObjectByObj2_"+ strFieldName + _ds.Tables[0].Rows[0][strFieldName].GetType().ToString());
+                                    if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Byte[]")
+                                    {
+                                        //clsDBHelper.LogtxtToFile("GetDBObjectByObj2____Byte Detected_" + strFieldName);
+                                        //byte[] b = (byte[])_ds.Tables[0].Rows[i][strFieldName];
+                                        //sbyte[] sb = (sbyte[])(Array)b;
+                                        //int i = BitConverter.ToInt32(bytes, 0);
+                                        //int[] ib = b.Select(x => (int)x).ToArray(); ;
+                                        //string s=Convert.ToBase64String((byte[])_ds.Tables[0].Rows[i][strFieldName]);
+                                        //MemoryStream mstream = new MemoryStream(b);
+                                        _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToBase64String((byte[])_ds.Tables[0].Rows[i][strFieldName]), null);
+                                    }
+                                    else
+                                    {
+                                        if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Decimal")
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToDouble(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                        else
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, _ds.Tables[0].Rows[i][strFieldName], null);
+                                    }
+                                }
+                                else
+                                {
+                                    //clsDBHelper.LogtxtToFile("Null value-GetDBObjectByObj2" + strFieldName+ "_is null");// Thumbnail
+                                    _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, null, null);
+                                }
+                                lstObj[i] = _Obj;
+                            }
+                            catch (Exception e)
+                            {
+                                LogFile(e);
+                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj3" + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
+                            }
+                        }
+
+                    }
+                    //DBHelper.LogtxtToFile("Succeed-GetDBObjectByObj2");
+                }
+                else
+                {
+                    DBHelper.LogtxtToFile("ds is Null-GetDBObjectByObj33_Second Try" + _CommandText);
+                }
+                return lstObj;
+            }
+            catch (Exception ex)
+            {
+                LogFile(ex);
+                //DBHelper.LogtxtToFile("err2-GetDBObjectByObj2_Err:"+ex);
+                throw ex;
+            }
+        }
         public class Cryptographer
         {
 
@@ -564,7 +979,7 @@ namespace Common.db
                 message += Environment.NewLine;
                 message += "-----------------------------------------------------------";
                 message += Environment.NewLine;
-                string path = @"C:/ErrorLog/ErrorLog.txt";
+                string path = @"D:\\WebApiLogs\\ErrorLog.txt";
                 StreamWriter writer = new StreamWriter(path, true);
                 writer.WriteLine(message);
                 writer.Close();
@@ -582,7 +997,7 @@ namespace Common.db
                 string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
                 message += Environment.NewLine;
                 message += txt;
-                string path = @"C:/ErrorLog/TraceLog.txt";
+                string path = @"D:\\WebApiLogs\\TraceLog.txt";
                 StreamWriter writer = new StreamWriter(path, true);
                 writer.WriteLine(message);
                 writer.Close();
@@ -592,13 +1007,18 @@ namespace Common.db
 
         public static void LogtLoginUser(string txt)
         {
-            string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
-            //message += Environment.NewLine;
-            message += "__" + txt;
-            string path = @"C:/ErrorLog/UserLog.txt";
-            StreamWriter writer = new StreamWriter(path, true);
-            writer.WriteLine(message);
-            writer.Close();
+            try
+            {
+                string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+                //message += Environment.NewLine;
+                message += "__" + txt;
+                string path = @"D:\\WebApiLogs\\UserLog.txt";
+                StreamWriter writer = new StreamWriter(path, true);
+                writer.WriteLine(message);
+                writer.Close();
+            }
+            catch { }
+
         }
 
         public static List<T> ConvertDataTable<T>(DataTable dt)
@@ -634,5 +1054,32 @@ namespace Common.db
 
 
 
+        public static DataTable ToDataTable<T>(List<T> items)
+        {
+            DataTable dataTable = new DataTable(typeof(T).Name);
+
+            //Get all the properties
+            PropertyInfo[] Props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (PropertyInfo prop in Props)
+            {
+                //Defining type of data column gives proper data table 
+                var type = (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(prop.PropertyType) : prop.PropertyType);
+                //Setting column names as Property names
+                dataTable.Columns.Add(prop.Name, type);
+            }
+            foreach (T item in items)
+            {
+                var values = new object[Props.Length];
+                for (int i = 0; i < Props.Length; i++)
+                {
+                    //inserting property values to datatable rows
+                    values[i] = Props[i].GetValue(item, null);
+                }
+                dataTable.Rows.Add(values);
+            }
+            //put a breakpoint here and check datatable
+            return dataTable;
+        }
     }
+
 }

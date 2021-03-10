@@ -20,12 +20,11 @@ namespace WebApi2
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
+                AccessTokenExpireTimeSpan = TimeSpan.FromHours(3),
                 Provider = myProvider
             };
             app.UseOAuthAuthorizationServer(options);
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
-
 
             HttpConfiguration config = new HttpConfiguration();
             WebApiConfig.Register(config);

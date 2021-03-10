@@ -10,6 +10,7 @@ namespace WebApi2.Controllers.Utility
     {
         public static MessageCount GetSmsCountByDate(string InsDateFa)
         {
+            
             MessageCount msc = new MessageCount();
             msc.InsDateFa = InsDateFa;
             try
@@ -35,7 +36,7 @@ namespace WebApi2.Controllers.Utility
                                 ", InsDateFa);
 
                 List<MsgStatistics> lst = new List<MsgStatistics>();
-                lst = clsDBHelper.GetDBObjectByObj2(new MsgStatistics(), null, commandtext, "stopage").Cast<MsgStatistics>().ToList();
+                lst = DBHelper.GetDBObjectByObj2(new MsgStatistics(), null, commandtext, "stopage").Cast<MsgStatistics>().ToList();
                 //---
                 if ((lst != null) && (lst.Count > 0))
                 {
@@ -52,6 +53,7 @@ namespace WebApi2.Controllers.Utility
             }
             catch (Exception ex)
             {
+                DBHelper.LogFile(ex);
                 return msc;
             }
 

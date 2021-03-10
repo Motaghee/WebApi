@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Web.Http;
 using WebApi2.Controllers.Utility;
 using WebApi2.Models;
@@ -10,15 +12,23 @@ namespace WebApi2.Controllers
     {
 
         [HttpPost]
+        [Authorize]
         [Route("api/audit/AuditUnLockCar")]
         public Car UnLockCar([FromBody] Car car)
         {
             try
             {
-                if ((car != null)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
+                bool UserUnlockPermission = false;
+                User user = new User();
+                var identity = (ClaimsIdentity)User.Identity;
+                IEnumerable<Claim> claims = identity.Claims;
+                user.USERNAME = claims.FirstOrDefault(x => x.Type == "UserName").Value.ToString();
+                if ((user.USERNAME != "1000861") || (user.USERNAME != "257923")||(user.USERNAME != "465992"))
+                { UserUnlockPermission = true; }
+
+                if ((car != null)&&(UserUnlockPermission)) // && (U.Macaddress == "48:13:7e:11:d7:1f"))
                 {
                     car.ValidFormat = CarUtility.CheckFormatVin(car.Vin);
-
                     car.AuditEditable = false;
                     if (car.ValidFormat)
                     {
@@ -48,7 +58,7 @@ namespace WebApi2.Controllers
                 }
                 else
                 {
-                    return car;
+                    return null;
                 }
             }
             catch (Exception e)

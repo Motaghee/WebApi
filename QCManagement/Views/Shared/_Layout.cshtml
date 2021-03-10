@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/css/simple-sidebar.css")
+    <!--Skin Script: Place this script in head to load scripts for skins and rtl support-->
+    @Scripts.Render("~/bundles/skin")
+    
+</head>
+<body>
+    <div id="sidebar-wrapper">
+        <ul id="sidebar_menu" class="sidebar-nav" style="text-align: right; padding-right: 10px;
+            padding-top: 10px">
+            <li class="sidebar-brand">
+                <a id="menu-toggle" href="#">
+                    <span id="main_icon" class="navbar-icon fa fa-bars icon">
+                    </span>
+                </a>
+            </li>
+        </ul>
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand"><a href="#">Start Bootstrap </a></li>
+            <li><a href="#">Home</a> </li>
+            <li><a href="#">About</a> </li>
+            <li><a href="#">Contact</a> </li>
+        </ul>
+    </div>
+
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

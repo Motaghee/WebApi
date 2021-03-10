@@ -24,13 +24,12 @@ namespace WebApi2.Controllers
             ndt.NowTime = dtN.ToString("HH:mm:ss");
             ndt.NowDateTimeFa = ndt.NowDateFa + " " + ndt.NowTime;
             // ---
-            MemoryCacher mc = new MemoryCacher();
-            MessageCount oldmsc = (MessageCount)mc.GetValue("MessageCount");
+            MessageCount oldmsc = (MessageCount)MemoryCacher.GetValue("MessageCount");
             if ((oldmsc == null) || (oldmsc.InsDateFa != ndt.NowDateFa))
             {
                 MessageCount msc = MessageUtility.GetSmsCountByDate(ndt.NowDateFa);
                 ndt.MsgCount = msc;
-                mc.Add("MessageCount", msc, DateTimeOffset.Now.AddSeconds(5));
+                MemoryCacher.Add("MessageCount", msc, DateTimeOffset.Now.AddSeconds(5));
             }
             else
                 ndt.MsgCount = oldmsc;
@@ -55,15 +54,14 @@ namespace WebApi2.Controllers
             ndt.NowTime = dtN.ToString("HH:mm:ss");
             ndt.NowDateTimeFa = ndt.NowDateFa + " " + ndt.NowTime;
             // ---
-            MemoryCacher mc = new MemoryCacher();
-            MessageCount oldmsc = (MessageCount)mc.GetValue("MessageCount");
+            MessageCount oldmsc = (MessageCount)MemoryCacher.GetValue("MessageCount");
             if ((oldmsc == null) || (oldmsc.InsDateFa != ndt.NowDateFa))
             {
                 MessageCount msc = MessageUtility.GetSmsCountByDate(ndt.NowDateFa);
                 ndt.MsgCount = msc;
                 if (oldmsc != null)
-                    mc.Delete("MessageCount");
-                mc.Add("MessageCount", msc, DateTimeOffset.Now.AddSeconds(30));
+                    MemoryCacher.Delete("MessageCount");
+                MemoryCacher.Add("MessageCount", msc, DateTimeOffset.Now.AddSeconds(30));
             }
             else
                 ndt.MsgCount = oldmsc;

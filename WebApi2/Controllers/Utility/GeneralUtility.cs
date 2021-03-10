@@ -16,16 +16,16 @@ namespace WebApi2.Controllers.Utility
             {
 
                 byte[] userByte = Encoding.UTF8.GetBytes(_UserName);
-                string strHashPSW = clsDBHelper.Cryptographer.CreateHash(_Password, "MD5", userByte);
+                string strHashPSW = DBHelper.Cryptographer.CreateHash(_Password, "MD5", userByte);
                 // ---
-                if (clsDBHelper.DBConnectionIns.State == ConnectionState.Closed)
+                if (DBHelper.DBConnectionIns.State == ConnectionState.Closed)
                 {
-                    clsDBHelper.DBConnectionIns.ConnectionString = clsDBHelper.CnStrIns;
-                    clsDBHelper.DBConnectionIns.Open();
+                    DBHelper.DBConnectionIns.ConnectionString = DBHelper.CnStrInsLive;
+                    DBHelper.DBConnectionIns.Open();
                 }
                 OracleCommand cmd = new OracleCommand();
                 OracleDataAdapter da = new OracleDataAdapter();
-                cmd.Connection = clsDBHelper.DBConnectionIns;
+                cmd.Connection = DBHelper.DBConnectionIns;
                 da.SelectCommand = cmd;
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandText = "SP_SendOTP";

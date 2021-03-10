@@ -16,8 +16,25 @@
         public string USERAPPVER { get; set; }
         public bool MACISVALID { get; set; } = false;
         public bool CLIENTVERISVALID { get; set; } = false;
+        public string STRUSERPROFILEIMAGE { get; set; }
+        // -- MobAppPerrmission
+        public string QCMOBAPPPER { get; set; }
+        public string PTDASHPER { get; set; }
+        public string QCDASHPER { get; set; }
+        public string AUDITDASHPER { get; set; }
+        public string AUDITUNLOCKPER { get; set; }
+        public string QCREGDEFPER { get; set; }
+        public string SMSQCPER { get; set; }
+        public string SMSAUDITPER { get; set; }
+        public string SMSSPPER { get; set; }
+        public string QCCARDPER { get; set; }
+        public string SMSPTPER { get; set; }
+        public string AUDITCARDPER { get; set; }
+        public string CARSTATUSPER { get; set; }
 
-
+        
 
     }
+
+
 }

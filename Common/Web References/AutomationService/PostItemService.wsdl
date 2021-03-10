@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://Baridsoft.ir/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://Baridsoft.ir/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://Baridsoft.ir/">
+      <s:element name="SendPostItem">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="userName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="passWord" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="postItem" type="tns:PostItem" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PostItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="AttachmentList" type="tns:ArrayOfAttachment" />
+          <s:element minOccurs="0" maxOccurs="1" name="InvolvedPersonList" type="tns:ArrayOfInvolvedPerson" />
+          <s:element minOccurs="1" maxOccurs="1" name="ImportanceType" type="tns:ImportanceType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Subject" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="HasAttachment" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfAttachment">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Attachment" nillable="true" type="tns:Attachment" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Attachment">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="FileExtention" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ID" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="FileContent" type="s:base64Binary" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfInvolvedPerson">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="InvolvedPerson" nillable="true" type="tns:InvolvedPerson" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="InvolvedPerson">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OrganizationID" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayString" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PersonID" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="OrganizationUnitName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PositionName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ID" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="InvolvedParticipantID" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="InvolvedType" type="tns:InvolvedType" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="InvolvedType">
+        <s:restriction base="s:string">
+          <s:enumeration value="MainReceiver" />
+          <s:enumeration value="CopyReceiver" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="ImportanceType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Normal" />
+          <s:enumeration value="Fast" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SendPostItemResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SendPostItemResult" type="tns:SendPostItemType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="SendPostItemType">
+        <s:restriction base="s:string">
+          <s:enumeration value="SendSuccessful" />
+          <s:enumeration value="SendFaild" />
+          <s:enumeration value="LoginFaild" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="FindPersonalNo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="userName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="passWord" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="personalNo" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FindPersonalNoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FindPersonalNoResult" type="tns:Participant" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Participant">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayString" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OrganizationUnit" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PersonName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Position" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="SendPostItemSoapIn">
+    <wsdl:part name="parameters" element="tns:SendPostItem" />
+  </wsdl:message>
+  <wsdl:message name="SendPostItemSoapOut">
+    <wsdl:part name="parameters" element="tns:SendPostItemResponse" />
+  </wsdl:message>
+  <wsdl:message name="FindPersonalNoSoapIn">
+    <wsdl:part name="parameters" element="tns:FindPersonalNo" />
+  </wsdl:message>
+  <wsdl:message name="FindPersonalNoSoapOut">
+    <wsdl:part name="parameters" element="tns:FindPersonalNoResponse" />
+  </wsdl:message>
+  <wsdl:portType name="PostItemServiceSoap">
+    <wsdl:operation name="SendPostItem">
+      <wsdl:input message="tns:SendPostItemSoapIn" />
+      <wsdl:output message="tns:SendPostItemSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FindPersonalNo">
+      <wsdl:input message="tns:FindPersonalNoSoapIn" />
+      <wsdl:output message="tns:FindPersonalNoSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PostItemServiceSoap" type="tns:PostItemServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendPostItem">
+      <soap:operation soapAction="http://Baridsoft.ir/SendPostItem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FindPersonalNo">
+      <soap:operation soapAction="http://Baridsoft.ir/FindPersonalNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="PostItemServiceSoap12" type="tns:PostItemServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendPostItem">
+      <soap12:operation soapAction="http://Baridsoft.ir/SendPostItem" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FindPersonalNo">
+      <soap12:operation soapAction="http://Baridsoft.ir/FindPersonalNo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PostItemService">
+    <wsdl:port name="PostItemServiceSoap" binding="tns:PostItemServiceSoap">
+      <soap:address location="http://172.20.9.37/sendpostitemwithoutattach/PostItemService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="PostItemServiceSoap12" binding="tns:PostItemServiceSoap12">
+      <soap12:address location="http://172.20.9.37/sendpostitemwithoutattach/PostItemService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

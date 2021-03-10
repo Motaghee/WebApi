@@ -1,0 +1,77 @@
+﻿#myTable {
+    direction: rtl;
+    width: 100%;
+    max-width: 610px;
+}
+
+    #myTable, #myTable input, #myTable select, #myTable span, #divPopup label {
+        font-family: "Tahoma";
+        font-size: 9pt;
+    }
+
+        #myTable .param-field {
+            float: right;
+            width: 200px;
+            height: 50px;
+        }
+
+            #myTable .param-field button {
+                width: 21px;
+            }
+
+        #myTable span {
+            display: block;
+        }
+
+        #myTable .param-field table {
+            display: none;
+        }
+
+#divPopup {
+    position: absolute;
+    width: 200px;
+    z-index: 10;
+    border: solid 1px gray;
+    background-color: #fafafa;
+    box-shadow: 3px 3px 5px #888888;
+}
+
+    #divPopup td:hover {
+        background-color: #A8DEFF;
+    }
+
+#divPopupHeader {
+    padding: 3px;
+    background-color: Green;
+    color: White;
+}
+
+#divPopupBody {
+    height: 180px;
+    overflow: auto;
+}
+
+#divPopupFooter {
+    padding: 3px;
+    background-color: White;
+    border-top: solid 1px silver;
+    text-align: center;
+}
+
+    #divPopupFooter input {
+        width: 75px;
+        padding: 1px;
+    }
+
+.big {
+    width: 400px !important;
+    height: 100px !important;
+}
+
+.hide {
+    display: none;
+}
+
+.message-error span {
+    color: Red;
+}

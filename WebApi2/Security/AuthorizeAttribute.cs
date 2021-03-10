@@ -12,7 +12,7 @@ namespace WebApi2.Security
             }
             else
             {
-                actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                //actionContext.Response = actionContext.Request.CreateResponse();
             }
         }
     }
