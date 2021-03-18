@@ -397,10 +397,7 @@ namespace Common.CacheManager
                     lus.Id = "1";
                     return lus;
                 }
-                 
-                
-
-                db.Dispose();
+                //db.Dispose();
             }
             catch (Exception ex)
             {

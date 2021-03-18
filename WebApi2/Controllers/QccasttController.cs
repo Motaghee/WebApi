@@ -20,14 +20,25 @@ namespace WebApi2.Controllers
             return QccasttUtility.GetCarDefect(qccastt);
         }
 
-        //[HttpGet]
-        //[Route("api/Qccastt/CarDefect2")]
-        //public List<Qccastt> CarDefect2()
-        //{
-        //    Qccastt qccastt = new Qccastt();
-        //    qccastt.Vin = "NAS111100M1000870";
-        //    return QccasttUtility.GetCarDefect(qccastt);
-        //}
+
+        [HttpPost]
+        [Route("api/Qccastt/DeleteQccastt")]
+        public ResultMsg DeleteQccastt([FromBody] Qccastt qccastt)
+        {
+            return QccasttUtility.Delete_QCCASTT(qccastt);
+        }
+        
+        [HttpGet]
+        [Route("api/Qccastt/DeleteQccastt2")]
+        public ResultMsg DeleteQccastt2()
+        {
+            Qccastt qccastt = new Qccastt();
+            qccastt.Srl = 26867555;
+            qccastt.ActBy = 4314;
+            qccastt.ActAreaSrl = 94;
+            //qccastt.Vin = "NAS411100G1205277";
+            return QccasttUtility.Delete_QCCASTT(qccastt);
+        }
 
         [HttpPost]
         [Route("api/Qccastt/CarSend")]

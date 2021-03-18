@@ -1,4 +1,5 @@
-﻿using Common.db;
+﻿using Common.Actions;
+using Common.db;
 using Common.Models;
 using Common.Models.Qccastt;
 using Oracle.ManagedDataAccess.Client;
@@ -33,8 +34,8 @@ namespace WebApi2.Controllers.Utility
                                                                d.defectdesc,c.bdmdlcode,
                                                                bm.grpcode,
                                                                cg.grpname,
-                                                               t.title,
-                                                               q.inuse,
+                                                               t.title,q.RecordOwner,q.CHECKLISTAREA_SRL,q.QCSTRGT_SRL,q.IsDefected,q.InUse,
+                                                               q.inuse,a.areacode,
                                                                a.areacode||a.areadesc as AreaDesc,
                                                                u.lname as CreatedByDesc,q.CreatedBy,
                                                                ur.lname as RepairedByDesc,q.RepairedBy,
@@ -635,31 +636,40 @@ namespace WebApi2.Controllers.Utility
 
         }
 
-        public static ResultMsg Delete_QCCASTT(int QCCASTTSRL, int areaSRL, int userSRL)
+        public static ResultMsg Delete_QCCASTT(Qccastt qccastt)
         {
+            //int QCCASTTSRL = Convert.ToInt32(qccastt.Srl);
+            //int areaSRL = Convert.ToInt32(qccastt.ActAreaSrl);
+            //int userSRL = Convert.ToInt32(qccastt.ActBy);
+            //LogManager.SetCommonLog("Delete_QCCASTT" + qccastt.Srl.ToString() + "_" + qccastt.ActAreaSrl.ToString() + "_" + qccastt.ActBy.ToString());
             ResultMsg rm = new ResultMsg();
             try
             {
-                if (DBHelper.DBConnectionIns.State == ConnectionState.Closed)
-                {
-                    DBHelper.DBConnectionIns.ConnectionString = DBHelper.CnStrIns;
-                    DBHelper.DBConnectionIns.Open();
-                }
                 OracleCommand cmd = new OracleCommand();
                 OracleDataAdapter da = new OracleDataAdapter();
-                cmd.Connection = DBHelper.DBConnectionIns;
+                cmd.Connection = DBHelper.LiveDBConnectionIns;
+                if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
+                    DBHelper.LiveDBConnectionIns.Open();
                 da.SelectCommand = cmd;
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandText = "QCP_QCCASTT_Delete";
-                cmd.Parameters.Clear();
-                cmd.Parameters.Add("pQCCASTT_SRL", OracleDbType.Double).Value = QCCASTTSRL;
-                cmd.Parameters.Add("pQCAREAT_SRL", OracleDbType.Double).Value = areaSRL;
-                cmd.Parameters.Add("pQCUSERT_SRL", OracleDbType.Double).Value = userSRL;
-                cmd.Parameters.Add("pMessage", OracleDbType.Varchar2, 2048);
+                cmd.Parameters.Add("pQCCASTT_SRL", OracleDbType.Int32).Value = qccastt.Srl;
+                cmd.Parameters.Add("pQCAREAT_SRL", OracleDbType.Int32).Value = qccastt.ActAreaSrl;
+                cmd.Parameters.Add("pQCUSERT_SRL", OracleDbType.Int32).Value = qccastt.ActBy;
+                cmd.Parameters.Add("pMessage", OracleDbType.Varchar2, 1000);
                 cmd.Parameters["pMessage"].Direction = ParameterDirection.Output;
                 cmd.ExecuteNonQuery();
                 string result = cmd.Parameters["pMessage"].Value.ToString();
                 rm.title = rm.Message = result;
+                //-- translate result  msg --
+                if (result.Contains("SUCCESSFUL"))
+                    rm.MessageFa = "عیب مورد نظر با موفقیت حذف گردید";
+                else if (result.Contains("NO_DATA_FOUND"))
+                    rm.MessageFa = "عیب مورد نظر در سیستم یافت نشد";
+                else
+                    rm.MessageFa = "بروز خطا در حذف عیب";
+                rm.lstQccastt = QccasttUtility.GetCarDefect(qccastt);
+                // --
                 return rm;
             }
             catch (Exception ex)
@@ -671,5 +681,225 @@ namespace WebApi2.Controllers.Utility
 
         }
 
+        public static bool CheckConsistencyBetweenCheckListAndCarGroupCode(Qccastt qccastt)
+        {
+            try
+            {
+                string commandtext = string.Format(@"Select * from qcdfctt d where (d.grpcode={0} or  d.qcareat_srl=841 )
+                                                        And d.qcbadft_srl={1} 
+                                                        And d.qcareat_srl={2}
+                                                        And d.qcmdult_srl={3}
+                                                        ", qccastt.GrpCode, qccastt.QCBadft_Srl, qccastt.QCAreat_Srl, qccastt.QCMdult_Srl);
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
+                if ((ds.Tables[0] != null) && (ds.Tables[0].Rows.Count != 0))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public static ResultMsg QCCASTT_DefectDetect(Qccastt qccastt)
+        {
+            ResultMsg rm = new ResultMsg();
+            try
+            {
+                bool blnConsistency = false;
+                if (qccastt.IsDefected == 1)
+                {
+                    blnConsistency =
+                        CheckConsistencyBetweenCheckListAndCarGroupCode(qccastt);
+                }
+                if ((blnConsistency) || (qccastt.IsDefected == 0))
+                {
+                    OracleCommand cmd = new OracleCommand();
+                    OracleDataAdapter da = new OracleDataAdapter();
+                    cmd.Connection = DBHelper.LiveDBConnectionIns;
+                    if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
+                        DBHelper.LiveDBConnectionIns.Open();
+                    da.SelectCommand = cmd;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "QCP_QCCASTT_Detect";
+                    cmd.Parameters.Add("PVIN", OracleDbType.Int32).Value = qccastt.VinWithoutChar;
+                    cmd.Parameters.Add("PQCAREAT_SRL", OracleDbType.Int32).Value = qccastt.QCAreat_Srl;
+                    cmd.Parameters.Add("PQCUSERT_SRL", OracleDbType.Int32).Value = qccastt.ActBy;
+                    cmd.Parameters.Add("PISDEFECTED", OracleDbType.Int32).Value = qccastt.IsDefected;
+                    cmd.Parameters.Add("PINUSE", OracleDbType.Int32).Value = qccastt.IsDefected;
+                    // --
+                    if (!qccastt.QCBadft_Srl.Equals(null))
+                        cmd.Parameters.Add("PQCBADFT_SRL", OracleDbType.Int32).Value = qccastt.QCBadft_Srl;
+                    else
+                        cmd.Parameters.Add("PQCBADFT_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                    // --
+                    if (!qccastt.QCMdult_Srl.Equals(null))
+                        cmd.Parameters.Add("PQCMDULT_SRL", OracleDbType.Int32).Value = qccastt.QCMdult_Srl;
+                    else
+                        cmd.Parameters.Add("PQCMDULT_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                    // --
+                    if (!qccastt.QCSTRGT_SRL.Equals(null))
+                        cmd.Parameters.Add("PQCSTRGT_SRL", OracleDbType.Int32).Value = qccastt.QCSTRGT_SRL;
+                    else
+                        cmd.Parameters.Add("PQCSTRGT_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                    // --
+                    if (!qccastt.CHECKLISTAREA_SRL.Equals(null))
+                        cmd.Parameters.Add("pCheckListArea_SRL", OracleDbType.Int32).Value = qccastt.CHECKLISTAREA_SRL;
+                    else
+                        cmd.Parameters.Add("pCheckListArea_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                    // --
+                    if (!qccastt.IsRepaired.Equals(null))
+                        cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = qccastt.IsRepaired;
+                    else
+                        cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = DBNull.Value;
+                    // --
+                    if (!qccastt.RecordOwner.Equals(null))
+                        cmd.Parameters.Add("pRecordOwner", OracleDbType.Int32).Value = qccastt.RecordOwner;
+                    else
+                        cmd.Parameters.Add("pRecordOwner", OracleDbType.Int32).Value = DBNull.Value;
+                    // --
+                    cmd.Parameters.Add("pMessage", OracleDbType.Varchar2, 1000);
+                    cmd.Parameters["PMESSAGE"].Direction = ParameterDirection.Output;
+                    // --
+                    cmd.ExecuteNonQuery();
+                    string result = cmd.Parameters["PMESSAGE"].Value.ToString();
+                    rm.title = rm.Message = result;
+                    //-- translate result  msg --
+                    if (result.Contains("SUCCESSFUL"))
+                        rm.MessageFa = "عیب با موفقیت ثبت گردید";
+                    else if (result.ToUpper().Trim().Equals("REPAIRED CHANGE") || result.ToUpper().Trim().Equals("EDIT_REPAIRED"))
+                    {
+                        if (qccastt.IsRepaired==1)
+                            rm.MessageFa = "عیب رفع شده ثبت گردید";
+                        else
+                            rm.MessageFa = "عیب رفع نشده ثبت گردید";
+                    }
+                    else if (result.Contains("EDIT DEFECT"))
+                        rm.MessageFa = "عیب ویرایش گردید";
+
+                    else if (result.Contains("REPEATED DEFECT"))
+                        rm.MessageFa = "این عیب قبلا در این ناحیه ثبت گردیده است";
+                    else
+                        rm.MessageFa = "خطایی رخ داده است";
+                    // --
+                    rm.lstQccastt= QccasttUtility.GetCarDefect(qccastt);
+                    return rm;
+                }
+                else
+                {
+                    rm.title = rm.Message = rm.MessageFa = "عدم همخوانی عیب باخودرو";
+                    return rm;
+                }
+            }
+            catch (Exception ex)
+            {
+                rm.title = "error";
+                rm.Message = ex.Message.ToString();
+                return rm;
+            }
+        }
+
+        public static ResultMsg QCCASTT_MultiDefectRepair(List<Qccastt> LstQCcastt)
+        {
+            ResultMsg rm = new ResultMsg();
+            try
+            {
+                for (int i = 0; i < LstQCcastt.Count; i++)
+                {
+                    bool blnConsistency = false;
+                    if (LstQCcastt[i].IsDefected == 1)
+                    {
+                        blnConsistency =
+                            CheckConsistencyBetweenCheckListAndCarGroupCode(LstQCcastt[i]);
+                    }
+                    if ((blnConsistency) || (LstQCcastt[i].IsDefected == 0))
+                    {
+                        OracleCommand cmd = new OracleCommand();
+                        OracleDataAdapter da = new OracleDataAdapter();
+                        cmd.Connection = DBHelper.LiveDBConnectionIns;
+                        if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
+                            DBHelper.LiveDBConnectionIns.Open();
+                        da.SelectCommand = cmd;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.CommandText = "QCP_QCCASTT_Detect";
+                        cmd.Parameters.Add("PVIN", OracleDbType.Int32).Value = LstQCcastt[i].VinWithoutChar;
+                        cmd.Parameters.Add("PQCAREAT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].QCAreat_Srl;
+                        cmd.Parameters.Add("PQCUSERT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].ActBy;
+                        cmd.Parameters.Add("PISDEFECTED", OracleDbType.Int32).Value = LstQCcastt[i].IsDefected;
+                        cmd.Parameters.Add("PINUSE", OracleDbType.Int32).Value = LstQCcastt[i].IsDefected;
+                        // --
+                        if (!LstQCcastt[i].QCBadft_Srl.Equals(null))
+                            cmd.Parameters.Add("PQCBADFT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].QCBadft_Srl;
+                        else
+                            cmd.Parameters.Add("PQCBADFT_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                        // --
+                        if (!LstQCcastt[i].QCMdult_Srl.Equals(null))
+                            cmd.Parameters.Add("PQCMDULT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].QCMdult_Srl;
+                        else
+                            cmd.Parameters.Add("PQCMDULT_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                        // --
+                        if (!LstQCcastt[i].QCSTRGT_SRL.Equals(null))
+                            cmd.Parameters.Add("PQCSTRGT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].QCSTRGT_SRL;
+                        else
+                            cmd.Parameters.Add("PQCSTRGT_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                        // --
+                        if (!LstQCcastt[i].CHECKLISTAREA_SRL.Equals(null))
+                            cmd.Parameters.Add("pCheckListArea_SRL", OracleDbType.Int32).Value = LstQCcastt[i].CHECKLISTAREA_SRL;
+                        else
+                            cmd.Parameters.Add("pCheckListArea_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                        // --
+                        if (!LstQCcastt[i].IsRepaired.Equals(null))
+                            cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = LstQCcastt[i].IsRepaired;
+                        else
+                            cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = DBNull.Value;
+                        // --
+                        if (!LstQCcastt[i].RecordOwner.Equals(null))
+                            cmd.Parameters.Add("pRecordOwner", OracleDbType.Int32).Value = LstQCcastt[i].RecordOwner;
+                        else
+                            cmd.Parameters.Add("pRecordOwner", OracleDbType.Int32).Value = DBNull.Value;
+                        // --
+                        cmd.Parameters.Add("pMessage", OracleDbType.Varchar2, 1000);
+                        cmd.Parameters["PMESSAGE"].Direction = ParameterDirection.Output;
+                        // --
+                        cmd.ExecuteNonQuery();
+                        string result = cmd.Parameters["PMESSAGE"].Value.ToString();
+                        rm.Message += result;
+                        //-- translate result  msg --
+                        if (result.Contains("SUCCESSFUL"))
+                            rm.MessageFa = "عیب با موفقیت ثبت گردید";
+                        else if (result.ToUpper().Trim().Equals("REPAIRED CHANGE") || result.ToUpper().Trim().Equals("EDIT_REPAIRED"))
+                        {
+                            if (LstQCcastt[i].IsRepaired == 1)
+                                rm.MessageFa += "عیب رفع شده ثبت گردید";
+                            else
+                                rm.MessageFa += "عیب رفع نشده ثبت گردید";
+                        }
+                        else if (result.Contains("EDIT DEFECT"))
+                            rm.MessageFa += "عیب ویرایش گردید";
+
+                        else if (result.Contains("REPEATED DEFECT"))
+                            rm.MessageFa += "این عیب قبلا در این ناحیه ثبت گردیده است";
+                        else
+                            rm.MessageFa += "خطایی رخ داده است";
+                        // --
+                    }
+                    else
+                    {
+                        //rm.title = rm.Message =
+                        rm.MessageFa += "عدم همخوانی عیب باخودرو";
+                        
+                    }
+                }
+                rm.lstQccastt = QccasttUtility.GetCarDefect(LstQCcastt[0]);
+                return rm;
+            }
+            catch (Exception ex)
+            {
+                rm.lstQccastt = null;
+                rm.title = "error";
+                rm.Message = ex.Message.ToString();
+                return rm;
+            }
+        }
     }
 }
