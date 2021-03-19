@@ -799,7 +799,7 @@ namespace WebApi2.Controllers.Utility
             }
         }
 
-        public static ResultMsg QCCASTT_MultiDefectRepair(List<Qccastt> LstQCcastt)
+        public static ResultMsg QCCASTT_MultiDefectRepair2(List<Qccastt> LstQCcastt)
         {
             ResultMsg rm = new ResultMsg();
             try
