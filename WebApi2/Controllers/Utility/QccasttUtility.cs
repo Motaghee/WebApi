@@ -59,7 +59,7 @@ namespace WebApi2.Controllers.Utility
                                                             on q.qcstrgt_srl = s.srl
                                                           join cargroup cg on cg.grpcode=bm.grpcode
                                                           join qccabdt t on t.srl = d.qccabdt_srl
-                                                         where q.inuse=1 and q.recordowner=1 and q.isdefected=1  
+                                                         where q.inuse=1 and q.recordowner=1 and q.isdefected=1 and q.deletedby is null 
                                                          And q.vin= '{0}' order by q.createddate desc", qccastt.VinWithoutChar);
                         //DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
                         // --
@@ -68,7 +68,7 @@ namespace WebApi2.Controllers.Utility
                         //return jsonString;
                         // --
                         List<Qccastt> FoundDefects = new List<Qccastt>();
-                        FoundDefects = DBHelper.GetDBObjectByObj2(new Qccastt(), null, commandtext, "inspector").Cast<Qccastt>().ToList();
+                        FoundDefects = DBHelper.GetDBObjectByObj2_OnLive(new Qccastt(), null, commandtext, "inspector").Cast<Qccastt>().ToList();
                         //---
                         if (FoundDefects.Count > 0)
                         {
@@ -668,7 +668,10 @@ namespace WebApi2.Controllers.Utility
                     rm.MessageFa = "عیب مورد نظر در سیستم یافت نشد";
                 else
                     rm.MessageFa = "بروز خطا در حذف عیب";
+                //System.Threading.Thread.Sleep(1000);
                 rm.lstQccastt = QccasttUtility.GetCarDefect(qccastt);
+                
+                
                 // --
                 return rm;
             }
@@ -690,7 +693,7 @@ namespace WebApi2.Controllers.Utility
                                                         And d.qcareat_srl={2}
                                                         And d.qcmdult_srl={3}
                                                         ", qccastt.GrpCode, qccastt.QCBadft_Srl, qccastt.QCAreat_Srl, qccastt.QCMdult_Srl);
-                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
+                DataSet ds = DBHelper.ExecuteMyQueryInsOnLive(commandtext);
                 if ((ds.Tables[0] != null) && (ds.Tables[0].Rows.Count != 0))
                     return true;
                 else

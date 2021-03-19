@@ -584,6 +584,111 @@ namespace Common.db
             }
         }
 
+        public static object[] GetDBObjectByObj2_OnLive(object _Obj, DataSet _ds, string _CommandText, string strSchema)
+        {
+
+            string strFieldName = "";
+            try
+            {
+                //clsDBHelper.LogtxtToFile("GetDBObjectByObj2_ds-cmd-txt_ " + _CommandText);
+                // clsDBHelper.LogtxtToFile("1-GetDBObjectByObj2");
+                if (_ds == null)
+                {
+                    if (strSchema.ToLower() == "stopage")
+                        _ds = DBHelper.ExecuteMyQueryStpOnLive(_CommandText);
+                    else if (strSchema.ToLower() == "pt")
+                        _ds = DBHelper.ExecuteMyQueryPTOnLive(_CommandText);
+                    else
+                        _ds = DBHelper.ExecuteMyQueryInsOnLive(_CommandText);
+
+                }
+                object[] lstObj = null;
+                if (_ds != null)
+                {
+                    //clsDBHelper.LogtxtToFile("2-GetDBObjectByObj2");
+                    lstObj = new object[_ds.Tables[0].Rows.Count];
+
+                    for (int i = 0; i < _ds.Tables[0].Rows.Count; i++)
+                    {
+                        _Obj = Activator.CreateInstance(_Obj.GetType());
+                        strFieldName = "";
+                        Type myType = _Obj.GetType();
+                        IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
+                        foreach (PropertyInfo prop in props)
+                        {
+                            //clsDBHelper.LogtxtToFile("3-GetDBObjectByObj2"+ prop.Name);
+                            strFieldName = prop.Name.ToString();
+
+                            //DataColumn column = _ds.Tables[0].Rows[0][strFieldName];
+                            try
+                            {
+                                if ((!strFieldName.ToLower().StartsWith("lst")) && (_ds.Tables[0].Rows[i][strFieldName] != DBNull.Value))
+                                {
+                                    //clsDBHelper.LogtxtToFile("4-GetDBObjectByObj2_"+ strFieldName + _ds.Tables[0].Rows[0][strFieldName].GetType().ToString());
+                                    if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Byte[]")
+                                    {
+                                        //clsDBHelper.LogtxtToFile("GetDBObjectByObj2____Byte Detected_" + strFieldName);
+                                        //byte[] b = (byte[])_ds.Tables[0].Rows[i][strFieldName];
+                                        //sbyte[] sb = (sbyte[])(Array)b;
+                                        //int i = BitConverter.ToInt32(bytes, 0);
+                                        //int[] ib = b.Select(x => (int)x).ToArray(); ;
+                                        //string s=Convert.ToBase64String((byte[])_ds.Tables[0].Rows[i][strFieldName]);
+                                        //MemoryStream mstream = new MemoryStream(b);
+                                        _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToBase64String((byte[])_ds.Tables[0].Rows[i][strFieldName]), null);
+                                    }
+                                    else
+                                    {
+                                        if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Decimal")
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToInt32(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                        else
+                                        {
+                                            if ((_ds.Tables[0].Rows[i][strFieldName].ToString() == "FALSE") || (_ds.Tables[0].Rows[i][strFieldName].ToString() == "TRUE"))
+                                            {
+                                                _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToBoolean(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                            }
+                                            else
+                                                _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, _ds.Tables[0].Rows[i][strFieldName], null);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //clsDBHelper.LogtxtToFile("Null value-GetDBObjectByObj2" + strFieldName+ "_is null");// Thumbnail
+                                    _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, null, null);
+                                }
+                                lstObj[i] = _Obj;
+                            }
+                            catch (Exception e)
+                            {
+                                LogFile(e);
+                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj2" + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
+                            }
+                        }
+
+                    }
+                    //DBHelper.LogtxtToFile("Succeed-GetDBObjectByObj2");
+                }
+                else
+                {
+                    //DBHelper.LogtxtToFile("ds is Null-GetDBObjectByObj2_"+ _CommandText);
+                    //await Task.Delay(10000);
+                    //DateTime Tthen = DateTime.Now;
+                    //do
+                    //{
+
+                    //} while (Tthen.AddSeconds(5) > DateTime.Now);
+                    Thread.Sleep(10000);
+                    return GetDBObjectByObj22(_Obj, _ds, _CommandText, strSchema);
+                }
+                return lstObj;
+            }
+            catch (Exception ex)
+            {
+                LogFile(ex);
+                //DBHelper.LogtxtToFile("err2-GetDBObjectByObj2_Err:"+ex);
+                throw ex;
+            }
+        }
         public static object[] GetDBObjectByObj22(object _Obj, DataSet _ds, string _CommandText, string strSchema)
         {
 

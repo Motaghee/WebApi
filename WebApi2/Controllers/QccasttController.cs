@@ -33,7 +33,8 @@ namespace WebApi2.Controllers
         public ResultMsg DeleteQccastt2()
         {
             Qccastt qccastt = new Qccastt();
-            qccastt.Srl = 26867555;
+            qccastt.Srl = 26904272;
+            qccastt.Vin = "NAS411100G1205277";
             qccastt.ActBy = 4314;
             qccastt.ActAreaSrl = 94;
             //qccastt.Vin = "NAS411100G1205277";

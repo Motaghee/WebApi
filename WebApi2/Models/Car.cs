@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Models.Qccastt;
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -48,6 +49,7 @@ namespace WebApi2.Models
         public string ASMShopProdDate { get; set; }
         public double CurAreaSrl { get; set; }
         public IEnumerable<Qcqctrt> lstQcqctrt { get; set; }
+        public IEnumerable<Qccastt> lstQccastt { get; set; }
 
 
 

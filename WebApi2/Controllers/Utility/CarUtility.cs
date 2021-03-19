@@ -1,4 +1,5 @@
 ﻿using Common.db;
+using Common.Models.Qccastt;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -53,7 +54,7 @@ namespace WebApi2.Controllers.Utility
                                                             from qccariddt c where c.vin ='{0}' "
                                                             , car.VinWithoutChar);
                         // 
-                        carinfo = DBHelper.GetDBObjectByObj2(new Car(), null, commandtext, "inspector").Cast<Car>().ToList();
+                        carinfo = DBHelper.GetDBObjectByObj2_OnLive(new Car(), null, commandtext, "inspector").Cast<Car>().ToList();
                         if (carinfo.Count == 1)
                         {
                             carinfo[0].ValidFormat = car.ValidFormat;
@@ -72,10 +73,13 @@ namespace WebApi2.Controllers.Utility
                                                       from qcqctrt tr join qcareat a1 on tr.fromareasrl = a1.srl
                                                       join qcareat a2 on tr.toareasrl = a2.srl
                                                       join qcusert u on tr.uauser_srl = u.srl where tr.vin = '{0}'
-                                                     order by tr.u_date desc)z", car.VinWithoutChar);
+                                                     order by tr.seq desc)z", car.VinWithoutChar);
                             List<Qcqctrt> lst = new List<Qcqctrt>();
-                            lst = DBHelper.GetDBObjectByObj2(new Qcqctrt(), null, commandtext, "ins").Cast<Qcqctrt>().ToList();
+                            lst = DBHelper.GetDBObjectByObj2_OnLive(new Qcqctrt(), null, commandtext, "ins").Cast<Qcqctrt>().ToList();
                             carinfo[0].lstQcqctrt = lst;
+                            Qccastt q = new Qccastt();
+                            q.Vin = car.Vin;
+                            carinfo[0].lstQccastt= QccasttUtility.GetCarDefect(q);
                             return carinfo[0];
                             //
                             //commandtext = string.Format(@"select q.*,
