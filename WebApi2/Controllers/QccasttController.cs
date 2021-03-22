@@ -27,19 +27,46 @@ namespace WebApi2.Controllers
         {
             return QccasttUtility.Delete_QCCASTT(qccastt);
         }
-        
-        [HttpGet]
-        [Route("api/Qccastt/DeleteQccastt2")]
-        public ResultMsg DeleteQccastt2()
+
+        [HttpPost]
+        [Route("api/Qccastt/DefectDetect")]
+        public ResultMsg DefectDetect([FromBody] Qccastt qccastt)
+        {
+            return QccasttUtility.QCCASTT_DefectDetect(qccastt);
+        }
+
+        [HttpPost]
+        [Route("api/Qccastt/DefectDetect2")]
+        public ResultMsg DefectDetect2()
         {
             Qccastt qccastt = new Qccastt();
-            qccastt.Srl = 26904272;
+            qccastt.Srl = 26904286;
             qccastt.Vin = "NAS411100G1205277";
             qccastt.ActBy = 4314;
             qccastt.ActAreaSrl = 94;
-            //qccastt.Vin = "NAS411100G1205277";
-            return QccasttUtility.Delete_QCCASTT(qccastt);
+            qccastt.QCMdult_Srl = 716;
+            qccastt.QCBadft_Srl = 2024;
+            qccastt.RecordOwner = 1;
+            qccastt.IsRepaired = 1;
+            qccastt.InUse = 1;
+            qccastt.CreatedBy = 4314;
+            qccastt.CHECKLISTAREA_SRL =94;
+
+            return QccasttUtility.QCCASTT_DefectDetect(qccastt);
         }
+
+        //[HttpGet]
+        //[Route("api/Qccastt/DeleteQccastt2")]
+        //public ResultMsg DeleteQccastt2()
+        //{
+        //    Qccastt qccastt = new Qccastt();
+        //    qccastt.Srl = 26904272;
+        //    qccastt.Vin = "NAS411100G1205277";
+        //    qccastt.ActBy = 4314;
+        //    qccastt.ActAreaSrl = 94;
+        //    //qccastt.Vin = "NAS411100G1205277";
+        //    return QccasttUtility.Delete_QCCASTT(qccastt);
+        //}
 
         [HttpPost]
         [Route("api/Qccastt/CarSend")]

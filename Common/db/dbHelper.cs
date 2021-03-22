@@ -64,7 +64,7 @@ namespace Common.db
 
         static DBHelper()
         {
-            bool Live = false;
+            bool Live = true;
             //===
             if (Live)
             { CnStrIns = CnStrInsLive; CnStrStp = CnStrStpLive; CnStrPT = CnStrPTLive; }

@@ -50,9 +50,10 @@ namespace WebApi2.Controllers.Utility
                         List<Car> carinfo = new List<Car>();
                         string commandtext = string.Format(@"select c.vin,c.prodno,c.joinerydate,c.bdmdlcode,c.bdstlcode,c.bdstlaliasname ,c.fitypecode,c.finqccode,c.clrcode, (select q.toareasrl from qcqctrt q where vin = '{0}' and passed=0) as CurAreaSrl,
                                                             c.JoinaryTeamDesc,c.nasvin,c.shopcode,c.shopname,c.joinaryteam,c.assmteamwork,c.assemblytypecode,c.gearboxtypecode,c.forexport,c.grpcode,c.bdmdlaliasname,
-                                                            c.grpname,c.comanyname as companyname,c.companycode,c.fitypename,c.clralias,c.gearboxtypedesc,c.prodenddate,c.prodenddate_fa,c.joinerydate_fa,c.bodyshopproddate,c.paintshopproddate,asmshopproddate
+                                                            c.grpname,c.comanyname as companyname,c.companycode,c.fitypename,c.clralias,c.gearboxtypedesc,c.prodenddate,c.prodenddate_fa,c.joinerydate_fa,c.bodyshopproddate,c.paintshopproddate,asmshopproddate,
+                                                            {1} as ActAreaSrl,{2} as ActBy
                                                             from qccariddt c where c.vin ='{0}' "
-                                                            , car.VinWithoutChar);
+                                                            , car.VinWithoutChar,car.ActAreaSrl,car.ActBy);
                         // 
                         carinfo = DBHelper.GetDBObjectByObj2_OnLive(new Car(), null, commandtext, "inspector").Cast<Car>().ToList();
                         if (carinfo.Count == 1)
@@ -79,6 +80,8 @@ namespace WebApi2.Controllers.Utility
                             carinfo[0].lstQcqctrt = lst;
                             Qccastt q = new Qccastt();
                             q.Vin = car.Vin;
+                            q.ActAreaSrl = car.ActAreaSrl;
+                            q.ActBy= car.ActBy;
                             carinfo[0].lstQccastt= QccasttUtility.GetCarDefect(q);
                             return carinfo[0];
                             //

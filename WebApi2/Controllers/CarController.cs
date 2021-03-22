@@ -24,6 +24,8 @@ namespace WebApi2.Controllers
             {
                 Car car = new Car();
                 car.Vin = "NAS411100K1146021";
+                car.ActBy = 4314;
+                car.ActAreaSrl = 94;
                 return CarUtility.GetCarInfo(car);
             }
             catch (Exception ex)

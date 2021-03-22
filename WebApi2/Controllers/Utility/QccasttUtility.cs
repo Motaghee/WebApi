@@ -40,9 +40,10 @@ namespace WebApi2.Controllers.Utility
                                                                u.lname as CreatedByDesc,q.CreatedBy,
                                                                ur.lname as RepairedByDesc,q.RepairedBy,
                                                                TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa,
-                                                               TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as repaireddateFa,
+                                                               TO_char(q.repaireddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as repaireddateFa,
                                                                to_char(q.createddate,'yyyy/mm/dd','nls_calendar=persian') as CreatedDayFa,
-                                                               q.isrepaired
+                                                               q.isrepaired,
+                                                               {1} as ActAreaSrl,{2} as ActBy
                                                           from qccastt q
                                                           join qcusert u on u.srl = q.createdby
                                                           left join qcusert ur on ur.srl = q.RepairedBy
@@ -60,7 +61,7 @@ namespace WebApi2.Controllers.Utility
                                                           join cargroup cg on cg.grpcode=bm.grpcode
                                                           join qccabdt t on t.srl = d.qccabdt_srl
                                                          where q.inuse=1 and q.recordowner=1 and q.isdefected=1 and q.deletedby is null 
-                                                         And q.vin= '{0}' order by q.createddate desc", qccastt.VinWithoutChar);
+                                                         And q.vin= '{0}' order by q.createddate desc", qccastt.VinWithoutChar, qccastt.ActAreaSrl.ToString(), qccastt.ActBy.ToString());
                         //DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
                         // --
                         //string jsonString = string.Empty;
@@ -423,7 +424,7 @@ namespace WebApi2.Controllers.Utility
             try
             {
                 string commandtext = string.Format(@"select  a.srl,a.areacode,a.areadesc,a.CheckDest,
-                                        decode(a.areatype,35,(decode(p.shopcode,14,30,17,40)),a.areatype) as areatype
+                                        decode(a.areatype,35,(decode(p.shopcode,14,30,17,40)),a.areatype) as areatype,PCShopt_Srl
                                         from qcareat a join pcshopt p on p.srl = a.pcshopt_srl ");
                 DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                 List<Area> AreaList = new List<Area>();
@@ -645,6 +646,7 @@ namespace WebApi2.Controllers.Utility
             ResultMsg rm = new ResultMsg();
             try
             {
+                LogManager.SetCommonLog("Delete_QCCASTT:" + qccastt.IsRepaired.ToString() + "_actby:" + qccastt.ActBy.ToString() + "_actareasrl:" + qccastt.ActAreaSrl.ToString());
                 OracleCommand cmd = new OracleCommand();
                 OracleDataAdapter da = new OracleDataAdapter();
                 cmd.Connection = DBHelper.LiveDBConnectionIns;
@@ -654,8 +656,8 @@ namespace WebApi2.Controllers.Utility
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandText = "QCP_QCCASTT_Delete";
                 cmd.Parameters.Add("pQCCASTT_SRL", OracleDbType.Int32).Value = qccastt.Srl;
-                cmd.Parameters.Add("pQCAREAT_SRL", OracleDbType.Int32).Value = qccastt.ActAreaSrl;
                 cmd.Parameters.Add("pQCUSERT_SRL", OracleDbType.Int32).Value = qccastt.ActBy;
+                cmd.Parameters.Add("pQCAREAT_SRL", OracleDbType.Int32).Value = qccastt.ActAreaSrl;
                 cmd.Parameters.Add("pMessage", OracleDbType.Varchar2, 1000);
                 cmd.Parameters["pMessage"].Direction = ParameterDirection.Output;
                 cmd.ExecuteNonQuery();
@@ -668,6 +670,7 @@ namespace WebApi2.Controllers.Utility
                     rm.MessageFa = "عیب مورد نظر در سیستم یافت نشد";
                 else
                     rm.MessageFa = "بروز خطا در حذف عیب";
+                LogManager.SetCommonLog("Delete_QCCASTT:err" + result);
                 //System.Threading.Thread.Sleep(1000);
                 rm.lstQccastt = QccasttUtility.GetCarDefect(qccastt);
                 
@@ -707,8 +710,10 @@ namespace WebApi2.Controllers.Utility
         public static ResultMsg QCCASTT_DefectDetect(Qccastt qccastt)
         {
             ResultMsg rm = new ResultMsg();
+            
             try
             {
+                //LogManager.SetCommonLog("QCCASTT_DefectDetect_isrep:"+qccastt.IsRepaired.ToString()+"_actby:" + qccastt.ActBy.ToString() + "_actareasrl:" + qccastt.ActAreaSrl.ToString() + "_QCSTRGT_SRL:" + qccastt.QCSTRGT_SRL.ToString() + "_IsDefected:" + qccastt.IsDefected.ToString());//
                 bool blnConsistency = false;
                 if (qccastt.IsDefected == 1)
                 {
@@ -725,22 +730,26 @@ namespace WebApi2.Controllers.Utility
                     da.SelectCommand = cmd;
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandText = "QCP_QCCASTT_Detect";
-                    cmd.Parameters.Add("PVIN", OracleDbType.Int32).Value = qccastt.VinWithoutChar;
-                    cmd.Parameters.Add("PQCAREAT_SRL", OracleDbType.Int32).Value = qccastt.QCAreat_Srl;
-                    cmd.Parameters.Add("PQCUSERT_SRL", OracleDbType.Int32).Value = qccastt.ActBy;
-                    cmd.Parameters.Add("PISDEFECTED", OracleDbType.Int32).Value = qccastt.IsDefected;
-                    cmd.Parameters.Add("PINUSE", OracleDbType.Int32).Value = qccastt.IsDefected;
-                    // --
                     if (!qccastt.QCBadft_Srl.Equals(null))
                         cmd.Parameters.Add("PQCBADFT_SRL", OracleDbType.Int32).Value = qccastt.QCBadft_Srl;
                     else
                         cmd.Parameters.Add("PQCBADFT_SRL", OracleDbType.Int32).Value = DBNull.Value;
-                    // --
+                    //-
                     if (!qccastt.QCMdult_Srl.Equals(null))
                         cmd.Parameters.Add("PQCMDULT_SRL", OracleDbType.Int32).Value = qccastt.QCMdult_Srl;
                     else
                         cmd.Parameters.Add("PQCMDULT_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                    //--
+                    cmd.Parameters.Add("PVIN", OracleDbType.Varchar2).Value = qccastt.VinWithoutChar;
+                    cmd.Parameters.Add("PQCAREAT_SRL", OracleDbType.Int32).Value = qccastt.ActAreaSrl;
                     // --
+                    if (!qccastt.IsRepaired.Equals(null))
+                        cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = qccastt.IsRepaired;
+                    else
+                        cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = DBNull.Value;
+
+                    cmd.Parameters.Add("PQCUSERT_SRL", OracleDbType.Int32).Value = qccastt.ActBy;
+                    //-
                     if (!qccastt.QCSTRGT_SRL.Equals(null))
                         cmd.Parameters.Add("PQCSTRGT_SRL", OracleDbType.Int32).Value = qccastt.QCSTRGT_SRL;
                     else
@@ -751,15 +760,15 @@ namespace WebApi2.Controllers.Utility
                     else
                         cmd.Parameters.Add("pCheckListArea_SRL", OracleDbType.Int32).Value = DBNull.Value;
                     // --
-                    if (!qccastt.IsRepaired.Equals(null))
-                        cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = qccastt.IsRepaired;
-                    else
-                        cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = DBNull.Value;
+                    cmd.Parameters.Add("PINUSE", OracleDbType.Int32).Value = qccastt.InUse;
+                    cmd.Parameters.Add("PISDEFECTED", OracleDbType.Int32).Value = qccastt.IsDefected;
                     // --
                     if (!qccastt.RecordOwner.Equals(null))
                         cmd.Parameters.Add("pRecordOwner", OracleDbType.Int32).Value = qccastt.RecordOwner;
                     else
                         cmd.Parameters.Add("pRecordOwner", OracleDbType.Int32).Value = DBNull.Value;
+                    // --
+                    cmd.Parameters.Add("pGrpCode", OracleDbType.Int32).Value = qccastt.GrpCode;
                     // --
                     cmd.Parameters.Add("pMessage", OracleDbType.Varchar2, 1000);
                     cmd.Parameters["PMESSAGE"].Direction = ParameterDirection.Output;
@@ -783,7 +792,7 @@ namespace WebApi2.Controllers.Utility
                     else if (result.Contains("REPEATED DEFECT"))
                         rm.MessageFa = "این عیب قبلا در این ناحیه ثبت گردیده است";
                     else
-                        rm.MessageFa = "خطایی رخ داده است";
+                        rm.MessageFa = "خطایی رخ داده است"+ qccastt.ActBy.ToString() ;
                     // --
                     rm.lstQccastt= QccasttUtility.GetCarDefect(qccastt);
                     return rm;
@@ -798,6 +807,7 @@ namespace WebApi2.Controllers.Utility
             {
                 rm.title = "error";
                 rm.Message = ex.Message.ToString();
+                LogManager.SetCommonLog("QCCASTT_DefectDetect_Err:" + ex.Message.ToString());
                 return rm;
             }
         }
@@ -825,22 +835,26 @@ namespace WebApi2.Controllers.Utility
                         da.SelectCommand = cmd;
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.CommandText = "QCP_QCCASTT_Detect";
-                        cmd.Parameters.Add("PVIN", OracleDbType.Int32).Value = LstQCcastt[i].VinWithoutChar;
-                        cmd.Parameters.Add("PQCAREAT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].QCAreat_Srl;
-                        cmd.Parameters.Add("PQCUSERT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].ActBy;
-                        cmd.Parameters.Add("PISDEFECTED", OracleDbType.Int32).Value = LstQCcastt[i].IsDefected;
-                        cmd.Parameters.Add("PINUSE", OracleDbType.Int32).Value = LstQCcastt[i].IsDefected;
-                        // --
                         if (!LstQCcastt[i].QCBadft_Srl.Equals(null))
                             cmd.Parameters.Add("PQCBADFT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].QCBadft_Srl;
                         else
                             cmd.Parameters.Add("PQCBADFT_SRL", OracleDbType.Int32).Value = DBNull.Value;
-                        // --
+                        //-
                         if (!LstQCcastt[i].QCMdult_Srl.Equals(null))
                             cmd.Parameters.Add("PQCMDULT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].QCMdult_Srl;
                         else
                             cmd.Parameters.Add("PQCMDULT_SRL", OracleDbType.Int32).Value = DBNull.Value;
+                        //--
+                        cmd.Parameters.Add("PVIN", OracleDbType.Varchar2).Value = LstQCcastt[i].VinWithoutChar;
+                        cmd.Parameters.Add("PQCAREAT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].ActAreaSrl;
                         // --
+                        if (!LstQCcastt[i].IsRepaired.Equals(null))
+                            cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = LstQCcastt[i].IsRepaired;
+                        else
+                            cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = DBNull.Value;
+
+                        cmd.Parameters.Add("PQCUSERT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].ActBy;
+                        //-
                         if (!LstQCcastt[i].QCSTRGT_SRL.Equals(null))
                             cmd.Parameters.Add("PQCSTRGT_SRL", OracleDbType.Int32).Value = LstQCcastt[i].QCSTRGT_SRL;
                         else
@@ -851,15 +865,15 @@ namespace WebApi2.Controllers.Utility
                         else
                             cmd.Parameters.Add("pCheckListArea_SRL", OracleDbType.Int32).Value = DBNull.Value;
                         // --
-                        if (!LstQCcastt[i].IsRepaired.Equals(null))
-                            cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = LstQCcastt[i].IsRepaired;
-                        else
-                            cmd.Parameters.Add("PISREPAIRED", OracleDbType.Int32).Value = DBNull.Value;
+                        cmd.Parameters.Add("PINUSE", OracleDbType.Int32).Value = LstQCcastt[i].InUse;
+                        cmd.Parameters.Add("PISDEFECTED", OracleDbType.Int32).Value = LstQCcastt[i].IsDefected;
                         // --
                         if (!LstQCcastt[i].RecordOwner.Equals(null))
                             cmd.Parameters.Add("pRecordOwner", OracleDbType.Int32).Value = LstQCcastt[i].RecordOwner;
                         else
                             cmd.Parameters.Add("pRecordOwner", OracleDbType.Int32).Value = DBNull.Value;
+                        // --
+                        cmd.Parameters.Add("pGrpCode", OracleDbType.Int32).Value = LstQCcastt[i].GrpCode;
                         // --
                         cmd.Parameters.Add("pMessage", OracleDbType.Varchar2, 1000);
                         cmd.Parameters["PMESSAGE"].Direction = ParameterDirection.Output;

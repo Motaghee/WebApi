@@ -48,8 +48,12 @@ namespace WebApi2.Models
         public string PaintShopProdDate { get; set; }
         public string ASMShopProdDate { get; set; }
         public double CurAreaSrl { get; set; }
+        public int ActAreaSrl { get; set; }
+        public int ActBy { get; set; }
+
         public IEnumerable<Qcqctrt> lstQcqctrt { get; set; }
         public IEnumerable<Qccastt> lstQccastt { get; set; }
+
 
 
 

@@ -32,9 +32,9 @@
         public int CHECKLISTAREA_SRL { get; set; }
         public int IsDefected { get; set; }
         public int InUse { get; set; }
-        public int ActAreaSrl;// { get; set; }
-        public int ActBy;//{ get; set; }
-        
+        public int ActAreaSrl { get; set; }
+        public int ActBy { get; set; }
+
 
     }
 }
