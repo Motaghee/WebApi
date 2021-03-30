@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Common.Models.Qccastt;
+using Common.Models.QccasttModels;
 
 namespace QCManagement.Models
 {

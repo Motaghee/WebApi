@@ -2,6 +2,7 @@
 using ClosedXML.Excel;
 using Common.Automation;
 using Common.db;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -148,5 +149,119 @@ namespace Common.Utility
             return new SelectList(list, "Value", "Text");
         }
 
-    }
+        public static bool QCInsertUserAct2(string _QcusertSrl,
+                            string _Action,
+                            string _vin,
+                            string _QcareatSrl,
+                            string _REPORTMETHODCODE,
+                            string _ClientIP,
+                            string _CLIENTMACADDRESS,
+                            string _COMPUTERNAME,
+                            string _WINDOWSUSERNAME,
+                            string _Device,
+                            string _QCUsAcTytSrl)
+        {
+            try
+            {
+                //==
+                if (string.IsNullOrEmpty(_QcusertSrl))
+                    _QcusertSrl = "null";
+                else if (_QcusertSrl.Substring(0, 2) == "UI")
+                {
+                    _QcusertSrl = _QcusertSrl.Remove(0, 2);
+                    _QcusertSrl = string.Format(@"(select srl from qcusert u where userid={0})", _QcusertSrl);
+                }
+                //==
+                if (string.IsNullOrEmpty(_Action))
+                    _Action = "null";
+                else
+                    _Action = "'" + _Action + "'";
+                //--
+                if (string.IsNullOrEmpty(_vin))
+                    _vin = "null";
+                else
+                    _vin = "'" + _vin + "'";
+                //--
+                if (string.IsNullOrEmpty(_QcareatSrl))
+                    _QcareatSrl = "null";
+                else if (_QcareatSrl.Substring(0, 2) == "AC")
+                {
+                    _QcareatSrl = _QcareatSrl.Remove(0, 2);
+                    _QcareatSrl = string.Format(@"(select srl from qcareat a where AreaCode={0})", _QcareatSrl);
+                }
+                //--
+                if (string.IsNullOrEmpty(_REPORTMETHODCODE))
+                    _REPORTMETHODCODE = "null";
+                else
+                    _REPORTMETHODCODE = "'" + _REPORTMETHODCODE + "'";
+                //--
+                if (string.IsNullOrEmpty(_ClientIP))
+                    _ClientIP = "null";
+                else
+                    _ClientIP = "'" + _ClientIP + "'";
+                //--
+                if (string.IsNullOrEmpty(_CLIENTMACADDRESS))
+                    _CLIENTMACADDRESS = "null";
+                else
+                    _CLIENTMACADDRESS = "'" + _CLIENTMACADDRESS + "'";
+                //---
+                if (string.IsNullOrEmpty(_COMPUTERNAME))
+                    _COMPUTERNAME = "null";
+                else
+                    _COMPUTERNAME = "'" + _COMPUTERNAME + "'";
+                //---
+                if (string.IsNullOrEmpty(_WINDOWSUSERNAME))
+                    _WINDOWSUSERNAME = "null";
+                else
+                    _WINDOWSUSERNAME = "'" + _WINDOWSUSERNAME + "'";
+                //---
+                if (string.IsNullOrEmpty(_Device))
+                    _Device = "null";
+                //--
+                if (DBHelper.LiveDBConnectionIns.State == ConnectionState.Closed)
+                {
+                    DBHelper.LiveDBConnectionIns.ConnectionString = DBHelper.CnStrInsLive;
+                    DBHelper.LiveDBConnectionIns.Open();
+                }
+                OracleCommand cmd = new OracleCommand();
+                cmd.Connection = DBHelper.LiveDBConnectionIns;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = string.Format(@"insert into QCUSACT
+                                                  (QCUSERT_SRL,
+                                                   Action,
+                                                   vin,
+                                                   qcareat_Srl,
+                                                   REPORTMETHODCODE,
+                                                   CLIENTIP,
+                                                   CLIENTMACADDRESS,
+                                                   COMPUTERNAME,
+                                                   WINDOWSUSERNAME,
+                                                   Device,
+                                                   CREATEDDATE,
+                                                   QCUsAcTyt_Srl)
+                                                   values
+                                                  ({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},sysdate,{10})
+                                                       ",
+                                              _QcusertSrl,
+                                              _Action,
+                                              _vin,
+                                              _QcareatSrl,
+                                              _REPORTMETHODCODE,
+                                              _ClientIP,
+                                              _CLIENTMACADDRESS,
+                                              _COMPUTERNAME,
+                                              _WINDOWSUSERNAME, _Device, _QCUsAcTytSrl
+                                              );
+                cmd.ExecuteNonQuery();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LiveDBConnectionIns.Close();
+                return false;
+                //throw;
+            }
+        }
+
+        }
 }

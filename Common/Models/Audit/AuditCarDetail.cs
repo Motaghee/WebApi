@@ -1,4 +1,4 @@
-﻿namespace WebApi2.Models
+﻿namespace Common.Models.Audit
 {
     public class AuditCarDetail
     {

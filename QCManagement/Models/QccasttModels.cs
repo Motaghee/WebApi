@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using Common.Models.Car;
-using Common.Models.Qccastt;
+using Common.Models.QccasttModels;
 
 namespace QCManagement.Models
 {

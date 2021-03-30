@@ -20,7 +20,7 @@ namespace WebApi2
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromHours(3),
+                AccessTokenExpireTimeSpan = TimeSpan.FromHours(5),
                 Provider = myProvider
             };
             app.UseOAuthAuthorizationServer(options);

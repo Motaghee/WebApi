@@ -571,7 +571,7 @@ namespace Common.db
                     //{
 
                     //} while (Tthen.AddSeconds(5) > DateTime.Now);
-                    Thread.Sleep(10000);
+                    //Thread.Sleep(10000);
                     return GetDBObjectByObj22(_Obj, _ds, _CommandText, strSchema);
                 }
                 return lstObj;
@@ -640,6 +640,10 @@ namespace Common.db
                                     {
                                         if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Decimal")
                                             _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToInt32(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                        else if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Int32")
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToInt32(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                        else if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Int64")
+                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToInt32(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
                                         else
                                         {
                                             if ((_ds.Tables[0].Rows[i][strFieldName].ToString() == "FALSE") || (_ds.Tables[0].Rows[i][strFieldName].ToString() == "TRUE"))
@@ -661,7 +665,6 @@ namespace Common.db
                             catch (Exception e)
                             {
                                 LogFile(e);
-                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj2" + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
                             }
                         }
 
@@ -685,7 +688,7 @@ namespace Common.db
             catch (Exception ex)
             {
                 LogFile(ex);
-                //DBHelper.LogtxtToFile("err2-GetDBObjectByObj2_Err:"+ex);
+                DBHelper.LogtxtToFile("err2-GetDBObjectByObj2_Err:"+ex);
                 throw ex;
             }
         }
@@ -775,6 +778,7 @@ namespace Common.db
             catch (Exception ex)
             {
                 LogFile(ex);
+                DBHelper.LogtxtToFile("err1-GetDBObjectByObj22_SecondTry_PTOnLive => " + strFieldName + ex.ToString() + ex.InnerException.Message + ex.Message.ToString());
                 //DBHelper.LogtxtToFile("err2-GetDBObjectByObj2_Err:"+ex);
                 throw ex;
             }

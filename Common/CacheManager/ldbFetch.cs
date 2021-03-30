@@ -1,7 +1,7 @@
 ﻿using Common.Actions;
 using Common.db;
 using Common.Models;
-using Common.Models.Qccastt;
+using Common.Models.QccasttModels;
 using Common.Utility;
 using LiteDB;
 using System;

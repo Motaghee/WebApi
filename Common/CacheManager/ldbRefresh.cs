@@ -4,7 +4,7 @@ using Common.db;
 using LiteDB;
 using System;
 using System.Collections.Generic;
-using Common.Models.Qccastt;
+using Common.Models.QccasttModels;
 using System.Globalization;
 using Common.Utility;
 using Common.Models.General;

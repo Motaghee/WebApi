@@ -1,12 +1,14 @@
 ﻿using Common.db;
+using Common.Models.Audit;
+using Common.Models.General;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using WebApi2.Models;
 
-namespace WebApi2.Controllers.Utility
+
+namespace Common.Utility
 {
     public class AuditUtility
     {

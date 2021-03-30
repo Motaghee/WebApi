@@ -1,5 +1,5 @@
-﻿namespace WebApi2.Models
-{
+﻿namespace Common.Models.QccasttModels
+{ 
     public class Qcqctrt
     {
         public double Rowindex { get; set; }

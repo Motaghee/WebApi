@@ -14,6 +14,8 @@ using System.Drawing;
 using System.Windows.Media.Imaging;
 using System.Threading.Tasks;
 using System.Drawing.Imaging;
+using Common.Models;
+using Common.Models.General;
 
 namespace WebApi2.Controllers
 {
@@ -38,15 +40,17 @@ namespace WebApi2.Controllers
             IEnumerable<Claim> claims = identity.Claims;
             user.SRL = Convert.ToDouble(claims.FirstOrDefault(x => x.Type == "srl").Value.ToString());
             user.USERNAME = claims.FirstOrDefault(x => x.Type == "UserName").Value.ToString();
+            user.USERID = Convert.ToInt32(claims.FirstOrDefault(x => x.Type == "UserId").Value.ToString());
             user.FNAME = claims.FirstOrDefault(x => x.Type == "FName").Value.ToString();
             user.LNAME = claims.FirstOrDefault(x => x.Type == "LName").Value.ToString();
             user.QCAREATSRL = Convert.ToDouble(claims.FirstOrDefault(x => x.Type == "QCAreatSrl").Value.ToString());
-            user.QCAREACODE = claims.FirstOrDefault(x => x.Type == "QCAreaCode").Value.ToString();
+            user.AREACODE= Convert.ToInt32(claims.FirstOrDefault(x => x.Type == "AreaCode").Value.ToString());
+            user.AREADESC = claims.FirstOrDefault(x => x.Type == "AreaDesc").Value.ToString();
+            user.AREATYPE = Convert.ToInt32(claims.FirstOrDefault(x => x.Type == "AreaType").Value.ToString());
             user.QCAREATSRL = Convert.ToDouble(claims.FirstOrDefault(x => x.Type == "QCAreatSrl").Value.ToString());
             user.CHECKDEST = Convert.ToDouble(claims.FirstOrDefault(x => x.Type == "CheckDest").Value.ToString());
             user.MACISVALID = Convert.ToBoolean(claims.FirstOrDefault(x => x.Type == "MacIsValid").Value.ToString());
             user.CLIENTVERISVALID = Convert.ToBoolean(claims.FirstOrDefault(x => x.Type == "ClientVerIsValid").Value.ToString());
-            
             user.QCMOBAPPPER = claims.FirstOrDefault(x => x.Type == "QCMobAppPer").Value.ToString();
             user.PTDASHPER = claims.FirstOrDefault(x => x.Type == "PTDashPer").Value.ToString();
             user.QCDASHPER = claims.FirstOrDefault(x => x.Type == "QCDashPer").Value.ToString();

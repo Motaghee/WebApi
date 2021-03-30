@@ -1,4 +1,4 @@
-﻿namespace Common.Models.Qccastt
+﻿namespace Common.Models.QccasttModels
 {
     public class Area
     {
@@ -9,6 +9,7 @@
         public double AreaCode { get; set; }
         public string AreaDesc { get; set; }
         public double PCShopt_Srl{ get; set; }
+        public int PTShopCode { get; set; }
 
-}
+    }
 }

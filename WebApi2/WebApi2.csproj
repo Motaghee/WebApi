@@ -221,25 +221,8 @@
     <Compile Include="Controllers\AuditController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\PublicController.cs" />
-    <Compile Include="Controllers\Utility\MessageUtility.cs" />
-    <Compile Include="Controllers\Utility\QccasttUtility.cs" />
-    <Compile Include="Controllers\Utility\CarUtility.cs" />
-    <Compile Include="Controllers\Utility\AuditUtility.cs" />
     <Compile Include="Controllers\Utility\GeneralUtility.cs" />
-    <Compile Include="Models\BodyModel.cs" />
-    <Compile Include="Models\CarGroup.cs" />
-    <Compile Include="Models\Qcqctrt.cs" />
-    <Compile Include="Models\Shop.cs" />
-    <Compile Include="Models\CarSend.cs" />
-    <Compile Include="Models\CarImage.cs" />
-    <Compile Include="Models\MsgStatistics.cs" />
-    <Compile Include="Models\MessageCount.cs" />
     <Compile Include="Models\NowDateTime.cs" />
-    <Compile Include="Models\Qcdfctt.cs" />
-    <Compile Include="Models\Qcdsart.cs" />
-    <Compile Include="Models\Defect.cs" />
-    <Compile Include="Models\Module.cs" />
-    <Compile Include="Models\ResultMsg.cs" />
     <Compile Include="Models\utility\clsCommon.cs" />
     <Compile Include="Security\AuthorizeAttribute.cs" />
     <Compile Include="Controllers\CarController.cs" />
@@ -253,11 +236,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Car.cs" />
-    <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\AuditCarDetail.cs" />
     <Compile Include="Models\QCSrv.cs" />
-    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

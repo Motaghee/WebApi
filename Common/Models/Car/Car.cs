@@ -1,9 +1,8 @@
-﻿using Common.Models.Qccastt;
+﻿using Common.Models.QccasttModels;
 using System;
 using System.Collections.Generic;
-using System.Data;
 
-namespace WebApi2.Models
+namespace Common.Models.Car
 {
     public class Car
     {
@@ -50,7 +49,8 @@ namespace WebApi2.Models
         public double CurAreaSrl { get; set; }
         public int ActAreaSrl { get; set; }
         public int ActBy { get; set; }
-
+        public int PTCurrentShopCode { get; set; }
+        public int CurrentAreaDefCount { get; set; }
         public IEnumerable<Qcqctrt> lstQcqctrt { get; set; }
         public IEnumerable<Qccastt> lstQccastt { get; set; }
 

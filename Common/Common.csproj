@@ -117,24 +117,38 @@
     <Compile Include="CacheManager\MemoryCacher.cs" />
     <Compile Include="db\DBHelper.cs" />
     <Compile Include="Models\AuditStatisticsMDTrend.cs" />
+    <Compile Include="Models\Audit\AuditCarDetail.cs" />
     <Compile Include="Models\Car\BodyStyle.cs" />
     <Compile Include="Models\Car\BodyModel.cs" />
+    <Compile Include="Models\Car\Car.cs" />
     <Compile Include="Models\Car\CarGroup.cs" />
+    <Compile Include="Models\Car\CarImage.cs" />
+    <Compile Include="Models\Car\CarSend.cs" />
     <Compile Include="Models\Car\FilterCarStatus.cs" />
     <Compile Include="Models\Audit\DataMining.cs" />
     <Compile Include="Models\BodyModelProductStatistics.cs" />
     <Compile Include="Models\General\ldbUpdStatus.cs" />
+    <Compile Include="Models\General\Message.cs" />
+    <Compile Include="Models\General\MessageCount.cs" />
+    <Compile Include="Models\General\MsgStatistics.cs" />
+    <Compile Include="Models\General\ResultMsg.cs" />
     <Compile Include="Models\GroupProductStatistics.cs" />
     <Compile Include="Models\CompanyProductStatistics.cs" />
     <Compile Include="Models\PT\FinalQC.cs" />
     <Compile Include="Models\AuditStatistics.cs" />
-    <Compile Include="Models\Qccastt\Area.cs" />
-    <Compile Include="Models\Qccastt\Pcshopt.cs" />
-    <Compile Include="Models\Qccastt\QccasttLight.cs" />
-    <Compile Include="Models\Qccastt\Qccastt.cs" />
-    <Compile Include="Models\Qccastt\QCDataMining.cs" />
-    <Compile Include="Models\Qccastt\Shift.cs" />
-    <Compile Include="Models\Qccastt\Strength.cs" />
+    <Compile Include="Models\PT\Shop.cs" />
+    <Compile Include="Models\QccasttModels\Area.cs" />
+    <Compile Include="Models\QccasttModels\Defect.cs" />
+    <Compile Include="Models\QccasttModels\Module.cs" />
+    <Compile Include="Models\QccasttModels\Pcshopt.cs" />
+    <Compile Include="Models\QccasttModels\QccasttLight.cs" />
+    <Compile Include="Models\QccasttModels\Qccastt.cs" />
+    <Compile Include="Models\QccasttModels\QCDataMining.cs" />
+    <Compile Include="Models\QccasttModels\Qcdfctt.cs" />
+    <Compile Include="Models\QccasttModels\Qcdsart.cs" />
+    <Compile Include="Models\QccasttModels\Qcqctrt.cs" />
+    <Compile Include="Models\QccasttModels\Shift.cs" />
+    <Compile Include="Models\QccasttModels\Strength.cs" />
     <Compile Include="Models\QCShopStatistics.cs" />
     <Compile Include="Models\QCAreaStatistics.cs" />
     <Compile Include="Models\Car\CarStatus.cs" />
@@ -142,6 +156,7 @@
     <Compile Include="Models\QCStatistics.cs" />
     <Compile Include="Models\ProductStatistics.cs" />
     <Compile Include="Models\Sale\SaleStatus.cs" />
+    <Compile Include="Models\QCUsert.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -150,8 +165,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Utility\AuditUtility.cs" />
     <Compile Include="Utility\CarUtility.cs" />
     <Compile Include="Utility\CommonUtility.cs" />
+    <Compile Include="Utility\MessageUtility.cs" />
     <Compile Include="Utility\QccasttUtility.cs" />
     <Compile Include="Utility\UserManager.cs" />
     <Compile Include="Utility\VinUtility.cs" />

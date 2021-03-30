@@ -1,4 +1,4 @@
-﻿namespace WebApi2.Models
+﻿namespace Common.Models.PT
 {
     public class Shop
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Common.Models
+namespace Common.Models.PT
 {
     public class FinalQC
     {

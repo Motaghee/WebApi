@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.Models.Audit
+namespace Common.Models.QccasttModels
 {
     class QCDataMining
     {

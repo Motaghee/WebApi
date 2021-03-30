@@ -1,5 +1,9 @@
 ﻿using Common.Models;
-using Common.Models.Qccastt;
+using Common.Models.Car;
+using Common.Models.General;
+using Common.Models.PT;
+using Common.Models.QccasttModels;
+using Common.Utility;
 using System;
 using System.Collections.Generic;
 using System.Web.Http;
@@ -55,18 +59,12 @@ namespace WebApi2.Controllers
             return QccasttUtility.QCCASTT_DefectDetect(qccastt);
         }
 
-        //[HttpGet]
-        //[Route("api/Qccastt/DeleteQccastt2")]
-        //public ResultMsg DeleteQccastt2()
-        //{
-        //    Qccastt qccastt = new Qccastt();
-        //    qccastt.Srl = 26904272;
-        //    qccastt.Vin = "NAS411100G1205277";
-        //    qccastt.ActBy = 4314;
-        //    qccastt.ActAreaSrl = 94;
-        //    //qccastt.Vin = "NAS411100G1205277";
-        //    return QccasttUtility.Delete_QCCASTT(qccastt);
-        //}
+        [HttpGet]
+        [Route("api/Qccastt/GetUserTst")]
+        public User GetUserTst()
+        {
+            return QccasttUtility.FindUser("1000861","0082397171","1","500","");
+        }
 
         [HttpPost]
         [Route("api/Qccastt/CarSend")]
@@ -75,6 +73,35 @@ namespace WebApi2.Controllers
             return QccasttUtility.InsertQcqctrt(carsend);
         }
 
+        [HttpPost]
+        [Route("api/Qccastt/PDIConfirm")]
+        public ResultMsg PDIConfirm([FromBody] Qccastt qccastt)
+        {
+            return QccasttUtility.PDIConfirm(qccastt);
+        }
+        [HttpGet]
+        [Route("api/Qccastt/PDIConfirm")]
+        public ResultMsg PDIConfirmtst()
+        {
+            Qccastt q = new Qccastt();
+            q.Vin = "NAS411100G1205277";
+            q.ActAreaSrl = 94;
+            q.ActBy = 4314;
+            return QccasttUtility.PDIConfirm(q);
+        }
+
+        [HttpGet]
+        [Route("api/Qccastt/CarSendtest")]
+        public ResultMsg CarSendtest()
+        {
+            CarSend carsend = new CarSend();
+            carsend.UserId = 1000861;
+            carsend.Vin = "NAS411100G1205277";
+            carsend.QCUsertSrl = 4314;
+            carsend.FromAreaSrl = 461;
+            carsend.ToAreaSrl = 94;
+            return QccasttUtility.InsertQcqctrt(carsend);
+        }
 
         [HttpPost]
         [Route("api/Qccastt/UpdateCarImage")]

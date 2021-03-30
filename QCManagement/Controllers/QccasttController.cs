@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using Common;
 using Common.db;
 using Common.Models.Car;
-using Common.Models.Qccastt;
+using Common.Models.QccasttModels;
 using Common.Utility;
 using QCManagement.Models;
 using Stimulsoft.Report;

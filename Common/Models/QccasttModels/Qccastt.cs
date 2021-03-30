@@ -1,4 +1,4 @@
-﻿namespace Common.Models.Qccastt
+﻿namespace Common.Models.QccasttModels
 {
     public class Qccastt
     {

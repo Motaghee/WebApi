@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebApi2.Models
+namespace Common.Models.Car
 {
     public class CarImage
     {

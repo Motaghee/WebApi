@@ -1,4 +1,5 @@
 ﻿using Common.db;
+using Common.Models.General;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Data;

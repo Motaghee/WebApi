@@ -1,7 +1,7 @@
-﻿using Common.Models.Qccastt;
+﻿using Common.Models.QccasttModels;
 using System.Collections.Generic;
 
-namespace WebApi2.Models
+namespace Common.Models.General
 {
     public class ResultMsg
     {
@@ -9,5 +9,6 @@ namespace WebApi2.Models
         public string Message = ""; //{ get; set; } = ""; //double
         public string MessageFa = "";
         public IEnumerable<Qccastt> lstQccastt { get; set; }
+        public IEnumerable<Qcqctrt> lstQcqctrt { get; set; }
     }
 }

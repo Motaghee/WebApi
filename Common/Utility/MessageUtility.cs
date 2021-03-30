@@ -1,10 +1,10 @@
 ﻿using Common.db;
+using Common.Models.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebApi2.Models;
 
-namespace WebApi2.Controllers.Utility
+namespace Common.Utility
 {
     public static class MessageUtility
     {

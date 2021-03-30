@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Models.General;
+using System;
 
 namespace WebApi2.Models
 {

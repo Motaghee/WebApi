@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-namespace Common.Models.Qccastt
+namespace Common.Models.QccasttModels
 {
     public class Pcshopt
     {

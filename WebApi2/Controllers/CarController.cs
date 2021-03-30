@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Common.Models;
+using Common.Models.Car;
+using Common.Utility;
+using System;
 using System.Web.Http;
 using WebApi2.Controllers.Utility;
 using WebApi2.Models;
@@ -35,7 +38,20 @@ namespace WebApi2.Controllers
 
         }
 
+        [HttpGet]
+        [Route("api/car/GetUsertst")]
+        public QCUsert GetUsertst()
+        {
+            try
+            {
+                return QccasttUtility.GetQCUserT("4314");
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
 
+        }
     }
 
 
