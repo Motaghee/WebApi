@@ -1,5 +1,6 @@
 ﻿using Common.Actions;
 using Common.CacheManager;
+using Common.db;
 using Common.Models;
 using Common.Models.General;
 using Common.Utility;
@@ -80,33 +81,46 @@ namespace WebApi2.Controllers
             else
                 ndt.MsgCount = oldmsc;
             // ---
-            UpdateUserData(user,ndt,1);
-            LogManager.SetCommonLog(String.Format(@"GetNowU time:{0} From:{1} by:{2} UserId:{3}", ndt.NowDateFa, user.AppName, ndt.QCUsertSrl.ToString(), user.USERID));
+            try
+            {
+                LogManager.SetCommonLog(String.Format(@"GetNowU time:{0} From:{1} by:{2} UserId:{3}", ndt.NowDateFa, user.AppName, ndt.QCUsertSrl.ToString(), user.USERID));
+                UpdateUserData(user, ndt, 1);
+            }
+            catch(Exception e) { DBHelper.LogFile(e); }
             return ndt;
             //ToShortDateString()+" " + DateTime.Now.ToShortTimeString();
         }
 
+        public static Random rnd = new Random();
         public void UpdateUserData(User _user, NowDateTime _ndt, int _UserDataType)
         {
-            if (true)
+            try
             {
-                UserData ud = new UserData();
-                ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim();
-                ud.DateFa = _ndt.NowDateFa;
-                ud.DateTimeFa = _ndt.NowDateTimeFa;
-                ud.Time = _ndt.NowTime;
-                // get instanse of ldb
-                ConnectionString cn = ldbConfig.ldbUserConnectionString;
-                LiteDatabase db = new LiteDatabase(ldbConfig.GetUserConnectionString(_user.USERID.ToString()));
-                // get old ldb ps lst
-                LiteCollection<UserData> dbUD = db.GetCollection<UserData>("UserData");
-                //var dbUD = db.GetCollection<UserData>("UserData");
-                // delete old lst
-                //dbPS.Delete(Query.EQ("DateIntervalType", _Type));
-                ud.DataType = _UserDataType;
-                dbUD.Insert(ud);
-                //LogManager.SetCommonLog("RefreshLdbProductStatistics_ insert successfully" + lstNewPS.Count);
-                db.Dispose();
+                if (true)
+                {
+                    DateTime dt = new DateTime();
+                    dt = DateTime.Now;
+                    UserData ud = new UserData();
+                    ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim()+ DateTime.Now.Millisecond.ToString() + rnd.Next().ToString();
+                    ud.DateFa = _ndt.NowDateFa;
+                    ud.DateTimeFa = _ndt.NowDateTimeFa;
+                    ud.Time = _ndt.NowTime;
+                    // get instanse of ldb
+                    ConnectionString cn = ldbConfig.ldbUserConnectionString;
+                    LiteDatabase db = new LiteDatabase(ldbConfig.GetUserConnectionString(_user.USERID.ToString()));
+                    // get old ldb ps lst
+                    LiteCollection<UserData> dbUD = db.GetCollection<UserData>("UserData");
+                    //var dbUD = db.GetCollection<UserData>("UserData");
+                    // delete old lst
+                    //dbPS.Delete(Query.EQ("DateIntervalType", _Type));
+                    ud.DataType = _UserDataType;
+                    dbUD.Insert(ud);
+                    //LogManager.SetCommonLog("RefreshLdbProductStatistics_ insert successfully" + lstNewPS.Count);
+                    db.Dispose();
+                }
+            }
+            catch (Exception e){
+                DBHelper.LogFile(e); 
             }
         }
     }
