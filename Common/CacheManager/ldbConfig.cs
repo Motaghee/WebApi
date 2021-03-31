@@ -2,7 +2,7 @@
 
 namespace Common.CacheManager
 {
-    class ldbConfig
+    public class ldbConfig
     {
         public static ConnectionString ldbConnectionString = new ConnectionString(@"C:\MobAppCache\ProductStatisticsCache.bdl")
         {
@@ -49,6 +49,18 @@ namespace Common.CacheManager
         {
             Password = "H@med110Rez@"
         };
+        public static ConnectionString ldbUserConnectionString = new ConnectionString(@"C:\MobAppCache\users\x.bdl")
+        {
+            Password = "H@med110Rez@"
+        };
+
+        public static ConnectionString GetUserConnectionString(string _userid)
+        {
+            string path = string.Format(@"C:\MobAppCache\users\{0}.bdl", _userid);
+            ConnectionString ldbUserConnectionString = new ConnectionString(path);
+            ldbUserConnectionString.Password = "H@med110Rez@";
+            return ldbUserConnectionString;
+        }
 
     }
 }

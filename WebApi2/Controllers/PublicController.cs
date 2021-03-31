@@ -1,10 +1,16 @@
-﻿using Common.Models.General;
+﻿using Common.Actions;
+using Common.CacheManager;
+using Common.Models;
+using Common.Models.General;
 using Common.Utility;
+using LiteDB;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
 using System.Web.Http;
 using WebApi.OutputCache.V2;
-using WebApi2.Controllers.Utility;
 using WebApi2.Models;
 
 namespace WebApi2.Controllers
@@ -47,6 +53,12 @@ namespace WebApi2.Controllers
         public NowDateTime GetNowU([FromBody] NowDateTime ndt)
         //public DateTime GetNow()
         {
+            User user = new User();
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            user.AppName = claims.FirstOrDefault(x => x.Type == "AppName").Value.ToString();
+            user.USERID = Convert.ToInt32(claims.FirstOrDefault(x => x.Type == "UserId").Value.ToString());
+            //---
             // String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
             //String mDateTime = DateUtils.formatDateTimeFromDate(DATE_FORMAT, Calendar.getInstance().getTime());
             ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -68,12 +80,35 @@ namespace WebApi2.Controllers
             else
                 ndt.MsgCount = oldmsc;
             // ---
+            UpdateUserData(user,ndt,1);
+            LogManager.SetCommonLog(String.Format(@"GetNowU time:{0} From:{1} by:{2} UserId:{3}", ndt.NowDateFa, user.AppName, ndt.QCUsertSrl.ToString(), user.USERID));
             return ndt;
             //ToShortDateString()+" " + DateTime.Now.ToShortTimeString();
         }
 
-
-
-
+        public void UpdateUserData(User _user, NowDateTime _ndt, int _UserDataType)
+        {
+            if (true)
+            {
+                UserData ud = new UserData();
+                ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim();
+                ud.DateFa = _ndt.NowDateFa;
+                ud.DateTimeFa = _ndt.NowDateTimeFa;
+                ud.Time = _ndt.NowTime;
+                // get instanse of ldb
+                ConnectionString cn = ldbConfig.ldbUserConnectionString;
+                LiteDatabase db = new LiteDatabase(ldbConfig.GetUserConnectionString(_user.USERID.ToString()));
+                // get old ldb ps lst
+                LiteCollection<UserData> dbUD = db.GetCollection<UserData>("UserData");
+                //var dbUD = db.GetCollection<UserData>("UserData");
+                // delete old lst
+                //dbPS.Delete(Query.EQ("DateIntervalType", _Type));
+                ud.DataType = _UserDataType;
+                dbUD.Insert(ud);
+                //LogManager.SetCommonLog("RefreshLdbProductStatistics_ insert successfully" + lstNewPS.Count);
+                db.Dispose();
+            }
+        }
     }
+
 }

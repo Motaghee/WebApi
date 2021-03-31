@@ -33,6 +33,7 @@
         public string SMSPTPER { get; set; }
         public string AUDITCARDPER { get; set; }
         public string CARSTATUSPER { get; set; }
+        public string AppName { get; set; }
 
         //public double SRL { get; set; } //double
         //public string FNAME { get; set; }

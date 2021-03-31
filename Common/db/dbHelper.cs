@@ -664,25 +664,18 @@ namespace Common.db
                             }
                             catch (Exception e)
                             {
-                                LogFile(e);
+                                //LogFile(e);
                             }
                         }
 
                     }
                     //DBHelper.LogtxtToFile("Succeed-GetDBObjectByObj2");
                 }
-                else
-                {
-                    //DBHelper.LogtxtToFile("ds is Null-GetDBObjectByObj2_"+ _CommandText);
-                    //await Task.Delay(10000);
-                    //DateTime Tthen = DateTime.Now;
-                    //do
-                    //{
-
-                    //} while (Tthen.AddSeconds(5) > DateTime.Now);
-                    Thread.Sleep(10000);
-                    return GetDBObjectByObj22(_Obj, _ds, _CommandText, strSchema);
-                }
+                //else
+                //{
+                //    Thread.Sleep(10000);
+                //    return GetDBObjectByObj22(_Obj, _ds, _CommandText, strSchema);
+                //}
                 return lstObj;
             }
             catch (Exception ex)

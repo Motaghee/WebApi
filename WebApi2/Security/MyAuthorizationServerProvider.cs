@@ -24,7 +24,6 @@ namespace WebApi2.Security
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            LogManager.SetCommonLog("GrantResourceOwnerCredentials1:" );
             var identity = new ClaimsIdentity(context.Options.AuthenticationType);
             // authenticat from database
             string[] strScope = context.Scope[0].ToString().Split(',');
@@ -32,8 +31,6 @@ namespace WebApi2.Security
             string strAreaCode = strScope[1];
             int intClientVersion = Convert.ToInt32(strScope[2].Replace(".", ""));
             string LoginFromAppName = strScope[3];
-            //string strMac = strScope[3];
-            LogManager.SetCommonLog("GrantResourceOwnerCredentials1:"+ LoginFromAppName);
             User FoundUser = QccasttUtility.FindUser(context.UserName, context.Password, strSecondPassword, strAreaCode, "");
             if (FoundUser != null)
             {
@@ -68,10 +65,11 @@ namespace WebApi2.Security
                         identity.AddClaim(new Claim("SMSPTPer", FoundUser.SMSPTPER.ToString()));
                         identity.AddClaim(new Claim("AuditCardPer", FoundUser.AUDITCARDPER.ToString()));
                         identity.AddClaim(new Claim("CarStatusPer", FoundUser.CARSTATUSPER.ToString()));
+                        identity.AddClaim(new Claim("AppName", LoginFromAppName));
                         // ---
-                        if (LoginFromAppName != "Inspector")
+                        if (LoginFromAppName == "qcm")
                         {
-                            int ClientForceVersion = Convert.ToInt32(clsCommon.ClientForceVersion.Replace(".", ""));
+                            int ClientForceVersion = Convert.ToInt32(clsCommon.ClientForceVersion_qcmobapp.Replace(".", ""));
                             if (intClientVersion >= ClientForceVersion)
                                 identity.AddClaim(new Claim("ClientVerIsValid", "true"));
                             else
@@ -79,9 +77,9 @@ namespace WebApi2.Security
                             identity.AddClaim(new Claim("UserAuthorization", "true"));
                             context.Validated(identity);
                         }
-                        else
+                        else if (LoginFromAppName == "ins")
                         {
-                            int InspectorClientForceVersion = Convert.ToInt32(clsCommon.InspectorClientForceVersion.Replace(".", ""));
+                            int InspectorClientForceVersion = Convert.ToInt32(clsCommon.InspectorClientForceVersion_inspector.Replace(".", ""));
                             if (intClientVersion >= InspectorClientForceVersion)
                                 identity.AddClaim(new Claim("ClientVerIsValid", "true"));
                             else

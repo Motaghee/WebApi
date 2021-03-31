@@ -2,7 +2,7 @@
 {
     public class clsCommon
     {
-        public static string ClientForceVersion = "1.0.0.2";
-        public static string InspectorClientForceVersion = "1.0.0.0";
+        public static string ClientForceVersion_qcmobapp = "1.0.0.3";
+        public static string InspectorClientForceVersion_inspector = "1.0.0.0";
     }
 }

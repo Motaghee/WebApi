@@ -157,6 +157,7 @@
     <Compile Include="Models\ProductStatistics.cs" />
     <Compile Include="Models\Sale\SaleStatus.cs" />
     <Compile Include="Models\QCUsert.cs" />
+    <Compile Include="Models\UserData.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

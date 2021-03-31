@@ -4,15 +4,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Web.Http;
 using WebApi2.Controllers.Utility;
-using WebApi2.Models;
 using Common.db;
 using System.Net;
 using System.IO;
-using Glimpse.Core.ClientScript;
-using System.Net.Http;
 using System.Drawing;
-using System.Windows.Media.Imaging;
-using System.Threading.Tasks;
 using System.Drawing.Imaging;
 using Common.Models;
 using Common.Models.General;
@@ -64,7 +59,7 @@ namespace WebApi2.Controllers
             user.SMSPTPER =claims.FirstOrDefault(x => x.Type == "SMSPTPer").Value.ToString();
             user.AUDITCARDPER = claims.FirstOrDefault(x => x.Type == "AuditCardPer").Value.ToString();
             user.CARSTATUSPER = claims.FirstOrDefault(x => x.Type == "CarStatusPer").Value.ToString();
-
+            user.AppName= claims.FirstOrDefault(x => x.Type == "AppName").Value.ToString();
             user.STRUSERPROFILEIMAGE = GetUserProfileImage(user.USERNAME);
             if (user.USERNAME != "1000861")
                 DBHelper.LogtLoginUser(user.USERNAME +" "+ user.LNAME);

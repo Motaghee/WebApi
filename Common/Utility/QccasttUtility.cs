@@ -1494,7 +1494,6 @@ namespace Common.Utility
                               string _SecondPassword,
                               string _AreaCode, string _Mac)
         {
-            LogManager.SetCommonLog("FindUser:" + _UserName);
             byte[] userByte = Encoding.UTF8.GetBytes(_UserName);
             string strHashPSW = DBHelper.Cryptographer.CreateHash(_Password, "MD5", userByte);
             string commandtext = string.Format(@"select srl,fname,lname,username,psw,userid,
@@ -1526,10 +1525,8 @@ namespace Common.Utility
                                                  and otp = '{3}'  and u.otpexpire > sysdate "
                                                  , _UserName, strHashPSW, _AreaCode, _SecondPassword);
             object[] obj = DBHelper.GetDBObjectByObj2_OnLive(new User(), null, commandtext, "inspector");
-            LogManager.SetCommonLog("FindUser2:" + _AreaCode);
             if ((obj != null) && (obj.Length != 0))
             {
-                LogManager.SetCommonLog("FindUser3");
                 return obj.Cast<User>().ToList()[0];
             }
             else
