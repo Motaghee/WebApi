@@ -15,7 +15,7 @@ namespace Common.Actions
             string commandtext = "";
             try
             {
-                
+
                 DateTime dtN = DateTime.Now;
                 DateTime dtYD = DateTime.Now.AddDays(-1);
                 DateTime dtO30D = DateTime.Now.AddDays(-30);
@@ -30,20 +30,20 @@ namespace Common.Actions
 
                 if (_Type == "Y")
                 {
-                    strDateCondition=string.Format(@"s.Prod_date>='{0}/01/01'", Y);
+                    strDateCondition = string.Format(@"s.Prod_date>='{0}/01/01'", Y);
                     strLFDDateCondition = string.Format(@"s.prodenddate > to_date('{0}/01/01','yyyy/mm/dd','nls_calendar=persian')", Y);
 
                 }
                 else if (_Type == "M")
                 {
-                    strDateCondition = string.Format(@"s.Prod_date>='{0}/{1}/01'", Y,M);
+                    strDateCondition = string.Format(@"s.Prod_date>='{0}/{1}/01'", Y, M);
                     strLFDDateCondition = string.Format(@"s.prodenddate > to_date('{0}/{1}/01','yyyy/mm/dd','nls_calendar=persian')", Y, M);
 
                 }
                 else if (_Type == "D")
                 {
-                    strDateCondition = string.Format(@"s.Prod_date='{0}/{1}/{2}'", Y, M,D);
-                    strLFDDateCondition= string.Format(@"trunc(s.prodenddate) = to_date('{0}/{1}/{2}','yyyy/mm/dd','nls_calendar=persian')", Y, M, D);
+                    strDateCondition = string.Format(@"s.Prod_date='{0}/{1}/{2}'", Y, M, D);
+                    strLFDDateCondition = string.Format(@"trunc(s.prodenddate) = to_date('{0}/{1}/{2}','yyyy/mm/dd','nls_calendar=persian')", Y, M, D);
 
                 }
                 else if (_Type == "YD")
@@ -60,7 +60,7 @@ namespace Common.Actions
                     Y = pc.GetYear(dtO30D).ToString();
                     M = pc.GetMonth(dtO30D).ToString().PadLeft(2, '0');
                     D = pc.GetDayOfMonth(dtO30D).ToString().PadLeft(2, '0');
-                    strDateCondition = string.Format(@"s.Prod_date>='{0}/{1}/{2}'", Y, M,D);
+                    strDateCondition = string.Format(@"s.Prod_date>='{0}/{1}/{2}'", Y, M, D);
                     strLFDDateCondition = string.Format(@"s.prodenddate > to_date('{0}/{1}/{2}','yyyy/mm/dd','nls_calendar=persian')", Y, M, D);
                 }
                 else if (_Type == "O90D")
@@ -116,11 +116,11 @@ namespace Common.Actions
                 //LogManager.SetCommonLog("GetYearProdStatistics_ SuccessFull");
                 //---
 
-                
+
             }
             catch (Exception ex)
             {
-                LogManager.SetCommonLog("GetLiveProdStatistics_ Error" + ex.Message.ToString()+ " "+commandtext+" ");
+                LogManager.SetCommonLog("GetLiveProdStatistics_ Error" + ex.Message.ToString() + " " + commandtext + " ");
                 return null;
             }
 
@@ -350,7 +350,7 @@ namespace Common.Actions
                                                     ", strDateCondition, strLFDDateCondition);
 
                 List<GroupProductStatistics> lst = new List<GroupProductStatistics>();
-                
+
                 lst = DBHelper.GetDBObjectByObj2(new GroupProductStatistics(), null, commandtext, "pt").Cast<GroupProductStatistics>().ToList();
                 return lst;
             }
@@ -379,7 +379,7 @@ namespace Common.Actions
                 string strDateCondition = "";
                 // ---
                 if (JustTodayStatistic)
-                    strDateCondition= string.Format(@" trunc(q.CreatedDate) = to_date('{0}/{1}/{2}','yyyy/mm/dd','nls_calendar=persian') ", Y, M, D);
+                    strDateCondition = string.Format(@" trunc(q.CreatedDate) = to_date('{0}/{1}/{2}','yyyy/mm/dd','nls_calendar=persian') ", Y, M, D);
                 else
                     strDateCondition = string.Format(@" q.CreatedDate >= to_date('{0}','yyyy/mm/dd','nls_calendar=persian') and q.CreatedDate < to_date('{1}','yyyy/mm/dd','nls_calendar=persian') ", strFromDate, strToDate);
                 //string strDateCondition0 = "13980101";
@@ -418,9 +418,15 @@ namespace Common.Actions
                                                     "
                     , strDateCondition);
                 List<QCStatistics> lst = new List<QCStatistics>();
-
-                lst = DBHelper.GetDBObjectByObj2(new QCStatistics(), null, commandtext, "ins").Cast<QCStatistics>().ToList();
-                return lst;
+                object[] obj = DBHelper.GetDBObjectByObj2(new QCStatistics(), null, commandtext, "ins");
+                if (obj!=null)
+                {
+                    lst = obj.Cast<QCStatistics>().ToList();
+                    return lst;
+                }
+                else return null;
+                
+                
             }
             catch (Exception ex)
             {
@@ -454,7 +460,7 @@ namespace Common.Actions
                     strDateCondition = string.Format(@" q.CreatedDate >= to_date('{0}','yyyy/mm/dd','nls_calendar=persian') and q.CreatedDate < to_date('{1}','yyyy/mm/dd','nls_calendar=persian') ", strFromDate, strToDate);
                 //string strDateCondition0 = "13980101";
                 // create Archive commande
-                string commandtext = string.Format(@"select SYS_GUID() as Id,q.srl,q.vin,
+                string commandtext = string.Format(@"select SYS_GUID() as Id,q.srl,q.vin,q.vin as VinWithoutChar,p.shopcode,
                                                                a.areacode,
                                                                s.strenghtdesc,
                                                                m.modulecode,
@@ -463,14 +469,14 @@ namespace Common.Actions
                                                                d.defectdesc,
                                                                bm.grpcode,
                                                                cg.grpname,
-                                                               t.title,
-                                                               q.inuse,
+                                                               t.title,q.RecordOwner,q.CHECKLISTAREA_SRL,QCSTRGT_SRL,q.IsDefected,q.InUse,
                                                                a.areacode||' '||a.areadesc as AreaDesc,
                                                                u.lname as CreatedByDesc,q.CreatedBy,
                                                                ur.lname as RepairedByDesc,q.RepairedBy,
                                                                TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa,
+                                                               TO_char(q.repaireddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as repaireddateFa,
                                                                to_char(q.createddate,'yyyy/mm/dd','nls_calendar=persian') as CreatedDayFa,
-                                                               q.isrepaired,c.bdmdlcode,a.areatype,bm.grpcode,p.shopcode,q.qcareat_srl
+                                                               q.isrepaired,c.bdmdlcode,a.areatype,bm.grpcode,p.shopcode,q.qcareat_srl,0 as ActAreaSrl,0 as ActBy
                                                           from qccastt q
                                                           join qcusert u on u.srl = q.createdby
                                                           left join qcusert ur on ur.srl = q.RepairedBy
@@ -497,9 +503,15 @@ namespace Common.Actions
                                                     "
                     , strDateCondition);
                 List<Qccastt> lst = new List<Qccastt>();
+                Object[] obj = DBHelper.GetDBObjectByObj2(new Qccastt(), null, commandtext, "ins");
+                if (obj != null)
+                {
+                    lst = obj.Cast<Qccastt>().ToList();
+                    return lst;
+                }
+                else return null;
 
-                lst = DBHelper.GetDBObjectByObj2(new Qccastt(), null, commandtext, "ins").Cast<Qccastt>().ToList();
-                return lst;
+
             }
             catch (Exception ex)
             {
@@ -534,8 +546,15 @@ namespace Common.Actions
                                              order by lpad(h.hour, 2, '0')");
                 List<QCHStatistics> lst = new List<QCHStatistics>();
 
-                lst = DBHelper.GetDBObjectByObj2(new QCHStatistics(), null, commandtext, "ins").Cast<QCHStatistics>().ToList();
-                return lst;
+                Object[] obj = DBHelper.GetDBObjectByObj2(new QCHStatistics(), null, commandtext, "ins");
+                if (obj != null)
+                {
+                    lst = obj.Cast<QCHStatistics>().ToList();
+                    return lst;
+                }
+                else return null;
+
+
             }
             catch (Exception ex)
             {
@@ -562,8 +581,15 @@ namespace Common.Actions
                                                         where  {0}) z join pt.companies c on z.companycode =c.companycode "
                                             , strDateCondition);
                 List<CarStatus> lst = new List<CarStatus>();
-                lst = DBHelper.GetDBObjectByObj2(new CarStatus(), null, commandtext, "ins").Cast<CarStatus>().ToList();
-                return lst;
+                Object[] obj = DBHelper.GetDBObjectByObj2(new CarStatus(), null, commandtext, "ins");
+                if (obj != null)
+                {
+                    lst = obj.Cast<CarStatus>().ToList();
+                    return lst;
+                }
+                else
+                    return null;
+
             }
             catch (Exception ex)
             {
@@ -574,7 +600,7 @@ namespace Common.Actions
             }
         }
 
-        public static List<AuditStatistics> GetArchiveAuditStatistics(bool JustTodayStatistic,String _AreaCodes)
+        public static List<AuditStatistics> GetArchiveAuditStatistics(bool JustTodayStatistic, String _AreaCodes)
         {
             try
             {

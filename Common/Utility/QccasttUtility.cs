@@ -9,6 +9,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -137,7 +138,6 @@ namespace Common.Utility
                                                                bm.grpcode,
                                                                cg.grpname,
                                                                t.title,q.RecordOwner,q.CHECKLISTAREA_SRL,q.QCSTRGT_SRL,q.IsDefected,q.InUse,
-                                                               q.inuse,a.areacode,
                                                                a.areacode||a.areadesc as AreaDesc,
                                                                u.lname as CreatedByDesc,q.CreatedBy,
                                                                ur.lname as RepairedByDesc,q.RepairedBy,
@@ -1003,61 +1003,89 @@ namespace Common.Utility
         public static ResultMsg InsertQcqctrt(CarSend _CarSend)
         {
             ResultMsg rm = new ResultMsg();
+            ResultMsg PDIResultMsg = new ResultMsg();
+            Qcdsart qcdsart = null;
             try
             {
-
-                if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
-                    DBHelper.LiveDBConnectionIns.Open();
-                OracleCommand cmd = new OracleCommand();
-                OracleDataAdapter da = new OracleDataAdapter();
-                cmd.Connection = DBHelper.LiveDBConnectionIns;
-                da.SelectCommand = cmd;
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "qcinsertqcqctrt";
-                cmd.Parameters.Clear();
-                cmd.Parameters.Add("pvin", OracleDbType.Varchar2).Value = CarUtility.GetVinWithoutChar(_CarSend.Vin);
-                cmd.Parameters.Add("pfromareasrl", OracleDbType.Int32).Value = _CarSend.FromAreaSrl;
-                cmd.Parameters.Add("ptoareasrl", OracleDbType.Int32).Value = _CarSend.ToAreaSrl;
-                cmd.Parameters.Add("pcurteamwork", OracleDbType.Varchar2).Value = "";
-                cmd.Parameters.Add("pstatuscode", OracleDbType.Int32).Value = 1;
-                cmd.Parameters.Add("puauser_srl", OracleDbType.Int32).Value = _CarSend.QCUsertSrl;
-                cmd.Parameters.Add("pErrorMessages", OracleDbType.Varchar2, 2048);
-                cmd.Parameters["pErrorMessages"].Direction = ParameterDirection.Output;
-                cmd.ExecuteNonQuery();
-                string result = cmd.Parameters["pErrorMessages"].Value.ToString();
-                rm.title = rm.Message = result;
-                if (String.IsNullOrEmpty(result)|| result.Length == 0 || result=="null")
+                bool NeedSetPdi = false;
+                // 
+                if (_CarSend.AreaType == 50)
                 {
-                    rm.title = rm.Message = "SUCCESSFUL";
-                    rm.MessageFa = "خودرو ارسال گردید";
-                    //-- disable pdiok if reject from 710 area
-                    if (_CarSend.FromAreaSrl==461)
+                    qcdsart = GetQcdsartByPath(_CarSend.FromAreaSrl, _CarSend.ToAreaSrl);
+                    if (qcdsart.IsDefault == 1)
                     {
-                        Qcdsart qcdsart = GetQcdsartByPath(_CarSend.FromAreaSrl, _CarSend.ToAreaSrl);
-                        if (qcdsart.IsReject == 1)
-                        {
-                            DisablePDIConfirm(_CarSend);
-                        }
+                        NeedSetPdi = true;
+                        Qccastt q = new Qccastt();
+                        q.Vin = _CarSend.Vin;
+                        q.ActBy = _CarSend.QCUsertSrl;
+                        q.ActAreaSrl = _CarSend.FromAreaSrl;
+                        PDIResultMsg = PDIConfirm(q);
                     }
-                    //--
-                    Qccastt q = new Qccastt();
-                    q.Vin = _CarSend.Vin;
-                    rm.lstQcqctrt = GetCarTrace(q);
                 }
-                else if (result.Equals("HaveSPDefect"))
-                    rm.MessageFa = "عدم ارسال خودرو به دلیل محدودیت منع ارسال با عیب ایمنی";
-                else if (result.Equals("CarNotInYourArea"))
+                //---
+                if ((!NeedSetPdi) || (NeedSetPdi && PDIResultMsg.Successful))
                 {
-                    rm.MessageFa = "خودرو در ناحیه ی شما نمی باشد";
-                }
-                else if (result.Equals("HaveSecurityConfirm"))
-                {
-                    rm.MessageFa = "عدم ارسال خودرو به دلیل ثبت مجوز تایید حراست";
+                    if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
+                        DBHelper.LiveDBConnectionIns.Open();
+                    OracleCommand cmd = new OracleCommand();
+                    OracleDataAdapter da = new OracleDataAdapter();
+                    cmd.Connection = DBHelper.LiveDBConnectionIns;
+                    da.SelectCommand = cmd;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "qcinsertqcqctrt";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add("pvin", OracleDbType.Varchar2).Value = CarUtility.GetVinWithoutChar(_CarSend.Vin);
+                    cmd.Parameters.Add("pfromareasrl", OracleDbType.Int32).Value = _CarSend.FromAreaSrl;
+                    cmd.Parameters.Add("ptoareasrl", OracleDbType.Int32).Value = _CarSend.ToAreaSrl;
+                    cmd.Parameters.Add("pcurteamwork", OracleDbType.Varchar2).Value = "";
+                    cmd.Parameters.Add("pstatuscode", OracleDbType.Int32).Value = 1;
+                    cmd.Parameters.Add("puauser_srl", OracleDbType.Int32).Value = _CarSend.QCUsertSrl;
+                    cmd.Parameters.Add("pErrorMessages", OracleDbType.Varchar2, 2048);
+                    cmd.Parameters["pErrorMessages"].Direction = ParameterDirection.Output;
+                    cmd.ExecuteNonQuery();
+                    string result = cmd.Parameters["pErrorMessages"].Value.ToString();
+                    rm.title = rm.Message = result;
+                    if (String.IsNullOrEmpty(result) || result.Length == 0 || result == "null")
+                    {
+                        rm.title = rm.Message = "SUCCESSFUL";
+                        rm.MessageFa = "خودرو ارسال گردید";
+                        if (NeedSetPdi)
+                        {
+                            rm.MessageFa += " و " + PDIResultMsg.MessageFa;
+                        }
+                        //-- disable pdiok if reject from 710 area
+                        if (_CarSend.FromAreaSrl == 461)
+                        {
+                            if (qcdsart == null)
+                                qcdsart = GetQcdsartByPath(_CarSend.FromAreaSrl, _CarSend.ToAreaSrl);
+                            if (qcdsart.IsReject == 1)
+                            {
+                                DisablePDIConfirm(_CarSend);
+                            }
+                        }
+                        //--
+                        Qccastt q = new Qccastt();
+                        q.Vin = _CarSend.Vin;
+                        rm.lstQcqctrt = GetCarTrace(q);
+                    }
+                    else if (result.Equals("HaveSPDefect"))
+                        rm.MessageFa = "عدم ارسال خودرو به دلیل محدودیت منع ارسال با عیب ایمنی";
+                    else if (result.Equals("CarNotInYourArea"))
+                    {
+                        rm.MessageFa = "خودرو در ناحیه ی شما نمی باشد";
+                    }
+                    else if (result.Equals("HaveSecurityConfirm"))
+                    {
+                        rm.MessageFa = "عدم ارسال خودرو به دلیل ثبت مجوز تایید حراست";
+                    }
+                    else
+                        rm.MessageFa = "بروز خطا در ارسال خودرو";
+                    // ---
+                    return rm;
                 }
                 else
-                    rm.MessageFa = "بروز خطا در ارسال خودرو";
-                // ---
-                return rm;
+                    return PDIResultMsg;
+
 
             }
             catch (Exception ex)
@@ -1129,7 +1157,7 @@ namespace Common.Utility
                 Area UserArea = QccasttUtility.GetAreaBySrl(qccastt.ActAreaSrl.ToString());
                 if (UserArea.CheckDest != 2)
                 {
-                    CarLastArea = QccasttUtility.GetVinCurrentArea(CarUtility.GetVinWithoutChar(qccastt.Vin)); 
+                    CarLastArea = QccasttUtility.GetVinCurrentArea(CarUtility.GetVinWithoutChar(qccastt.Vin));
                 }
                 QCUsert u = GetQCUserT(qccastt.ActBy.ToString());
                 //---
@@ -1145,7 +1173,7 @@ namespace Common.Utility
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.CommandText = "QCPDIUpdateOKStatus";
                     cmd.Parameters.Add("strVIN", OracleDbType.Varchar2).Value = CarUtility.GetVinWithoutChar(qccastt.Vin);
-                    cmd.Parameters.Add("strUserID", OracleDbType.Varchar2).Value =u.USERNAME;
+                    cmd.Parameters.Add("strUserID", OracleDbType.Varchar2).Value = u.USERNAME;
                     cmd.Parameters.Add("strQCAreaCD", OracleDbType.Varchar2).Value = UserArea.AreaCode;
                     cmd.Parameters.Add("ErrorMessages", OracleDbType.Varchar2, 500);
                     cmd.Parameters["ErrorMessages"].Direction = ParameterDirection.Output;
@@ -1153,19 +1181,23 @@ namespace Common.Utility
                     string result = cmd.Parameters["ErrorMessages"].Value.ToString();
                     rm.title = rm.Message = result;
                     //--translate result msg --
-                    if (string.IsNullOrEmpty(result)||result=="null")
+                    if (string.IsNullOrEmpty(result) || result == "null")
                     {
+                        rm.Successful = true;
                         rm.title = rm.Message = "SUCCESSFUL";
                         rm.MessageFa = "عمليات تایید جهت بارگیری با موفقيت انجام شد";
                         string strActDesc = string.Format(@"QCPDIConfirm_InAreaCode{0}_LogByWS", UserArea.AreaCode);
-                        bool blnLogResult= CommonUtility.QCInsertUserAct2("UI" + u.USERNAME, strActDesc, CarUtility.GetVinWithoutChar(qccastt.Vin), "AC" + UserArea.AreaCode, "", "WS", "WS", "WS", "WS", "0", "3");
+                        bool blnLogResult = CommonUtility.QCInsertUserAct2("UI" + u.USERNAME, strActDesc, CarUtility.GetVinWithoutChar(qccastt.Vin), "AC" + UserArea.AreaCode, "", "WS", "WS", "WS", "WS", "0", "3");
                     }
                     else if (result.Contains("Fractional Export"))
                         rm.MessageFa = "این خودرو صادراتي كسري دار بوده و مجاز به تائيد نمي باشد";
                     else if (result.Contains("CarNotInYourArea"))
                         rm.MessageFa = "محل خودرو این ناحیه نیست";
                     else if (result.Contains("Record Was Not Found"))
+                    {
+                        rm.Successful = true;
                         rm.MessageFa = "این خودرو نیازی به تایید بارگیری ندارد";
+                    }
                     else if (result.Contains("CarHaveASPDefect"))
                         rm.MessageFa = "این خودرو دارای عیب ایمنی است";
                     else if (result.Contains("ApplyRequestCarNoAudit"))
@@ -1232,6 +1264,8 @@ namespace Common.Utility
 
             try
             {
+                bool NeedSetPdi = false;
+                
                 //LogManager.SetCommonLog("QCCASTT_DefectDetect_isrep:" + qccastt.IsRepaired.ToString() + "_actby:" + qccastt.ActBy.ToString() + "_actareasrl:" + qccastt.ActAreaSrl.ToString() + "_QCSTRGT_SRL:" + qccastt.QCSTRGT_SRL.ToString() + "_IsDefected:" + qccastt.IsDefected.ToString() + "_QcmdultSrl:" + qccastt.QCMdult_Srl.ToString() + "_Qcbadft:" + qccastt.QCBadft_Srl.ToString() + "_Vin:" + qccastt.Vin.ToString());//
                 bool blnConsistency = false;
                 if (qccastt.IsDefected == 1)
@@ -1239,6 +1273,11 @@ namespace Common.Utility
                     blnConsistency =
                         CheckConsistencyBetweenCheckListAndCarGroupCode(qccastt);
                 }
+                else if (qccastt.IsDefected == 0 && qccastt.AreaType == 50)
+                {
+                    NeedSetPdi = true;
+                }
+
                 if ((blnConsistency) || (qccastt.IsDefected == 0))
                 {
                     OracleCommand cmd = new OracleCommand();
@@ -1298,10 +1337,15 @@ namespace Common.Utility
                     //-- translate result  msg --
                     if (result.Contains("SUCCESSFUL"))
                     {
+                        rm.Successful = true;
                         if (qccastt.IsDefected == 1)
+                        {
                             rm.MessageFa = "عیب با موفقیت ثبت گردید";
+                        }
                         else if (qccastt.IsDefected == 0)
+                        {
                             rm.MessageFa = "عبور مستقیم خودرو با موفقیت ثبت گردید";
+                        }
                     }
                     else if (result.ToUpper().Trim().Equals("REPAIRED CHANGE") || result.ToUpper().Trim().Equals("EDIT_REPAIRED"))
                     {
@@ -1316,13 +1360,25 @@ namespace Common.Utility
                     else if (result.Contains("REPEATED DEFECT"))
                         rm.MessageFa = "این عیب قبلا در این ناحیه ثبت گردیده است";
                     else if ((qccastt.IsDefected == 0) && (result.Contains("REPEATED STRAIGHT")))
+                    {
                         rm.MessageFa = "براي اين خودرو ،قبلاً عبور مستقيم ثبت شده است";
+                        rm.Successful = true;
+                    }
                     else if ((qccastt.IsDefected == 0) && (result.Contains("IS DEFECTED")))
                         rm.MessageFa = "برای این خودرو در این ناحیه قبلاً عیب ثبت شده است";
                     else
                         rm.MessageFa = "خطایی رخ داده است" + qccastt.ActBy.ToString();
                     // --
                     rm.lstQccastt = QccasttUtility.GetCarDefect(qccastt);
+                    //---
+                    if (qccastt.IsDefected == 0 && qccastt.AreaType == 50 && rm.Successful && NeedSetPdi)
+                    {
+                        Qccastt q = new Qccastt();
+                        q.Vin = qccastt.Vin;
+                        q.ActBy = qccastt.ActBy;
+                        q.ActAreaSrl = qccastt.ActAreaSrl;
+                        rm = PDIConfirm(q);
+                    }
                     return rm;
                 }
                 else
@@ -1446,6 +1502,7 @@ namespace Common.Utility
                 return rm;
             }
         }
+     
         public static ResultMsg DisablePDIConfirm(CarSend _CarSend)
         {
             //LogManager.SetCommonLog("Delete_QCCASTT" + qccastt.Srl.ToString() + "_" + qccastt.ActAreaSrl.ToString() + "_" + qccastt.ActBy.ToString());
@@ -1472,12 +1529,12 @@ namespace Common.Utility
                 string result = cmd.Parameters["ErrorMessages"].Value.ToString();
                 rm.title = rm.Message = result;
                 //--translate result msg --
-                if (string.IsNullOrEmpty(result) || result=="null")
+                if (string.IsNullOrEmpty(result) || result == "null")
                 {
                     rm.title = rm.Message = "SUCCESSFUL";
                     rm.MessageFa = "PDI_Disable";
                     string strActDesc = string.Format(@"QCPDIConfirm_InAreaCode{0}_LogByWS", UserArea.AreaCode);
-                    bool LogResult= CommonUtility.QCInsertUserAct2("UI" + _CarSend.UserId, strActDesc, CarUtility.GetVinWithoutChar(_CarSend.Vin), "AC" + UserArea.AreaCode, "", "WS", "WS", "WS", "WS", "0", "3");
+                    bool LogResult = CommonUtility.QCInsertUserAct2("UI" + _CarSend.UserId, strActDesc, CarUtility.GetVinWithoutChar(_CarSend.Vin), "AC" + UserArea.AreaCode, "", "WS", "WS", "WS", "WS", "0", "3");
                 }
                 return rm;
             }
@@ -1534,5 +1591,185 @@ namespace Common.Utility
             //---
 
         }
+
+
+        public static List<Summary> GetUserSammary(int _QcAreatSrl, int _QCUsertSrl, int _FromDayAgo, string _Type)
+        {
+            try
+            {
+                PersianCalendar pc = new PersianCalendar();
+                DateTime dtN = DateTime.Now;
+                string Y = pc.GetYear(dtN).ToString();
+                string M = pc.GetMonth(dtN).ToString().PadLeft(2, '0');
+                string D = pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
+                string strDateCondition = "";
+                if (_Type == "M")
+                    strDateCondition = string.Format(@"createddate >= to_date('{0}/{1}/01','yyyy/mm/dd','nls_calendar=persian')", Y, M);
+                else if (_Type == "D")
+                    strDateCondition = string.Format(@"createddate >= to_date('{0}/{1}/{2}','yyyy/mm/dd','nls_calendar=persian')", Y, M, D);
+                List<Summary> lstSummary = new List<Summary>();
+                string commandtext = string.Format(@"select count(distinct q.vin) as TotalDetectCarCount,                                              
+                                              count(distinct (decode(q.isdefected,0,q.vin,null))) as TotalStrCarCount,
+                                              count(distinct (decode(q.isdefected,1,q.vin,null))) as TotalDefCarCount,
+                                              count((decode(q.isdefected,1,q.vin,null))) as TotalRegDefCount,
+                                              count((decode(q.isdefected,0,q.vin,null))) as TotalStrCount,
+                                              count(distinct (decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,null))) as TotalASPCarCount,
+                                              count((decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,null))) as TotalASPRegDefCount,
+                                              count(distinct decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,63,q.vin,null)) as TotalBPlusCarCount,
+                                              count((decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,63,q.vin,null))) as TotalBPlusRegDefCount,
+                                              (select count(c.vin) from qccastt c where  {2} and c.qcareat_srl={0} and c.deletedby is not null ) as DefectDeletedCount 
+                                             from qccastt q
+                                             where {2} and q.recordowner=1 and q.qcareat_srl={0} 
+                                             group by qcareat_srl
+                                                ", _QcAreatSrl, _QCUsertSrl, strDateCondition);
+                // -- having q.createdby ={1}
+                //List<Qcqctrt> qcTrace = new List<Qcqctrt>();
+                DataSet ds = DBHelper.GetDBObjectByDataSet(null, commandtext);
+
+                Summary s = new Summary();
+                if ((ds != null) && (ds.Tables[0] != null) && (ds.Tables[0].Rows.Count > 0)) // user find
+                {
+                    s = new Summary();
+                    s.UserId = 0;
+                    s.SuammryTitle = "تعداد بازرسی خودرو در ناحیه";
+                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalDetectCarCount"].ToString());
+                    lstSummary.Add(s);
+                    //---
+                    s = new Summary();
+                    s.UserId = 0;
+                    s.SuammryTitle = "تعداد عبور مستقیم خودرو در ناحیه";
+                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalStrCarCount"].ToString());
+                    lstSummary.Add(s);
+                    //---
+                    s = new Summary();
+                    s.UserId = 0;
+                    s.SuammryTitle = "تعداد خودروی معیوب در ناحیه";
+                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalDefCarCount"].ToString());
+                    lstSummary.Add(s);
+                    //
+                    s = new Summary();
+                    s.UserId = 0;
+                    s.SuammryTitle = "تعداد عیب ثبتی در ناحیه";
+                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalRegDefCount"].ToString());
+                    lstSummary.Add(s);
+                    // 
+                    s = new Summary();
+                    s.UserId = 0;
+                    s.SuammryTitle = "تعداد عیب حذف شده در ناحیه";
+                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["DefectDeletedCount"].ToString());
+                    lstSummary.Add(s);
+                    //
+                    s = new Summary();
+                    s.UserId = 0;
+                    s.SuammryTitle = "تعداد خودرو با عیب ایمنی در ناحیه";
+                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalASPCarCount"].ToString());
+                    lstSummary.Add(s);
+                    //
+                    s = new Summary();
+                    s.UserId = 0;
+                    s.SuammryTitle = "تعداد ثبت عیب ایمنی در ناحیه";
+                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalASPRegDefCount"].ToString());
+                    lstSummary.Add(s);
+                    //
+                    s = new Summary();
+                    s.UserId = 0;
+                    s.SuammryTitle = "تعداد خودرو با عیب B پلاس در ناحیه ";
+                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBPlusCarCount"].ToString());
+                    lstSummary.Add(s);
+                    //
+                    s = new Summary();
+                    s.UserId = 0;
+                    s.SuammryTitle = "تعداد ثبت عیب B پلاس در ناحیه ";
+                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBPlusRegDefCount"].ToString());
+                    lstSummary.Add(s);
+
+
+                    // by usert statistic
+                    commandtext = string.Format(@"select q.createdby,u.userid,u.fname,u.lname   
+                                              ,count(distinct q.vin) as DetectCarCount,
+                                              count(distinct (decode(q.isdefected,1,q.vin,null))) as DefCarCount,
+                                              count(distinct (decode(q.isdefected,0,q.vin,null))) as StrCarCount,
+                                              count((decode(q.isdefected,1,q.vin,null))) as RegDefCount,
+                                              count((decode(q.isdefected,0,q.vin,null))) as StrCount,
+                                              count(distinct(decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,null))) as ASPCarCount,
+                                              count((decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,null))) as ASPRegDefCount,
+                                              count(distinct (decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,63,q.vin,null))) as BPlusCarCount,
+                                              count((decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,63,q.vin,null))) as BPlusRegDefCount,
+                                             (select count(c.vin) from qccastt c where  {1} and c.qcareat_srl=q.qcareat_srl and c.deletedby = q.createdby) as DefectDeletedCount
+                                             from qccastt q join qcusert u on u.srl = q.createdby
+                                             where {1} and q.recordowner=1 and q.qcareat_srl={0} 
+                                             group by q.qcareat_srl,q.createdby,u.userid,u.fname,u.lname 
+                                             order by DetectCarCount desc
+                                                ", _QcAreatSrl, strDateCondition);
+                    ds = DBHelper.GetDBObjectByDataSet(null, commandtext);
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        //---
+                        s = new Summary();
+                        s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
+                        s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
+                        s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
+                        s.SuammryTitle = "تعداد شاسی بازرسی شده";
+                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DetectCarCount"].ToString());
+                        lstSummary.Add(s);
+                        //---
+                        s = new Summary();
+                        s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
+                        s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
+                        s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
+                        s.SuammryTitle = "تعداد شاسی معیوب بازرسی شده ";
+                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DefCarCount"].ToString());
+                        lstSummary.Add(s);
+                        //---
+                        s = new Summary();
+                        s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
+                        s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
+                        s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
+                        s.SuammryTitle = "تعداد شاسی عبور مستقیم ";
+                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["StrCarCount"].ToString());
+                        lstSummary.Add(s);
+                        //---
+                        s = new Summary();
+                        s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
+                        s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
+                        s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
+                        s.SuammryTitle = "تعداد ثبت عیب ";
+                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["RegDefCount"].ToString());
+                        lstSummary.Add(s);
+                        //---
+                        s = new Summary();
+                        s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
+                        s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
+                        s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
+                        s.SuammryTitle = "تعداد ثبت عیب ایمنی ";
+                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["ASPRegDefCount"].ToString());
+                        lstSummary.Add(s);
+                        //---
+                        s = new Summary();
+                        s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
+                        s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
+                        s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
+                        s.SuammryTitle = "تعداد ثبت عیب B پلاس ";
+                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["BPlusRegDefCount"].ToString());
+                        lstSummary.Add(s);
+                        //---
+                        s = new Summary();
+                        s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
+                        s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
+                        s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
+                        s.SuammryTitle = "تعداد حذف عیب";
+                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DefectDeletedCount"].ToString());
+                        lstSummary.Add(s);
+                    }
+                    return lstSummary;
+                }
+                else return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
     }
 }

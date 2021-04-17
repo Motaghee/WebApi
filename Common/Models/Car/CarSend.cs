@@ -7,5 +7,6 @@
         public int ToAreaSrl { get; set; }
         public int QCUsertSrl { get; set; }
         public int UserId { get; set; }
+        public int AreaType { get; set; }
     }
 }

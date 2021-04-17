@@ -83,7 +83,7 @@ namespace WebApi2.Controllers
             // ---
             try
             {
-                LogManager.SetCommonLog(String.Format(@"GetNowU time:{0} From:{1} by:{2} UserId:{3}", ndt.NowDateFa, user.AppName, ndt.QCUsertSrl.ToString(), user.USERID));
+                //LogManager.SetCommonLog(String.Format(@"GetNowU time:{0} From:{1} by:{2} UserId:{3}", ndt.NowDateFa, user.AppName, ndt.QCUsertSrl.ToString(), user.USERID));
                 UpdateUserData(user, ndt, 1);
             }
             catch(Exception e) { DBHelper.LogFile(e); }

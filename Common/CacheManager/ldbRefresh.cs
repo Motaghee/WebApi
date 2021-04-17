@@ -102,7 +102,8 @@ namespace Common.CacheManager
                     l.ArchiveCompanyProductStatistics_UDate = strToday;
                     bool result = ldbRefresh.SetLdbUpdateStatus(l);
                     return true;
-                }else
+                }
+                else
                     return true;
             }
             catch (Exception ex)
@@ -123,22 +124,23 @@ namespace Common.CacheManager
                     //LogManager.SetCommonLog("RefreshLdbProductStatistics_ starting..." );
                     // generate new statistic
                     List<GroupProductStatistics> lstNewPS = StatisticsActs.GetArchiveGroupProdStatistics();
-                // get instanse of ldb
-                LiteDatabase db = new LiteDatabase(ldbConfig.ldbArchiveConnectionString);
-                // get old ldb ps lst
-                LiteCollection<GroupProductStatistics> dbPS = db.GetCollection<GroupProductStatistics>("GroupProductStatistics");
-                // delete old lst
-                dbPS.Delete(Query.All());
-                // insetr new lst
-                dbPS.Insert(lstNewPS);
-                //LogManager.SetCommonLog("RefreshLdbGroupProductStatistics_ insert successfully" + lstNewPS.Count);
-                db.Dispose();
-                l.ArchiveGroupProductStatistics_UDate = strToday;
-                bool result = ldbRefresh.SetLdbUpdateStatus(l);
-                return true;
-            }else
-                return true;
-        }
+                    // get instanse of ldb
+                    LiteDatabase db = new LiteDatabase(ldbConfig.ldbArchiveConnectionString);
+                    // get old ldb ps lst
+                    LiteCollection<GroupProductStatistics> dbPS = db.GetCollection<GroupProductStatistics>("GroupProductStatistics");
+                    // delete old lst
+                    dbPS.Delete(Query.All());
+                    // insetr new lst
+                    dbPS.Insert(lstNewPS);
+                    //LogManager.SetCommonLog("RefreshLdbGroupProductStatistics_ insert successfully" + lstNewPS.Count);
+                    db.Dispose();
+                    l.ArchiveGroupProductStatistics_UDate = strToday;
+                    bool result = ldbRefresh.SetLdbUpdateStatus(l);
+                    return true;
+                }
+                else
+                    return true;
+            }
             catch (Exception ex)
             {
                 LogManager.SetCommonLog("RefreshArchiveLdbGroupProductStatistics" + ex.Message.ToString());
@@ -152,33 +154,38 @@ namespace Common.CacheManager
             {
                 string strToday = CommonUtility.GetNowDateFaNum();
                 ldbUpdStatus l = ldbRefresh.GetLdbUpdateStatus();
-                if ((!JustTodayStatistics) &&(l.ArchiveQCStatistics_UDate == strToday))
+                if ((!JustTodayStatistics) && (l.ArchiveQCStatistics_UDate == strToday))
                 {
                     return true;
                 }
                 //LogManager.SetCommonLog("RefreshLdbQCStatistics starting... just today="+ JustTodayStatistics);
                 // generate new statistic
                 List<QCStatistics> lstNewPS = StatisticsActs.GetArchiveQCStatistics(JustTodayStatistics);
-                // get instanse of ldb
-                LiteDatabase db;
-                if (JustTodayStatistics)
-                    db = new LiteDatabase(ldbConfig.ldbQCStatisticsConnectionString);
-                else
-                    db = new LiteDatabase(ldbConfig.ldbArchiveQCStatisticsConnectionString);
-                // get old ldb ps lst
-                LiteCollection<QCStatistics> dbPS = db.GetCollection<QCStatistics>("QCStatistics");
-                // delete old lst
-                dbPS.Delete(Query.All());
-                // insetr new lst
-                dbPS.Insert(lstNewPS);
-                //LogManager.SetCommonLog("RefreshLdbQCStatistics insert successfully" + lstNewPS.Count);
-                db.Dispose();
-                if (!JustTodayStatistics)
+                if (lstNewPS != null)
                 {
-                    l.ArchiveQCStatistics_UDate = strToday;
-                    bool result = ldbRefresh.SetLdbUpdateStatus(l);
+                    // get instanse of ldb
+                    LiteDatabase db;
+                    if (JustTodayStatistics)
+                        db = new LiteDatabase(ldbConfig.ldbQCStatisticsConnectionString);
+                    else
+                        db = new LiteDatabase(ldbConfig.ldbArchiveQCStatisticsConnectionString);
+                    // get old ldb ps lst
+                    LiteCollection<QCStatistics> dbPS = db.GetCollection<QCStatistics>("QCStatistics");
+                    // delete old lst
+                    dbPS.Delete(Query.All());
+                    // insetr new lst
+                    dbPS.Insert(lstNewPS);
+                    //LogManager.SetCommonLog("RefreshLdbQCStatistics insert successfully" + lstNewPS.Count);
+                    db.Dispose();
+                    if (!JustTodayStatistics)
+                    {
+                        l.ArchiveQCStatistics_UDate = strToday;
+                        bool result = ldbRefresh.SetLdbUpdateStatus(l);
+                    }
+                    return true;
                 }
-                return true;
+                else
+                    return false;
             }
             catch (Exception ex)
             {
@@ -199,7 +206,7 @@ namespace Common.CacheManager
                 }
                 //LogManager.SetCommonLog("RefreshLdbQCStatistics starting... just today="+ JustTodayStatistics);
                 // generate new statistic
-                List<AuditStatistics> lstNewPS = StatisticsActs.GetArchiveAuditStatistics(JustTodayStatistics,"1000,1001,1002,1003");
+                List<AuditStatistics> lstNewPS = StatisticsActs.GetArchiveAuditStatistics(JustTodayStatistics, "1000,1001,1002,1003");
                 // get instanse of ldb
                 LiteDatabase db;
                 if (JustTodayStatistics)
@@ -282,38 +289,54 @@ namespace Common.CacheManager
                 }
                 trc = 5;
                 List<Qccastt> lstNewPS = StatisticsActs.GetASPQccastt(JustTodayStatistics);
-                trc = 6;
-                // get instanse of ldb
-                LiteDatabase db;
-                trc = 7;
-                if (JustTodayStatistics)
-                    db = new LiteDatabase(ldbConfig.ldbQccasttConnectionString);
-                else
-                    db = new LiteDatabase(ldbConfig.ldbQCArchiveQccasttConnectionString);
-                trc = 8;
-                // get old ldb ps lst
-                LiteCollection<Qccastt> dbPS = db.GetCollection<Qccastt>("QCCASTT");
-                // delete old lst
-                dbPS.Delete(Query.All());
-                // insetr new lst
-                dbPS.Insert(lstNewPS);
-                trc = 9;
-                //LogManager.SetCommonLog("RefreshLdbQCStatistics insert successfully" + lstNewPS.Count);
-                db.Dispose();
-                trc = 10;
-                if (!JustTodayStatistics)
+                if (lstNewPS != null)
                 {
-                    trc = 10;
-                    l.ArchiveASPQCCASTT = strToday;
-                    bool result = ldbRefresh.SetLdbUpdateStatus(l);
-                    trc = 11;
+                    trc = 6;
+                    // get instanse of ldb
+                    LiteDatabase db;
+                    trc = 7;
+                    if (JustTodayStatistics)
+                        db = new LiteDatabase(ldbConfig.ldbQccasttConnectionString);
+                    else
+                        db = new LiteDatabase(ldbConfig.ldbQCArchiveQccasttConnectionString);
+                    trc = 8;
+                    // get old ldb ps lst
+                    LiteCollection<Qccastt> dbPS = db.GetCollection<Qccastt>("QCCASTT");
+                    trc = 81;
+                    // delete old lst
+                    if (dbPS != null)
+                    {
+                        trc = 82;
+                        dbPS.Delete(Query.All());
+                        trc = 83;
+                        // insetr new lst
+                        dbPS.Insert(lstNewPS);
+                        trc = 9;
+                        //LogManager.SetCommonLog("RefreshLdbQCStatistics insert successfully" + lstNewPS.Count);
+                        db.Dispose();
+                        trc = 10;
+                        if (!JustTodayStatistics)
+                        {
+                            trc = 10;
+                            l.ArchiveASPQCCASTT = strToday;
+                            bool result = ldbRefresh.SetLdbUpdateStatus(l);
+                            trc = 11;
+                        }
+                        trc = 12;
+                        return true;
+                    }
+                    else return false;
                 }
-                trc = 12;
-                return true;
+                else return false;
+            }
+            catch (TimeoutException ex)
+            {
+                return false;
             }
             catch (Exception ex)
             {
-                LogManager.SetCommonLog(trc.ToString()+"RefreshLdbASPQCCASTT_Err:" + JustTodayStatistics + ex.Message.ToString());
+                //if (!ex.Message.Contains("timed out"))
+                LogManager.SetCommonLog(trc.ToString() + "RefreshLdbASPQCCASTT_Err:" + JustTodayStatistics + ex.Message.ToString());
                 return false;
             }
         }
@@ -325,18 +348,24 @@ namespace Common.CacheManager
                 //LogManager.SetCommonLog("RefreshLdbQCStatistics starting... just today="+ JustTodayStatistics);
                 // generate new statistic
                 List<QCHStatistics> lstNewPS = StatisticsActs.GetHQCStatistics();
-                // get instanse of ldb
-                LiteDatabase db= new LiteDatabase(ldbConfig.ldbQCStatisticsConnectionString); 
-                
-                // get old ldb ps lst
-                LiteCollection<QCHStatistics> dbPS = db.GetCollection<QCHStatistics>("QCHStatistics");
-                // delete old lst
-                dbPS.Delete(Query.All());
-                // insetr new lst
-                dbPS.Insert(lstNewPS);
-                //LogManager.SetCommonLog("RefreshLdbQCStatistics insert successfully" + lstNewPS.Count);
-                db.Dispose();
-                return true;
+                if (lstNewPS != null)
+                {
+                    // get instanse of ldb
+                    LiteDatabase db = new LiteDatabase(ldbConfig.ldbQCStatisticsConnectionString);
+
+                    // get old ldb ps lst
+                    LiteCollection<QCHStatistics> dbPS = db.GetCollection<QCHStatistics>("QCHStatistics");
+                    // delete old lst
+                    dbPS.Delete(Query.All());
+                    // insetr new lst
+                    dbPS.Insert(lstNewPS);
+                    //LogManager.SetCommonLog("RefreshLdbQCStatistics insert successfully" + lstNewPS.Count);
+                    db.Dispose();
+                    return true;
+                }
+                else
+                    return false;
+
             }
             catch (Exception ex)
             {
@@ -353,17 +382,22 @@ namespace Common.CacheManager
                 // generate new statistic
                 List<CarStatus> lstNew = StatisticsActs.GetCarStatus();
                 // get instanse of ldb
-                LiteDatabase db;
-                db = new LiteDatabase(ldbConfig.ldbCarStatusConnectionString);
-                // get old ldb ps lst
-                LiteCollection<CarStatus> dbPS = db.GetCollection<CarStatus>("CarStatus");
-                // delete old lst
-                dbPS.Delete(Query.All());
-                // insetr new lst
-                dbPS.Insert(lstNew);
-                //LogManager.SetCommonLog("RefreshLdbQCStatistics insert successfully" + lstNewPS.Count);
-                db.Dispose();
-                return true;
+                if (lstNew != null)
+                {
+                    LiteDatabase db;
+                    db = new LiteDatabase(ldbConfig.ldbCarStatusConnectionString);
+                    // get old ldb ps lst
+                    LiteCollection<CarStatus> dbPS = db.GetCollection<CarStatus>("CarStatus");
+                    // delete old lst
+                    dbPS.Delete(Query.All());
+                    // insetr new lst
+                    dbPS.Insert(lstNew);
+                    //LogManager.SetCommonLog("RefreshLdbQCStatistics insert successfully" + lstNewPS.Count);
+                    db.Dispose();
+                    return true;
+                }
+                else
+                    return false;
             }
             catch (Exception ex)
             {
@@ -508,7 +542,8 @@ namespace Common.CacheManager
                 da.SelectCommand = cmd;
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandText = "sp_GenerateQCCaridDetailsOnlineSync";
-                cmd.Parameters.Add(new OracleParameter {
+                cmd.Parameters.Add(new OracleParameter
+                {
                     OracleDbType = OracleDbType.Int32,
                     Direction = ParameterDirection.Input,
                     ParameterName = "pQuickNewVinSync",
@@ -526,7 +561,7 @@ namespace Common.CacheManager
             }
             finally
             {
-                DBHelper.DBConnectionIns.Close();
+                DBHelper.LiveDBConnectionIns.Close();
             }
 
         }

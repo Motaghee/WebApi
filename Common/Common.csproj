@@ -128,6 +128,7 @@
     <Compile Include="Models\Audit\DataMining.cs" />
     <Compile Include="Models\BodyModelProductStatistics.cs" />
     <Compile Include="Models\General\ldbUpdStatus.cs" />
+    <Compile Include="Models\General\Summary.cs" />
     <Compile Include="Models\General\Message.cs" />
     <Compile Include="Models\General\MessageCount.cs" />
     <Compile Include="Models\General\MsgStatistics.cs" />

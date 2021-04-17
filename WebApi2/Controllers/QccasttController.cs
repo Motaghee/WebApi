@@ -40,30 +40,16 @@ namespace WebApi2.Controllers
         }
 
         [HttpPost]
-        [Route("api/Qccastt/DefectDetect2")]
-        public ResultMsg DefectDetect2()
+        [Route("api/Qccastt/UserSammary")]
+        public List<Summary> UserSammary([FromBody] Qccastt qccastt)
         {
-            Qccastt qccastt = new Qccastt();
-            qccastt.Srl = 26904286;
-            qccastt.Vin = "NAS411100G1205277";
-            qccastt.ActBy = 4314;
-            qccastt.ActAreaSrl = 94;
-            qccastt.QCMdult_Srl = 716;
-            qccastt.QCBadft_Srl = 2024;
-            qccastt.RecordOwner = 1;
-            qccastt.IsRepaired = 1;
-            qccastt.InUse = 1;
-            qccastt.CreatedBy = 4314;
-            qccastt.CHECKLISTAREA_SRL =94;
-
-            return QccasttUtility.QCCASTT_DefectDetect(qccastt);
+            return QccasttUtility.GetUserSammary(qccastt.ActAreaSrl, qccastt.ActAreaSrl, 0, qccastt.RepairedByDesc);
         }
-
         [HttpGet]
-        [Route("api/Qccastt/GetUserTst")]
-        public User GetUserTst()
+        [Route("api/Qccastt/TSTUserSammary")]
+        public List<Summary> UserSammary2()
         {
-            return QccasttUtility.FindUser("1000861","0082397171","1","500","");
+            return QccasttUtility.GetUserSammary(94, 4314, 0,"D");
         }
 
         [HttpPost]
@@ -78,16 +64,6 @@ namespace WebApi2.Controllers
         public ResultMsg PDIConfirm([FromBody] Qccastt qccastt)
         {
             return QccasttUtility.PDIConfirm(qccastt);
-        }
-        [HttpGet]
-        [Route("api/Qccastt/PDIConfirm")]
-        public ResultMsg PDIConfirmtst()
-        {
-            Qccastt q = new Qccastt();
-            q.Vin = "NAS411100G1205277";
-            q.ActAreaSrl = 94;
-            q.ActBy = 4314;
-            return QccasttUtility.PDIConfirm(q);
         }
 
         [HttpGet]
@@ -219,6 +195,8 @@ namespace WebApi2.Controllers
         {
             return QccasttUtility.GetBaseFinalQCList();
         }
+
+
 
 
 

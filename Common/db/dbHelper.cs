@@ -564,15 +564,7 @@ namespace Common.db
                 }
                 else
                 {
-                    //DBHelper.LogtxtToFile("ds is Null-GetDBObjectByObj2_"+ _CommandText);
-                    //await Task.Delay(10000);
-                    //DateTime Tthen = DateTime.Now;
-                    //do
-                    //{
-
-                    //} while (Tthen.AddSeconds(5) > DateTime.Now);
-                    //Thread.Sleep(10000);
-                    return GetDBObjectByObj22(_Obj, _ds, _CommandText, strSchema);
+                    return GetDBObjectByObj2_OnLive(_Obj, _ds, _CommandText, strSchema);
                 }
                 return lstObj;
             }
@@ -696,11 +688,11 @@ namespace Common.db
                 if (_ds == null)
                 {
                     if (strSchema.ToLower() == "stopage")
-                        _ds = DBHelper.ExecuteMyQueryStpOnLive(_CommandText);
+                        _ds = DBHelper.ExecuteMyQueryStp(_CommandText);
                     else if (strSchema.ToLower() == "pt")
-                        _ds = DBHelper.ExecuteMyQueryPTOnLive(_CommandText);
+                        _ds = DBHelper.ExecuteMyQueryPT(_CommandText);
                     else
-                        _ds = DBHelper.ExecuteMyQueryInsOnLive(_CommandText);
+                        _ds = DBHelper.ExecuteMyQueryIns(_CommandText);
 
                 }
                 object[] lstObj = null;
@@ -755,7 +747,7 @@ namespace Common.db
                             catch (Exception e)
                             {
                                 LogFile(e);
-                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj22_SecondTry_PTOnLive => " + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
+                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj22_SecondTry_ => " + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
                             }
                         }
 
@@ -764,14 +756,14 @@ namespace Common.db
                 }
                 else
                 {
-                    DBHelper.LogtxtToFile("*ds is Null- GetDBObjectByObj22_SecondTry_PTOnLive => " + _CommandText);
+                    DBHelper.LogtxtToFile("*ds is Null- GetDBObjectByObj22_SecondTry_ => " + _CommandText);
                 }
                 return lstObj;
             }
             catch (Exception ex)
             {
                 LogFile(ex);
-                DBHelper.LogtxtToFile("err1-GetDBObjectByObj22_SecondTry_PTOnLive => " + strFieldName + ex.ToString() + ex.InnerException.Message + ex.Message.ToString());
+                DBHelper.LogtxtToFile("err1-GetDBObjectByObj22_SecondTry_ => " + strFieldName + ex.ToString() + ex.InnerException.Message + ex.Message.ToString());
                 //DBHelper.LogtxtToFile("err2-GetDBObjectByObj2_Err:"+ex);
                 throw ex;
             }

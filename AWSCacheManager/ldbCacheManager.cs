@@ -66,12 +66,11 @@ namespace AWSCacheManager
             {
                 //LogManager.SetWindowsServiceLog("OnPSCreatorTimer Start_On");
                 // QCToday Statistic
-                //bool RefQccasttTodaye = ldbRefresh.RefreshLdbASPQCCASTT(true);
                 bool RefNonBrand = ldbRefresh.GenerateQCCaridDetailsNonBrand();
                 bool RefAuditToday = ldbRefresh.RefreshLdbAuditStatistics(true);
                 bool RefQCToday = ldbRefresh.RefreshLdbQCStatistics(true);
                 bool RefQCHToday = ldbRefresh.RefreshLdbQCHStatistics();
-
+                bool RefQccasttTodaye = ldbRefresh.RefreshLdbASPQCCASTT(true);
                 // PS
                 bool RefRsltY = ldbRefresh.RefreshLiveLdbProductStatistics("Y");
                 bool RefRsltM = ldbRefresh.RefreshLiveLdbProductStatistics("M");
@@ -115,12 +114,10 @@ namespace AWSCacheManager
                 strArchiveRunDay = NowDay;
                 LogManager.SetWindowsServiceLog("Initialise LiveLdb Start NowDay is:" + NowDay);
                 PSInitialTimer.Stop();
-                //
-                //bool RefQccasttTodaye = ldbRefresh.RefreshLdbASPQCCASTT(true);
+                bool RefQccasttTodaye = ldbRefresh.RefreshLdbASPQCCASTT(true);
                 bool refreshNonBrand = ldbRefresh.GenerateQCCaridDetailsNonBrand();
                 bool RefAuditToday = ldbRefresh.RefreshLdbAuditStatistics(true);
                 bool RefQCToday = ldbRefresh.RefreshLdbQCStatistics(true);
-                
                 // --
                 bool RefQCHToday = ldbRefresh.RefreshLdbQCHStatistics();
                 bool RefRsltY = ldbRefresh.RefreshLiveLdbProductStatistics("Y");
@@ -195,13 +192,14 @@ namespace AWSCacheManager
         public void QuickOnLineTask(object sender, ElapsedEventArgs args)
         {
             string trace = "0";
+            bool RefQuickNewVinOnlineSync = false;
             try
             {
                 //run every 1 min 
-                bool RefQuickNewVinOnlineSync = ldbRefresh.GenerateQCCaridDetailsOnlineSync(1);
+                RefQuickNewVinOnlineSync = ldbRefresh.GenerateQCCaridDetailsOnlineSync(1);
                 trace += "1";
                 bool RefQccasttArchive = ldbRefresh.RefreshLdbASPQCCASTT(true);
-                trace += "2->"+ RefQccasttArchive.ToString();
+                //trace += "2->"+ RefQccasttArchive.ToString();
                 //LogManager.SetWindowsServiceLog("OnArchivePS cache db= " +  RefRsltAC + RefRsltAG);
                 DateTime dtN = DateTime.Now;
                 PersianCalendar pc = new PersianCalendar();
@@ -223,7 +221,7 @@ namespace AWSCacheManager
             }
             catch (Exception ex)
             {
-                LogManager.SetWindowsServiceLog("QuickOnLineTask_"+ trace + ex.Message.ToString());
+                LogManager.SetWindowsServiceLog("QuickOnLineTask_"+ trace+ "_RefQuickNewVinOnlineSync:"+ RefQuickNewVinOnlineSync + "_" + ex.Message.ToString());
             }
 
         }
