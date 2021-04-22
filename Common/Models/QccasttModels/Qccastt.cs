@@ -6,7 +6,7 @@
         public double Srl { get; set; } = 0; //double
         public bool ValidFormat = false;// { get; set; } = false;
         public string Vin { get; set; } = ""; //double
-        public string VinWithoutChar ; //{ get; set; } = ""; //double
+        public string VinWithoutChar { get; set; }  //double
         public int AreaCode { get; set; }
         public string AreaDesc { get; set; }
         public string ModuleName { get; set; }
@@ -34,7 +34,8 @@
         public int InUse { get; set; }
         public int ActAreaSrl { get; set; }
         public int ActBy { get; set; }
-
-
+        public string InListQCSTRGTSRL;
+        public string DateType;
+        public int deletedby;
     }
 }

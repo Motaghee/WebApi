@@ -69,17 +69,17 @@ namespace WebApi2.Controllers
             ndt.NowTime = dtN.ToString("HH:mm:ss");
             ndt.NowDateTimeFa = ndt.NowDateFa + " " + ndt.NowTime;
             // ---
-            MessageCount oldmsc = (MessageCount)MemoryCacher.GetValue("MessageCount");
-            if ((oldmsc == null) || (oldmsc.InsDateFa != ndt.NowDateFa))
-            {
-                MessageCount msc = MessageUtility.GetSmsCountByDate(ndt.NowDateFa);
-                ndt.MsgCount = msc;
-                if (oldmsc != null)
-                    MemoryCacher.Delete("MessageCount");
-                MemoryCacher.Add("MessageCount", msc, DateTimeOffset.Now.AddSeconds(30));
-            }
-            else
-                ndt.MsgCount = oldmsc;
+            //MessageCount oldmsc = (MessageCount)MemoryCacher.GetValue("MessageCount");
+            //if ((oldmsc == null) || (oldmsc.InsDateFa != ndt.NowDateFa))
+            //{
+            //    MessageCount msc = MessageUtility.GetSmsCountByDate(ndt.NowDateFa);
+            //    ndt.MsgCount = msc;
+            //    if (oldmsc != null)
+            //        MemoryCacher.Delete("MessageCount");
+            //    MemoryCacher.Add("MessageCount", msc, DateTimeOffset.Now.AddSeconds(30));
+            //}
+            //else
+            //    ndt.MsgCount = oldmsc;
             // ---
             try
             {
@@ -110,6 +110,9 @@ namespace WebApi2.Controllers
                     LiteDatabase db = new LiteDatabase(ldbConfig.GetUserConnectionString(_user.USERID.ToString()));
                     // get old ldb ps lst
                     LiteCollection<UserData> dbUD = db.GetCollection<UserData>("UserData");
+                    UserData duplicate = dbUD.FindOne(Query.GTE("Id", ud.Id));
+                    if (duplicate!=null)
+                        ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim() + DateTime.Now.Millisecond.ToString() + rnd.Next().ToString();
                     //var dbUD = db.GetCollection<UserData>("UserData");
                     // delete old lst
                     //dbPS.Delete(Query.EQ("DateIntervalType", _Type));
