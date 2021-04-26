@@ -29,9 +29,9 @@ namespace WebApi2.Controllers
         public List<Qccastt> tstCarDefect()
         {
             Qccastt q = new Qccastt();
-            q.Vin = "NAS411100G1205277";
-            //q.deletedby = 2621;
-            //q.DateType = "M";
+            //q.Vin = "NAS411100G1205277";
+            q.deletedby = -1;
+            q.DateType = "M";
             q.ActAreaSrl = 94;
             q.ActBy = 4314;
             return QccasttUtility.GetCarDefect(q);

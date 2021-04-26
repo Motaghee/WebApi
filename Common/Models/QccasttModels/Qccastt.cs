@@ -15,6 +15,7 @@
         public int QCSTRGT_SRL { get; set; }
         public string DefectDesc { get; set; }
         public string CreatedDateFa { get; set; }
+        public string DeletedDateFa { get; set; }
         public string CreatedDayFa { get; set; }
         public string StrenghtDesc { get; set; }
         public int IsRepaired { get; set; } 
@@ -35,7 +36,9 @@
         public int ActAreaSrl { get; set; }
         public int ActBy { get; set; }
         public string InListQCSTRGTSRL;
+        
         public string DateType;
-        public int deletedby;
+        public int deletedby { get; set; }
+        public string DeletedByDesc { get; set; }
     }
 }

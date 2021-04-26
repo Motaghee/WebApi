@@ -6,8 +6,9 @@
         public int UserId { get; set; }
         public string LName { get; set; }
         public string FName { get; set; }
-        public string SuammryTitle { get; set; }
-        public int SuammryValue { get; set; }
+        public string SummaryTitle { get; set; }
+        public int SummaryValue { get; set; }
+        public string SummaryType { get; set; }
 
     }
 }

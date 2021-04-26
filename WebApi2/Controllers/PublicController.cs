@@ -86,22 +86,28 @@ namespace WebApi2.Controllers
                 //LogManager.SetCommonLog(String.Format(@"GetNowU time:{0} From:{1} by:{2} UserId:{3}", ndt.NowDateFa, user.AppName, ndt.QCUsertSrl.ToString(), user.USERID));
                 UpdateUserData(user, ndt, 1);
             }
-            catch(Exception e) { DBHelper.LogFile(e); }
+            catch(Exception e) { 
+                DBHelper.LogFile(e); 
+            
+            }
             return ndt;
             //ToShortDateString()+" " + DateTime.Now.ToShortTimeString();
         }
 
-        public static Random rnd = new Random();
+        
         public void UpdateUserData(User _user, NowDateTime _ndt, int _UserDataType)
         {
+            UserData ud = new UserData();
+            Random rnd = new Random();
             try
             {
                 if (true)
                 {
                     DateTime dt = new DateTime();
                     dt = DateTime.Now;
-                    UserData ud = new UserData();
-                    ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim()+ DateTime.Now.Millisecond.ToString() + rnd.Next().ToString();
+                    
+                    //ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim()+ DateTime.Now.Millisecond.ToString() + rnd.Next(1000).ToString();
+                    ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim() + DateTime.Now.Millisecond.ToString() + Guid.NewGuid().ToString();
                     ud.DateFa = _ndt.NowDateFa;
                     ud.DateTimeFa = _ndt.NowDateTimeFa;
                     ud.Time = _ndt.NowTime;
@@ -111,8 +117,12 @@ namespace WebApi2.Controllers
                     // get old ldb ps lst
                     LiteCollection<UserData> dbUD = db.GetCollection<UserData>("UserData");
                     UserData duplicate = dbUD.FindOne(Query.GTE("Id", ud.Id));
-                    if (duplicate!=null)
-                        ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim() + DateTime.Now.Millisecond.ToString() + rnd.Next().ToString();
+                    string oldid = ud.Id;
+                    //if (duplicate != null)
+                    //{
+                    //    ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim() + DateTime.Now.Millisecond.ToString() + (rnd.Next(1000)).ToString();
+                    //    LogManager.SetCommonLog(String.Format(@"UpdateUserData On Duplicate time:{0} UserId:{1} DuplicateId:{2} NewId:{3} ", _ndt.NowDateFa, _user.USERID, oldid, ud.Id ));
+                    //}
                     //var dbUD = db.GetCollection<UserData>("UserData");
                     // delete old lst
                     //dbPS.Delete(Query.EQ("DateIntervalType", _Type));
@@ -123,6 +133,7 @@ namespace WebApi2.Controllers
                 }
             }
             catch (Exception e){
+                LogManager.SetCommonLog(String.Format(@"Duplicate time:{0} UserId:{1} DuplicateId:{2} ", _ndt.NowDateFa, _user.USERID,  ud.Id));
                 DBHelper.LogFile(e); 
             }
         }

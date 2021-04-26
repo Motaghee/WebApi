@@ -130,26 +130,37 @@ namespace Common.Utility
                     string M = pc.GetMonth(dtN).ToString().PadLeft(2, '0');
                     string D = pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
                     string strDateCondition = "";
+                    string Condition = " q.recordowner=1 and q.isdefected=1 ";
+                    //---
                     if (qccastt.DateType == "M")
                         strDateCondition = string.Format(@" createddate >= to_date('{0}/{1}/01','yyyy/mm/dd','nls_calendar=persian') ", Y, M);
                     else if (qccastt.DateType == "D")
                         strDateCondition = string.Format(@" createddate >= to_date('{0}/{1}/{2}','yyyy/mm/dd','nls_calendar=persian') ", Y, M, D);
-                    string Condition = " q.recordowner=1 and q.isdefected=1 ";
 
                     if (!string.IsNullOrEmpty(qccastt.InListQCSTRGTSRL))
                         Condition += string.Format(@" And  q.qcstrgt_srl in ({0})", qccastt.InListQCSTRGTSRL);
 
-                    if (qccastt.deletedby != 0)
-                        Condition += string.Format(@" And q.deletedby in ({0})", qccastt.deletedby);
-                    else
+                    if (qccastt.deletedby == 0)
                         Condition += string.Format(@" And q.inuse=1 ");
+                    else if (qccastt.deletedby == -1)
+                        Condition += string.Format(@" And q.deletedby is not null", qccastt.deletedby);
+                    else
+                        Condition += string.Format(@" And q.deletedby in (select srl from qcusert where userid in ({0})) ", qccastt.deletedby);
 
                     if (!string.IsNullOrEmpty(qccastt.Vin))
                     {
                         qccastt.VinWithoutChar = CarUtility.GetVinWithoutChar(qccastt.Vin);
                         Condition += string.Format(@" And q.vin = '{0}'", qccastt.VinWithoutChar);
                     }
+                    if (!string.IsNullOrEmpty(strDateCondition))
+                    {
+                        Condition = strDateCondition + " And " + Condition;
+                    }
 
+                    if ((qccastt.ActAreaSrl != 0))
+                    {
+                        Condition += string.Format(@" And q.qcareat_srl in '{0}'", qccastt.ActAreaSrl);
+                    }
                     #endregion
 
 
@@ -167,14 +178,17 @@ namespace Common.Utility
                                                                a.areacode||' '|| a.areadesc as AreaDesc,
                                                                u.lname as CreatedByDesc,q.CreatedBy,
                                                                ur.lname as RepairedByDesc,q.RepairedBy,
+                                                               ud.lname as DeletedByDesc,q.DeletedBy,
                                                                TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa,
                                                                TO_char(q.repaireddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as repaireddateFa,
+                                                               TO_char(q.deleteddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as DeleteddateFa,
                                                                to_char(q.createddate,'yyyy/mm/dd','nls_calendar=persian') as CreatedDayFa,
                                                                q.isrepaired,
                                                                {0} as ActAreaSrl,{1} as ActBy
                                                           from qccastt q
                                                           join qcusert u on u.srl = q.createdby
                                                           left join qcusert ur on ur.srl = q.RepairedBy
+                                                          left join qcusert ud on ud.srl = q.deletedby
                                                           join qccariddt c on c.vin = q.vin 
                                                           join bodymodel bm on bm.bdmdlcode=c.bdmdlcode
                                                           join qcareat a
@@ -190,7 +204,7 @@ namespace Common.Utility
                                                           join qccabdt t on t.srl = d.qccabdt_srl
                                                          where {2} 
                                                           order by q.createddate desc",
-                                                     qccastt.ActAreaSrl.ToString(), qccastt.ActBy.ToString(), Condition);
+                                                      qccastt.ActAreaSrl.ToString(), qccastt.ActBy.ToString(), Condition);
                     //DataSet ds = clsDBHelper.ExecuteMyQueryIns(commandtext);
                     // --
                     //string jsonString = string.Empty;
@@ -198,7 +212,8 @@ namespace Common.Utility
                     //return jsonString;
                     // --
                     List<Qccastt> FoundDefects = new List<Qccastt>();
-                    FoundDefects = DBHelper.GetDBObjectByObj2_OnLive(new Qccastt(), null, commandtext, "inspector").Cast<Qccastt>().ToList();
+                    Object[] obj = DBHelper.GetDBObjectByObj2_OnLive(new Qccastt(), null, commandtext, "inspector");
+                    FoundDefects = obj.Cast<Qccastt>().ToList();
                     //---
                     if (FoundDefects.Count > 0)
                     {
@@ -1646,7 +1661,7 @@ namespace Common.Utility
                                               count((decode(q.qcstrgt_srl,63,q.vin,null))) as TotalBRegDefCount,
                                               count(distinct decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,63,q.vin,null)) as TotalBPlusCarCount,
                                               count((decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,63,q.vin,null))) as TotalBPlusRegDefCount,
-                                              (select count(c.vin) from qccastt c where  {2} and c.qcareat_srl={0} and c.deletedby is not null ) as DefectDeletedCount 
+                                              (select count(c.vin) from qccastt c where  {2} and c.isdefected=1 and c.qcareat_srl={0} and c.deletedby is not null ) as DefectDeletedCount 
                                              from qccastt q
                                              where {2} and q.recordowner=1 and q.qcareat_srl={0} 
                                              group by qcareat_srl
@@ -1660,92 +1675,93 @@ namespace Common.Utility
                 {
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد بازرسی خودرو در ناحیه";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalDetectCarCount"].ToString());
+                    s.SummaryTitle = "تعداد بازرسی خودرو در ناحیه";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalDetectCarCount"].ToString());
                     lstSummary.Add(s);
                     //---
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد عبور مستقیم خودرو در ناحیه";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalStrCarCount"].ToString());
+                    s.SummaryTitle = "تعداد عبور مستقیم خودرو در ناحیه";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalStrCarCount"].ToString());
                     lstSummary.Add(s);
                     //---
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد خودروی معیوب در ناحیه";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalDefCarCount"].ToString());
+                    s.SummaryTitle = "تعداد خودروی معیوب در ناحیه";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalDefCarCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد عیب ثبتی در ناحیه";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalRegDefCount"].ToString());
+                    s.SummaryTitle = "تعداد عیب ثبتی در ناحیه";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalRegDefCount"].ToString());
                     lstSummary.Add(s);
                     // 
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد عیب حذف شده در ناحیه";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["DefectDeletedCount"].ToString());
+                    s.SummaryType = "D";
+                    s.SummaryTitle = "تعداد عیب حذف شده در ناحیه";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["DefectDeletedCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد خودرو با عیب ایمنی در ناحیه";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalASPCarCount"].ToString());
+                    s.SummaryTitle = "تعداد خودرو با عیب ایمنی در ناحیه";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalASPCarCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد ثبت عیب ایمنی در ناحیه";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalASPRegDefCount"].ToString());
+                    s.SummaryTitle = "تعداد ثبت عیب ایمنی در ناحیه";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalASPRegDefCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد خودرو با عیب SP در ناحیه ";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalSPCarCount"].ToString());
+                    s.SummaryTitle = "تعداد خودرو با عیب SP در ناحیه ";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalSPCarCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد ثبت عیب SP در ناحیه ";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalSPRegDefCount"].ToString());
+                    s.SummaryTitle = "تعداد ثبت عیب SP در ناحیه ";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalSPRegDefCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد خودرو با عیب A در ناحیه ";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalACarCount"].ToString());
+                    s.SummaryTitle = "تعداد خودرو با عیب A در ناحیه ";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalACarCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد ثبت عیب A در ناحیه ";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalARegDefCount"].ToString());
+                    s.SummaryTitle = "تعداد ثبت عیب A در ناحیه ";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalARegDefCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد خودرو با عیب B در ناحیه ";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBCarCount"].ToString());
+                    s.SummaryTitle = "تعداد خودرو با عیب B در ناحیه ";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBCarCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد ثبت عیب B در ناحیه ";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBRegDefCount"].ToString());
+                    s.SummaryTitle = "تعداد ثبت عیب B در ناحیه ";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBRegDefCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد خودرو با عیب B پلاس در ناحیه ";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBPlusCarCount"].ToString());
+                    s.SummaryTitle = "تعداد خودرو با عیب B پلاس در ناحیه ";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBPlusCarCount"].ToString());
                     lstSummary.Add(s);
                     //
                     s = new Summary();
                     s.UserId = 0;
-                    s.SuammryTitle = "تعداد ثبت عیب B پلاس در ناحیه ";
-                    s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBPlusRegDefCount"].ToString());
+                    s.SummaryTitle = "تعداد ثبت عیب B پلاس در ناحیه ";
+                    s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBPlusRegDefCount"].ToString());
                     lstSummary.Add(s);
 
 
@@ -1766,7 +1782,7 @@ namespace Common.Utility
                                               count((decode(q.qcstrgt_srl,63,q.vin,null))) as TotalBRegDefCount,
                                               count(distinct (decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,63,q.vin,null))) as BPlusCarCount,
                                               count((decode(q.qcstrgt_srl,62,q.vin,42,q.vin,101,q.vin,63,q.vin,null))) as BPlusRegDefCount,
-                                             (select count(c.vin) from qccastt c where  {1} and c.qcareat_srl=q.qcareat_srl and c.deletedby = q.createdby) as DefectDeletedCount
+                                             (select count(c.vin) from qccastt c where  {1} and c.isdefected=1 and c.qcareat_srl=q.qcareat_srl and c.deletedby = q.createdby) as DefectDeletedCount
                                              from qccastt q join qcusert u on u.srl = q.createdby
                                              where {1} and q.recordowner=1 and q.qcareat_srl={0} 
                                              group by q.qcareat_srl,q.createdby,u.userid,u.fname,u.lname 
@@ -1780,40 +1796,40 @@ namespace Common.Utility
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد شاسی بازرسی شده";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DetectCarCount"].ToString());
+                        s.SummaryTitle = "تعداد شاسی بازرسی شده";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DetectCarCount"].ToString());
                         lstSummary.Add(s);
                         //---
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد شاسی معیوب بازرسی شده ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DefCarCount"].ToString());
+                        s.SummaryTitle = "تعداد شاسی معیوب بازرسی شده ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DefCarCount"].ToString());
                         lstSummary.Add(s);
                         //---
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد شاسی عبور مستقیم ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["StrCarCount"].ToString());
+                        s.SummaryTitle = "تعداد شاسی عبور مستقیم ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["StrCarCount"].ToString());
                         lstSummary.Add(s);
                         //---
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد ثبت عیب ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["RegDefCount"].ToString());
+                        s.SummaryTitle = "تعداد ثبت عیب ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["RegDefCount"].ToString());
                         lstSummary.Add(s);
                         //---
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد ثبت عیب ایمنی ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["ASPRegDefCount"].ToString());
+                        s.SummaryTitle = "تعداد ثبت عیب ایمنی ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["ASPRegDefCount"].ToString());
                         lstSummary.Add(s);
                         //
                         //
@@ -1821,48 +1837,48 @@ namespace Common.Utility
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد خودرو با عیب SP در ناحیه ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalSPCarCount"].ToString());
+                        s.SummaryTitle = "تعداد خودرو با عیب SP در ناحیه ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalSPCarCount"].ToString());
                         lstSummary.Add(s);
                         //
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد ثبت عیب SP در ناحیه ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalSPRegDefCount"].ToString());
+                        s.SummaryTitle = "تعداد ثبت عیب SP در ناحیه ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalSPRegDefCount"].ToString());
                         lstSummary.Add(s);
                         //
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد خودرو با عیب A در ناحیه ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalACarCount"].ToString());
+                        s.SummaryTitle = "تعداد خودرو با عیب A در ناحیه ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalACarCount"].ToString());
                         lstSummary.Add(s);
                         //
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد ثبت عیب A در ناحیه ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalARegDefCount"].ToString());
+                        s.SummaryTitle = "تعداد ثبت عیب A در ناحیه ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalARegDefCount"].ToString());
                         lstSummary.Add(s);
                         //
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد خودرو با عیب B در ناحیه ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBCarCount"].ToString());
+                        s.SummaryTitle = "تعداد خودرو با عیب B در ناحیه ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBCarCount"].ToString());
                         lstSummary.Add(s);
                         //
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد ثبت عیب B در ناحیه ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBRegDefCount"].ToString());
+                        s.SummaryTitle = "تعداد ثبت عیب B در ناحیه ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalBRegDefCount"].ToString());
                         lstSummary.Add(s);
                         //
                         //---
@@ -1870,16 +1886,17 @@ namespace Common.Utility
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد ثبت عیب B پلاس ";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["BPlusRegDefCount"].ToString());
+                        s.SummaryTitle = "تعداد ثبت عیب B پلاس ";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["BPlusRegDefCount"].ToString());
                         lstSummary.Add(s);
                         //---
                         s = new Summary();
                         s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                         s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                         s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
-                        s.SuammryTitle = "تعداد حذف عیب";
-                        s.SuammryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DefectDeletedCount"].ToString());
+                        s.SummaryType = "D";
+                        s.SummaryTitle = "تعداد حذف عیب";
+                        s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DefectDeletedCount"].ToString());
                         lstSummary.Add(s);
                     }
                     return lstSummary;
