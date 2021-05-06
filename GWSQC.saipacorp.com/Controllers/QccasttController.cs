@@ -12,18 +12,32 @@ namespace GWSQC.saipacorp.com.Controllers
         [Route("api/Qccastt/GetSaipaCitroenPDIData")]
         public object GetSaipaCitroenPDIData([FromBody] User _User)
         {
-            bool Login = Authentication.FindUser(_User.USERNAME, _User.PSW);
-            if (Login)
+            try
             {
-                LogManager.MethodCallLog("GetSaipaCitroenPDIData _ RequestByUser: " + _User.USERNAME + " _RequestVin: " + _User.Vin);
-                return QccasttActs.GetSaipaCitroenPDIData(_User.Vin.ToUpper());
+                if (!string.IsNullOrEmpty(_User.USERNAME) && _User.USERNAME != "0" && !string.IsNullOrEmpty(_User.PSW) && _User.PSW != "0"
+                     && ((!string.IsNullOrEmpty(_User.Vin) && _User.Vin != "0") || (!string.IsNullOrEmpty(_User.SDate) && !string.IsNullOrEmpty(_User.EDate) && _User.SDate != "0" && _User.EDate != "0")))
+                {
+                    bool Login = Authentication.FindUser(_User.USERNAME, _User.PSW);
+                    if (Login)
+                    {
+                        LogManager.MethodCallLog("GetSaipaCitroenPDIData _ RequestByUser: " + _User.USERNAME + " _RequestVin: " + _User.Vin);
+                        return QccasttActs.GetSaipaCitroenPDIData(_User.Vin.ToUpper(), _User.SDate, _User.EDate);
+                    }
+                    else
+                    {
+                        LogManager.MethodCallLog("GetSaipaCitroenPDIData _ RequestByUser: " + _User.USERNAME + "_ AuthenticationFail");
+                        return null;
+                    }
+                }
+                else
+                    return "Check Your Parameters";
             }
-            else
+            catch
             {
-                LogManager.MethodCallLog("GetSaipaCitroenPDIData _ RequestByUser: " + _User.USERNAME + "_ AuthenticationFail");
-                return null;
+                return "Error Occurrence";
             }
         }
+
 
 
 

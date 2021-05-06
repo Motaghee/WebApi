@@ -128,6 +128,8 @@
     <Compile Include="Models\Audit\DataMining.cs" />
     <Compile Include="Models\BodyModelProductStatistics.cs" />
     <Compile Include="Models\General\ldbUpdStatus.cs" />
+    <Compile Include="Models\General\NowDateTime.cs" />
+    <Compile Include="Models\General\Users.cs" />
     <Compile Include="Models\General\Summary.cs" />
     <Compile Include="Models\General\Message.cs" />
     <Compile Include="Models\General\MessageCount.cs" />
@@ -158,7 +160,7 @@
     <Compile Include="Models\ProductStatistics.cs" />
     <Compile Include="Models\Sale\SaleStatus.cs" />
     <Compile Include="Models\QCUsert.cs" />
-    <Compile Include="Models\UserData.cs" />
+    <Compile Include="Models\OnlineUsers.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

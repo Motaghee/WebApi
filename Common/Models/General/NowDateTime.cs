@@ -1,7 +1,7 @@
 ﻿using Common.Models.General;
 using System;
 
-namespace WebApi2.Models
+namespace Common.Models.General
 {
     public class NowDateTime
     {

@@ -34,7 +34,7 @@
         public string AUDITCARDPER { get; set; }
         public string CARSTATUSPER { get; set; }
         public string AppName { get; set; }
-
+        public string ClientVersion { get; set; }
         //public double SRL { get; set; } //double
         //public string FNAME { get; set; }
         //public string LNAME { get; set; }

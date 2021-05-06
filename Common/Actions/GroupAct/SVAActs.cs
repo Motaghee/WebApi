@@ -46,7 +46,8 @@ namespace Common.Actions
                                                           And ('{2}'='0' or a.AUDITDATE <= TO_date('{2}','YYYY/MM/DD','nls_calendar=persian'))
                                                           ", _Vin.ToUpper(),_SDate,_EDate);
                 List<DataMining> lst = new List<DataMining>();
-                return DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "ins");
+                object[] obj = DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "ins");
+                return obj;
                 //return lst;
             }
             catch (Exception ex)
@@ -56,7 +57,7 @@ namespace Common.Actions
             }
         }
 
-        public static object GetSaipaCitroenIVAAuditData(string _Vin)
+        public static object GetSaipaCitroenIVAAuditData(string _Vin, string _SDate, string _EDate)
         {
             try
             {
@@ -85,7 +86,11 @@ namespace Common.Actions
                                                          on ad.svaauditcardetail_srl = d.srl
                                                         join iva_v_auditcar a
                                                         on d.svaauditcar_srl = a.srl
-                                                        where a.areacode in (1102) and d.vin = '{0}' ", _Vin);
+                                                        where a.areacode in (1102) 
+                                                          And ('{0}'='0' or a.vin = '{0}')
+                                                          And ('{1}'='0' or a.AUDITDATE >= TO_date('{1}','YYYY/MM/DD','nls_calendar=persian'))
+                                                          And ('{2}'='0' or a.AUDITDATE <= TO_date('{2}','YYYY/MM/DD','nls_calendar=persian'))
+                                                        ", _Vin, _SDate, _EDate);
                 List<DataMining> lst = new List<DataMining>();
                 return DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "ins");
                 //return lst;

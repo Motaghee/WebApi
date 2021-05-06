@@ -1,4 +1,5 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using Common.Utility;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 //using System.Collections.Generic;
@@ -64,7 +65,7 @@ namespace Common.db
 
         static DBHelper()
         {
-            bool Live = true;
+            bool Live = false;
             //===
             if (Live)
             { CnStrIns = CnStrInsLive; CnStrStp = CnStrStpLive; CnStrPT = CnStrPTLive; }
@@ -533,7 +534,12 @@ namespace Common.db
                                     else
                                     {
                                         if (_ds.Tables[0].Rows[i][strFieldName].GetType().ToString() == "System.Decimal")
-                                            _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToInt32(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                        {
+                                            if (!_ds.Tables[0].Rows[i][strFieldName].ToString().Contains("."))
+                                                _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToInt32(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                            else //ToDouble
+                                                _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToDouble(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
+                                        }
                                         else
                                         {
                                             if ((_ds.Tables[0].Rows[i][strFieldName].ToString() == "FALSE") || (_ds.Tables[0].Rows[i][strFieldName].ToString() == "TRUE"))
@@ -541,13 +547,13 @@ namespace Common.db
                                                 _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, Convert.ToBoolean(_ds.Tables[0].Rows[i][strFieldName].ToString()), null);
                                             }
                                             else
-                                                _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj,_ds.Tables[0].Rows[i][strFieldName], null);
+                                                _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, _ds.Tables[0].Rows[i][strFieldName], null);
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    //clsDBHelper.LogtxtToFile("Null value-GetDBObjectByObj2" + strFieldName+ "_is null");// Thumbnail
+                                    DBHelper.LogtxtToFile("Null value-GetDBObjectByObj2" + strFieldName+ "_is null");// Thumbnail
                                     _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, null, null);
                                 }
                                 lstObj[i] = _Obj;
@@ -555,7 +561,7 @@ namespace Common.db
                             catch (Exception e)
                             {
                                 LogFile(e);
-                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj2" + strFieldName + e.ToString() + e.InnerException.Message + e.Message.ToString());
+                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj2" + strFieldName + e.ToString() + e.Message.ToString());
                             }
                         }
 
@@ -1103,9 +1109,9 @@ namespace Common.db
         {
             try
             {
-                string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+                string message = string.Format("Time: {0}", CommonUtility.GetNowDateTime().NowDateTimeFa);
                 //message += Environment.NewLine;
-                message += "__" + txt;
+                message += "_" + txt;
                 string path = @"D:\\WebApiLogs\\UserLog.txt";
                 StreamWriter writer = new StreamWriter(path, true);
                 writer.WriteLine(message);

@@ -60,9 +60,10 @@ namespace WebApi2.Controllers
             user.AUDITCARDPER = claims.FirstOrDefault(x => x.Type == "AuditCardPer").Value.ToString();
             user.CARSTATUSPER = claims.FirstOrDefault(x => x.Type == "CarStatusPer").Value.ToString();
             user.AppName= claims.FirstOrDefault(x => x.Type == "AppName").Value.ToString();
+            user.ClientVersion = claims.FirstOrDefault(x => x.Type == "ClientVersion").Value.ToString();
             user.STRUSERPROFILEIMAGE = GetUserProfileImage(user.USERNAME);
             if (user.USERNAME != "1000861")
-                DBHelper.LogtLoginUser(user.USERNAME +" "+ user.LNAME);
+                DBHelper.LogtLoginUser(user.USERNAME +" "+ user.LNAME+" AppName:"+ user.AppName + " ClientVersion:" + user.ClientVersion);
             return user;
         }
 

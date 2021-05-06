@@ -1,8 +1,13 @@
-﻿using Common.db;
+﻿using Common.Actions;
+using Common.CacheManager;
+using Common.db;
+using Common.Models;
 using Common.Models.General;
+using LiteDB;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Data;
+using System.Globalization;
 using System.Text;
 using WebApi2.Models;
 
@@ -48,6 +53,65 @@ namespace WebApi2.Controllers.Utility
                 return rm;
             }
 
+        }
+
+        public static void UpdateUserData(User _user, NowDateTime _ndt, int _UserDataType)
+        {
+            OnlineUsers ud = new OnlineUsers();
+            LiteDatabase db=null;
+            try
+            {
+                if (_ndt==null)
+                {
+                    _ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    PersianCalendar pc = new PersianCalendar();
+                    DateTime dtN = DateTime.Now;
+                    _ndt.NowDateFa = pc.GetYear(dtN).ToString() + "/" + pc.GetMonth(dtN).ToString().PadLeft(2, '0') + "/" + pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
+                    _ndt.NowTime = dtN.ToString("HH:mm:ss");
+                    _ndt.NowDateTimeFa = _ndt.NowDateFa + " " + _ndt.NowTime;
+                }
+                DateTime dt = new DateTime();
+                dt = DateTime.Now;
+                ud.Id = _user.USERID;
+                //_ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim() + DateTime.Now.Millisecond.ToString() + Guid.NewGuid().ToString();
+                ud.DateFa = _ndt.NowDateFa;
+                ud.DateTimeFa = _ndt.NowDateTimeFa;
+                ud.Time = _ndt.NowTime;
+                // get instanse of ldb
+                ConnectionString cn = ldbConfig.ldbOnlineUsersConnectionString;
+                db = new LiteDatabase(cn);
+                // get old ldb ps lst
+                LiteCollection<OnlineUsers> dbUD = db.GetCollection<OnlineUsers>("OnlineUsers");
+                OnlineUsers old = dbUD.FindById(ud.Id);
+                if (old == null)
+                {
+                    ud.DataType = _UserDataType;
+                    if (_UserDataType == 0)
+                        ud.LoginDateTimeFa = ud.DateTimeFa;
+                    dbUD.Insert(ud);
+
+
+                }
+                else
+                {
+                    if (_UserDataType == 0)
+                        old.LoginDateTimeFa = ud.DateTimeFa;
+                    old.DateFa = _ndt.NowDateFa;
+                    old.DateTimeFa = _ndt.NowDateTimeFa;
+                    old.Time = _ndt.NowTime;
+                    dbUD.Update(old);
+                }
+
+            }
+            catch (Exception e)
+            {
+                LogManager.SetCommonLog(String.Format(@"Duplicate time:{0} UserId:{1} DuplicateId:{2} ", _ndt.NowDateFa, _user.USERID, ud.Id));
+                DBHelper.LogFile(e);
+            }
+            finally
+            {
+                db.Dispose();
+            }
         }
     }
 }

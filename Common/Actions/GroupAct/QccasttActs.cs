@@ -15,7 +15,7 @@ namespace Common.Actions
     public static class QccasttActs
     {
  
-        public static object GetSaipaCitroenPDIData(string _Vin)
+        public static object GetSaipaCitroenPDIData(string _Vin, string _SDate, string _EDate)
         {
             try
             {
@@ -45,8 +45,11 @@ namespace Common.Actions
                                                   left join qcusert u
                                                     on u.srl = q.createdby
                                                  where q.QCAREAT_SRL = 441
-                                                   and q.vin='{0}'
-                                                 ", VinUtility.GetVinWithoutChar(_Vin));
+                                                          And ('{0}'='0' or q.vin = '{0}')
+                                                          And ('{1}'='0' or q.CREATEDDATE >= TO_date('{1}','YYYY/MM/DD','nls_calendar=persian'))
+                                                          And ('{2}'='0' or q.CREATEDDATE <= TO_date('{2}','YYYY/MM/DD','nls_calendar=persian'))
+
+                                                 ", VinUtility.GetVinWithoutChar(_Vin.ToUpper()), _SDate, _EDate);
                 //List<QCDataMining> lst = new List<QCDataMining>();
                 return DBHelper.GetDBObjectByObj2(new QCDataMining(), null, commandtext, "ins");
                 //return lst;

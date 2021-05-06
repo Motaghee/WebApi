@@ -54,6 +54,11 @@ namespace Common.CacheManager
             Password = "H@med110Rez@"
         };
 
+        public static ConnectionString ldbOnlineUsersConnectionString = new ConnectionString(@"C:\MobAppCache\OnlineUsers.bdl")
+        {
+            Password = "H@med110Rez@"
+        };
+
         public static ConnectionString GetUserConnectionString(string _userid)
         {
             string path = string.Format(@"C:\MobAppCache\users\{0}.bdl", _userid);
@@ -61,6 +66,8 @@ namespace Common.CacheManager
             ldbUserConnectionString.Password = "H@med110Rez@";
             return ldbUserConnectionString;
         }
+
+
 
     }
 }

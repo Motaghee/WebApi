@@ -2,6 +2,7 @@
 using ClosedXML.Excel;
 using Common.Automation;
 using Common.db;
+using Common.Models.General;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,17 @@ namespace Common.Utility
 {
     public static class CommonUtility
     {
+        public static NowDateTime GetNowDateTime()
+        {
+            NowDateTime ndt = new NowDateTime();
+            ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            PersianCalendar pc = new PersianCalendar();
+            DateTime dtN = DateTime.Now;
+            ndt.NowDateFa = pc.GetYear(dtN).ToString() + "/" + pc.GetMonth(dtN).ToString().PadLeft(2, '0') + "/" + pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
+            ndt.NowTime = dtN.ToString("HH:mm:ss");
+            ndt.NowDateTimeFa = ndt.NowDateFa + " " + ndt.NowTime;
+            return ndt;
+        }
         public static string GetNowDateTimeFa()
         {
             //ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
