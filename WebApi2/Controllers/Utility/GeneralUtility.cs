@@ -58,11 +58,12 @@ namespace WebApi2.Controllers.Utility
         public static void UpdateUserData(User _user, NowDateTime _ndt, int _UserDataType)
         {
             OnlineUsers ud = new OnlineUsers();
-            LiteDatabase db=null;
+            LiteDatabase db = null;
             try
             {
-                if (_ndt==null)
+                if (_ndt == null)
                 {
+                    _ndt = new NowDateTime();
                     _ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     PersianCalendar pc = new PersianCalendar();
                     DateTime dtN = DateTime.Now;
@@ -72,9 +73,9 @@ namespace WebApi2.Controllers.Utility
                 }
                 DateTime dt = new DateTime();
                 dt = DateTime.Now;
-                ud.Id = _user.USERID;
                 //_ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim() + DateTime.Now.Millisecond.ToString() + Guid.NewGuid().ToString();
                 ud.DateFa = _ndt.NowDateFa;
+                ud.DateTime = _ndt.Now;
                 ud.DateTimeFa = _ndt.NowDateTimeFa;
                 ud.Time = _ndt.NowTime;
                 // get instanse of ldb
@@ -82,26 +83,37 @@ namespace WebApi2.Controllers.Utility
                 db = new LiteDatabase(cn);
                 // get old ldb ps lst
                 LiteCollection<OnlineUsers> dbUD = db.GetCollection<OnlineUsers>("OnlineUsers");
-                OnlineUsers old = dbUD.FindById(ud.Id);
+                OnlineUsers old = dbUD.FindById(_user.USERID);
                 if (old == null)
                 {
+                    //ud.Id = _ndt.NowDateTimeFa.Replace(" ", "").Replace("/", "").Replace(":", "").Trim() + DateTime.Now.Millisecond.ToString() + Guid.NewGuid().ToString();
+                    ud.UserId = ud.Id = _user.USERID;
+                    ud.UserSRL = _user.SRL;
                     ud.DataType = _UserDataType;
                     if (_UserDataType == 0)
+                    {
                         ud.LoginDateTimeFa = ud.DateTimeFa;
+                        ud.AreaCode = _user.AREACODE;
+                        ud.UserDesc = _user.FNAME +" " + _user.LNAME;
+
+                    }
                     dbUD.Insert(ud);
-
-
                 }
                 else
                 {
                     if (_UserDataType == 0)
+                    {
                         old.LoginDateTimeFa = ud.DateTimeFa;
+                        old.AreaCode = _user.AREACODE;
+                        old.UserDesc = _user.FNAME + " " + _user.LNAME;
+
+                    }
                     old.DateFa = _ndt.NowDateFa;
                     old.DateTimeFa = _ndt.NowDateTimeFa;
                     old.Time = _ndt.NowTime;
+                    ud.DateTime = _ndt.Now;
                     dbUD.Update(old);
                 }
-
             }
             catch (Exception e)
             {

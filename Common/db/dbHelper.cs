@@ -553,7 +553,7 @@ namespace Common.db
                                 }
                                 else
                                 {
-                                    DBHelper.LogtxtToFile("Null value-GetDBObjectByObj2" + strFieldName+ "_is null");// Thumbnail
+                                    //DBHelper.LogtxtToFile("Null value-GetDBObjectByObj2" + strFieldName+ "_is null"+ "Query: "+_CommandText );// Thumbnail
                                     _Obj.GetType().GetProperty(strFieldName).SetValue(_Obj, null, null);
                                 }
                                 lstObj[i] = _Obj;

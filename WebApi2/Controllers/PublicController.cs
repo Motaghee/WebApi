@@ -97,23 +97,31 @@ namespace WebApi2.Controllers
         }
 
         [HttpGet]
-        [Route("api/Public/tstOnlineUsers")]
-        public void tstOnlineUsers()
+        [Route("api/Public/GetOnlineUsers")]
+        public List<OnlineUsers> tstGetOnlineUsers()
         {
-            User user = new User();
-            user.USERID = 1000861;
-            NowDateTime ndt = new NowDateTime();
-            ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            PersianCalendar pc = new PersianCalendar();
-            DateTime dtN = DateTime.Now;
-            ndt.NowDateFa = pc.GetYear(dtN).ToString() + "/" + pc.GetMonth(dtN).ToString().PadLeft(2, '0') + "/" + pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
-            ndt.NowTime = dtN.ToString("HH:mm:ss");
-            ndt.NowDateTimeFa = ndt.NowDateFa + " " + ndt.NowTime;
-            GeneralUtility.UpdateUserData(user, ndt, 1);
+            // get instanse of ldb
+            ConnectionString cn = ldbConfig.ldbOnlineUsersConnectionString;
+            LiteDatabase db = new LiteDatabase(cn);
+            // get old ldb ps lst
+            List<OnlineUsers> lst = new List<OnlineUsers>();
+            LiteCollection <OnlineUsers> dbUD = db.GetCollection<OnlineUsers>("OnlineUsers");
+            lst = dbUD.FindAll().ToList<OnlineUsers>();
+            return lst;
+            //OnlineUsers[] res= result.Cast<OnlineUsers>().ToList();
+
+            //User user = new User();
+            //user.USERID = 1000861;
+            //NowDateTime ndt = new NowDateTime();
+            //ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            //PersianCalendar pc = new PersianCalendar();
+            //DateTime dtN = DateTime.Now;
+            //ndt.NowDateFa = pc.GetYear(dtN).ToString() + "/" + pc.GetMonth(dtN).ToString().PadLeft(2, '0') + "/" + pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
+            //ndt.NowTime = dtN.ToString("HH:mm:ss");
+            //ndt.NowDateTimeFa = ndt.NowDateFa + " " + ndt.NowTime;
+            //GeneralUtility.UpdateUserData(user, ndt, 1);
         }
-
-
-        
+       
     }
 
 
