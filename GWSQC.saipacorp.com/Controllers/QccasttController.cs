@@ -1,4 +1,5 @@
 ﻿using Common.Actions;
+using Common.Models.QccasttModels;
 using GWSQC.saipacorp.com.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace GWSQC.saipacorp.com.Controllers
     {
         [HttpPost]
         [Route("api/Qccastt/GetSaipaCitroenPDIData")]
-        public object GetSaipaCitroenPDIData([FromBody] User _User)
+        public List<QCDataMining> GetSaipaCitroenPDIData([FromBody] User _User)
         {
             try
             {
@@ -30,11 +31,11 @@ namespace GWSQC.saipacorp.com.Controllers
                     }
                 }
                 else
-                    return "Check Your Parameters";
+                    return null; // "Check Your Parameters";
             }
             catch
             {
-                return "Error Occurrence";
+                return null;// "Error Occurrence";
             }
         }
 

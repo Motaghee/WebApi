@@ -1,4 +1,5 @@
 ﻿using Common.Actions;
+using Common.Models.Audit;
 using GWSQC.saipacorp.com.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace GWSQC.saipacorp.com.Controllers
     {
         [HttpPost]
         [Route("api/audit/GetSaipaCitroenSVAAuditData")]
-        public object GetSaipaCitroenSVAAuditData([FromBody] User _User)
+        public List<DataMining> GetSaipaCitroenSVAAuditData([FromBody] User _User)
         {
             try
             {
@@ -26,28 +27,28 @@ namespace GWSQC.saipacorp.com.Controllers
                     else
                     {
                         //LogManager.MethodCallLog("GetSaipaCitroenSVAAuditData _ RequestByUser: " + _User.USERNAME + "_ AuthenticationFail");
-                        return "Authentication Fail";
+                        return null;// "Authentication Fail";
                     }
                 }
                 else
-                    return "Check Your Parameters";
+                    return null;// "Check Your Parameters";
             }
-            catch
+            catch (Exception e)
             {
-                return "Error Occurrence";
+                throw e;// "Error Occurrence";
             }
         }
 
         [HttpGet]
         [Route("api/audit/GetSaipaCitroenSVAAuditData2")]
-        public object GetSaipaCitroenSVAAuditData2()
+        public List<DataMining> GetSaipaCitroenSVAAuditData2()
         {
             try
             {
                 User _User = new User();
                 _User.Vin = "0";
                 _User.SDate = "1399/10/01";
-                _User.EDate = "1399/12/20";
+                _User.EDate = "1399/10/02";
                 _User.USERNAME = "1000861";
                 _User.PSW = "0082397171";
                 if (!string.IsNullOrEmpty(_User.USERNAME) && _User.USERNAME != "0" && !string.IsNullOrEmpty(_User.PSW) && _User.PSW != "0"
@@ -57,26 +58,28 @@ namespace GWSQC.saipacorp.com.Controllers
                     if (Login)
                     {
                         //LogManager.MethodCallLog("GetSaipaCitroenSVAAuditData _ RequestByUser: " + _User.USERNAME + " _RequestVin: " + _User.Vin + " _SDate: " + _User.SDate + " _EDate: " + _User.EDate);
-                        return SVAActs.GetSaipaCitroenIVAAuditData(_User.Vin.ToUpper(), _User.SDate, _User.EDate);
+                        List<DataMining> lst = SVAActs.GetSaipaCitroenIVAAuditData(_User.Vin.ToUpper(), _User.SDate, _User.EDate);
+                        return lst;
+
                     }
                     else
                     {
                         //LogManager.MethodCallLog("GetSaipaCitroenSVAAuditData _ RequestByUser: " + _User.USERNAME + "_ AuthenticationFail");
-                        return "Authentication Fail";
+                        return null; //"Authentication Fail";
                     }
                 }
                 else
-                    return "Check Your Parameters";
+                    return null; //"Check Your Parameters";
             }
-            catch
+            catch  (Exception e)
             {
-                return "Error Occurrence";
+                throw e;
             }
         }
 
         [HttpPost]
         [Route("api/audit/GetSaipaCitroenIVAAuditData")]
-        public object GetSaipaCitroenIVAAuditData([FromBody] User _User)
+        public List<DataMining> GetSaipaCitroenIVAAuditData([FromBody] User _User)
         {
             if (!string.IsNullOrEmpty(_User.USERNAME) && _User.USERNAME != "0" && !string.IsNullOrEmpty(_User.PSW) && _User.PSW != "0"
                      && ((!string.IsNullOrEmpty(_User.Vin) && _User.Vin != "0") || (!string.IsNullOrEmpty(_User.SDate) && !string.IsNullOrEmpty(_User.EDate) && _User.SDate != "0" && _User.EDate != "0")))
@@ -94,7 +97,7 @@ namespace GWSQC.saipacorp.com.Controllers
                 }
             }
             else
-                return "Check Your Parameters";
+                return null;// "Check Your Parameters";
         }
 
 

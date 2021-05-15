@@ -15,7 +15,7 @@ namespace Common.Actions
     public static class QccasttActs
     {
  
-        public static object GetSaipaCitroenPDIData(string _Vin, string _SDate, string _EDate)
+        public static List<QCDataMining> GetSaipaCitroenPDIData(string _Vin, string _SDate, string _EDate)
         {
             try
             {
@@ -50,9 +50,11 @@ namespace Common.Actions
                                                           And ('{2}'='0' or q.CREATEDDATE <= TO_date('{2}','YYYY/MM/DD','nls_calendar=persian'))
 
                                                  ", VinUtility.GetVinWithoutChar(_Vin.ToUpper()), _SDate, _EDate);
-                //List<QCDataMining> lst = new List<QCDataMining>();
-                return DBHelper.GetDBObjectByObj2(new QCDataMining(), null, commandtext, "ins");
-                //return lst;
+                List<QCDataMining> lst = new List<QCDataMining>();
+                Object[] obj = DBHelper.GetDBObjectByObj2(new QCDataMining(), null, commandtext, "inspector");
+                lst = obj.Cast<QCDataMining>().ToList();
+                return lst;
+                //return DBHelper.GetDBObjectByObj2(new QCDataMining(), null, commandtext, "ins");
             }
             catch (Exception ex)
             {

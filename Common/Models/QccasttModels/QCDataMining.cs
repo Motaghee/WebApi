@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.Models.QccasttModels
 {
-    class QCDataMining
+    public class QCDataMining
     {
         //public double SRL { get; set; } //double
         public string CreatedByDesc { get; set; }

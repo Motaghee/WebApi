@@ -94,8 +94,7 @@ namespace WebApi2.Controllers.Utility
                     {
                         ud.LoginDateTimeFa = ud.DateTimeFa;
                         ud.AreaCode = _user.AREACODE;
-                        ud.UserDesc = _user.FNAME +" " + _user.LNAME;
-
+                        ud.UserDesc = _user.FNAME + " " + _user.LNAME;
                     }
                     dbUD.Insert(ud);
                 }
@@ -108,10 +107,12 @@ namespace WebApi2.Controllers.Utility
                         old.UserDesc = _user.FNAME + " " + _user.LNAME;
 
                     }
+                    // --
+                    old.DataType = _UserDataType;
                     old.DateFa = _ndt.NowDateFa;
                     old.DateTimeFa = _ndt.NowDateTimeFa;
                     old.Time = _ndt.NowTime;
-                    ud.DateTime = _ndt.Now;
+                    old.DateTime = _ndt.Now;
                     dbUD.Update(old);
                 }
             }

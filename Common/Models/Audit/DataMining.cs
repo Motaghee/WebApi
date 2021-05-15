@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.Models.Audit
 {
-    class DataMining
+    public class DataMining
     {
         //public double SRL { get; set; } //double
         public string auditor { get; set; }

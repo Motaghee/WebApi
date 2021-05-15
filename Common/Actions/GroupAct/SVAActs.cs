@@ -11,7 +11,7 @@ namespace Common.Actions
     public static class SVAActs
     {
  
-        public static object GetSaipaCitroenSVAAuditData(string _Vin,string _SDate,string _EDate)
+        public static List<DataMining> GetSaipaCitroenSVAAuditData(string _Vin,string _SDate,string _EDate)
         {
             try
             {
@@ -46,9 +46,12 @@ namespace Common.Actions
                                                           And ('{2}'='0' or a.AUDITDATE <= TO_date('{2}','YYYY/MM/DD','nls_calendar=persian'))
                                                           ", _Vin.ToUpper(),_SDate,_EDate);
                 List<DataMining> lst = new List<DataMining>();
-                object[] obj = DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "ins");
-                return obj;
-                //return lst;
+                Object[] obj = DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "inspector");
+                lst = obj.Cast<DataMining>().ToList();
+                return lst;
+                //object[] obj = DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "ins");
+                //return obj;
+
             }
             catch (Exception ex)
             {
@@ -57,7 +60,7 @@ namespace Common.Actions
             }
         }
 
-        public static object GetSaipaCitroenIVAAuditData(string _Vin, string _SDate, string _EDate)
+        public static List<DataMining> GetSaipaCitroenIVAAuditData(string _Vin, string _SDate, string _EDate)
         {
             try
             {
@@ -92,7 +95,13 @@ namespace Common.Actions
                                                           And ('{2}'='0' or a.AUDITDATE <= TO_date('{2}','YYYY/MM/DD','nls_calendar=persian'))
                                                         ", _Vin, _SDate, _EDate);
                 List<DataMining> lst = new List<DataMining>();
-                return DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "ins");
+
+                Object[] obj = DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "inspector");
+                lst = obj.Cast<DataMining>().ToList();
+                return lst;
+
+
+//                return DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "ins");
                 //return lst;
             }
             catch (Exception ex)
