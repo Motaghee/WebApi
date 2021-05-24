@@ -105,19 +105,28 @@ namespace WebApi2.Controllers
         [Route("api/Public/GetOnlineUsers")]
         public List<OnlineUsers> GetOnlineUsers()
         {
-            // get instanse of ldb
-            ConnectionString cn = ldbConfig.ldbOnlineUsersConnectionString;
-            LiteDatabase db = new LiteDatabase(cn);
-            // get old ldb ps lst
-            List<OnlineUsers> lst = new List<OnlineUsers>();
-            LiteCollection<OnlineUsers> dbUD = db.GetCollection<OnlineUsers>("OnlineUsers");
-            lst = dbUD.FindAll().OrderByDescending(o => o.DateTimeFa).ToList<OnlineUsers>();
-            foreach (OnlineUsers item in lst)
+            try
             {
-                TimeSpan diff = DateTime.Now - Convert.ToDateTime(item.DateTime);
-                item.TimeFromLastOnline =Convert.ToInt32(diff.TotalSeconds);
+                // get instanse of ldb
+                ConnectionString cn = ldbConfig.ldbOnlineUsersConnectionString;
+                LiteDatabase db = new LiteDatabase(cn);
+                // get old ldb ps lst
+                List<OnlineUsers> lst = new List<OnlineUsers>();
+                LiteCollection<OnlineUsers> dbUD = db.GetCollection<OnlineUsers>("OnlineUsers");
+                lst = dbUD.FindAll().OrderByDescending(o => o.DateTimeFa).ToList<OnlineUsers>();
+                foreach (OnlineUsers item in lst)
+                {
+                    TimeSpan diff = DateTime.Now - Convert.ToDateTime(item.DateTime);
+                    item.TimeFromLastOnline = Convert.ToInt32(diff.TotalSeconds);
+                }
+                return lst;
             }
-            return lst;
+            catch (Exception e)
+            {
+                DBHelper.LogFile(e);
+                return null;
+
+            }
             //OnlineUsers[] res= result.Cast<OnlineUsers>().ToList();
 
             //User user = new User();

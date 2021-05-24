@@ -1,4 +1,7 @@
-﻿namespace Common.Models
+﻿using Common.Models.QccasttModels;
+using System.Collections.Generic;
+
+namespace Common.Models
 {
     public class User
     {
@@ -8,17 +11,17 @@
         public string USERNAME { get; set; }
         public int USERID { get; set; }
         public string PSW { get; set; }
-        public string MACADDRESS { get; set; }
+        public string MACADDRESS; //{ get; set; }
         public double QCAREATSRL { get; set; }
         public double CHECKDEST { get; set; }
         public int AREACODE { get; set; }
         public string AREADESC { get; set; }
         public int AREATYPE { get; set; }
-        public string SERVERREQVER { get; set; }
-        public string USERAPPVER { get; set; }
-        public bool MACISVALID { get; set; } = false;
-        public bool CLIENTVERISVALID { get; set; } = false;
-        public string STRUSERPROFILEIMAGE { get; set; }
+        public string SERVERREQVER;//{ get; set; }
+        public string USERAPPVER;// { get; set; }
+        public bool MACISVALID;// { get; set; } = false;
+        public bool CLIENTVERISVALID;// { get; set; } = false;
+        public string STRUSERPROFILEIMAGE;//{ get; set; }
         // -- MobAppPerrmission
         public string QCMOBAPPPER { get; set; }
         public string PTDASHPER { get; set; }
@@ -33,8 +36,10 @@
         public string SMSPTPER { get; set; }
         public string AUDITCARDPER { get; set; }
         public string CARSTATUSPER { get; set; }
-        public string AppName { get; set; }
-        public string ClientVersion { get; set; }
+        public string AppName;// { get; set; }
+        public string ClientVersion;// { get; set; }
+
+
         //public double SRL { get; set; } //double
         //public string FNAME { get; set; }
         //public string LNAME { get; set; }

@@ -10,6 +10,7 @@
         public string AreaDesc { get; set; }
         public double PCShopt_Srl{ get; set; }
         public int PTShopCode { get; set; }
+        public int IsAuditArea { get; set; }
 
     }
 }

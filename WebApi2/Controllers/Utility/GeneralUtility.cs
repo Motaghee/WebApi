@@ -118,7 +118,7 @@ namespace WebApi2.Controllers.Utility
             }
             catch (Exception e)
             {
-                LogManager.SetCommonLog(String.Format(@"Duplicate time:{0} UserId:{1} DuplicateId:{2} ", _ndt.NowDateFa, _user.USERID, ud.Id));
+                //LogManager.SetCommonLog(String.Format(@"Duplicate time:{0} UserId:{1} DuplicateId:{2} ", _ndt.NowDateFa, _user.USERID, ud.Id));
                 DBHelper.LogFile(e);
             }
             finally

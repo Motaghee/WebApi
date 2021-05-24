@@ -40,11 +40,12 @@ namespace Common.Actions
                                                      on ad.svaauditcardetail_srl = d.srl
                                                     join sva_v_auditcar_offline a
                                                     on d.svaauditcar_srl = a.srl
-                                                    where ((a.areacode =1002) or ((a.areacode = 1000) And (a.svaauditvart_srl =2) ))
+                                                    where (a.areacode =1002) 
                                                           And ('{0}'='0' or a.vin = '{0}')
                                                           And ('{1}'='0' or a.AUDITDATE >= TO_date('{1}','YYYY/MM/DD','nls_calendar=persian'))
                                                           And ('{2}'='0' or a.AUDITDATE <= TO_date('{2}','YYYY/MM/DD','nls_calendar=persian'))
                                                           ", _Vin.ToUpper(),_SDate,_EDate);
+                // or ((a.areacode = 1000) And (a.svaauditvart_srl =2) ))
                 List<DataMining> lst = new List<DataMining>();
                 Object[] obj = DBHelper.GetDBObjectByObj2(new DataMining(), null, commandtext, "inspector");
                 lst = obj.Cast<DataMining>().ToList();

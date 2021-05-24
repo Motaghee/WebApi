@@ -11,6 +11,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using Common.Models;
 using Common.Models.General;
+using Common.Models.QccasttModels;
+using Common.Utility;
 
 namespace WebApi2.Controllers
 {
@@ -63,7 +65,7 @@ namespace WebApi2.Controllers
             user.ClientVersion = claims.FirstOrDefault(x => x.Type == "ClientVersion").Value.ToString();
             user.STRUSERPROFILEIMAGE = GetUserProfileImage(user.USERNAME);
             if (user.USERNAME != "1000861")
-                DBHelper.LogtLoginUser(user.USERNAME +" "+ user.LNAME+" AppName:"+ user.AppName + " ClientVersion:" + user.ClientVersion);
+                DBHelper.LogtLoginUser(user.USERNAME +" "+ user.LNAME+" AppName:"+ user.AppName + " ClientVersion:" + user.ClientVersion + " AreaCode::" + user.AREACODE);
             return user;
         }
 
@@ -103,6 +105,13 @@ namespace WebApi2.Controllers
                 return null;
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("api/users/GetUserAreaPermision")]
+        public List<Area> GetUserAreaPermision([FromBody] User user)
+        {
+            return QccasttUtility.GetGetUserAreaPermision(user);
+        }
 
     }
 }

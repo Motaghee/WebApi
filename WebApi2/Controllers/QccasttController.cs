@@ -169,6 +169,8 @@ namespace WebApi2.Controllers
             return QccasttUtility.GetBaseAreaList();
         }
 
+
+
         [HttpGet]
         [CacheOutput(ClientTimeSpan = 86400, ServerTimeSpan = 86400)]
         [Route("api/Qccastt/GetBaseShopList")]

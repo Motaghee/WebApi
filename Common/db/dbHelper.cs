@@ -65,7 +65,7 @@ namespace Common.db
 
         static DBHelper()
         {
-            bool Live = false;
+            bool Live = true;
             //===
             if (Live)
             { CnStrIns = CnStrInsLive; CnStrStp = CnStrStpLive; CnStrPT = CnStrPTLive; }
@@ -561,7 +561,7 @@ namespace Common.db
                             catch (Exception e)
                             {
                                 LogFile(e);
-                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj2" + strFieldName + e.ToString() + e.Message.ToString());
+                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj2" + strFieldName + e.ToString() + e.Message.ToString()+"_Command: "+ _CommandText);
                             }
                         }
 
@@ -663,6 +663,7 @@ namespace Common.db
                             catch (Exception e)
                             {
                                 //LogFile(e);
+                                DBHelper.LogtxtToFile("err1-GetDBObjectByObj2_OnLive" + strFieldName + e.ToString() + e.Message.ToString() + "_Command: " + _CommandText);
                             }
                         }
 

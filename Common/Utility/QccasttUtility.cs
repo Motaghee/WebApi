@@ -29,7 +29,7 @@ namespace Common.Utility
                     if (qccastt.ValidFormat)
                     {
                         qccastt.VinWithoutChar = CarUtility.GetVinWithoutChar(qccastt.Vin);
-                        string commandtext = string.Format(@"select SYS_GUID() as Id,q.srl,q.vin,q.qcmdult_srl,q.qcbadft_srl,
+                        string commandtext = string.Format(@"select null as Id,q.srl,q.vin,q.qcmdult_srl,q.qcbadft_srl,
                                                                q.qcareat_srl,a.areacode,a.areatype,p.shopcode,
                                                                s.strenghtdesc,
                                                                m.modulecode,
@@ -165,7 +165,7 @@ namespace Common.Utility
 
 
                     // SYS_GUID() as Id,
-                    string commandtext = string.Format(@"select q.srl,'NAS'||q.vin as vin,q.vin as VinWithoutChar,q.qcmdult_srl,q.qcbadft_srl,
+                    string commandtext = string.Format(@"select null as Id,q.srl,'NAS'||q.vin as vin,q.vin as VinWithoutChar,q.qcmdult_srl,q.qcbadft_srl,
                                                                q.qcareat_srl,a.areacode,a.areatype,p.shopcode,
                                                                s.strenghtdesc,
                                                                m.modulecode,
@@ -330,7 +330,7 @@ namespace Common.Utility
         {
             try
             {
-                string commandtext = string.Format(@"select  a.srl,a.areacode,a.areadesc,a.CheckDest,p.ptshopcode,
+                string commandtext = string.Format(@"select  a.srl,a.areacode,a.areadesc,a.CheckDest,p.ptshopcode,a.IsAuditArea,
                                         decode(a.areatype,35,(decode(p.shopcode,14,30,17,40)),a.areatype) as areatype,PCShopt_Srl
                                         from qcareat a join pcshopt p on p.srl = a.pcshopt_srl where a.srl in ({0})", _AreaSrl);
                 DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
@@ -357,7 +357,7 @@ namespace Common.Utility
         {
             try
             {
-                string commandtext = string.Format(@"select  a.srl,a.areacode,a.areadesc,a.CheckDest,p.ptshopcode,
+                string commandtext = string.Format(@"select  a.srl,a.areacode,a.areadesc,a.CheckDest,p.ptshopcode,a.IsAuditArea,
                                         decode(a.areatype,35,(decode(p.shopcode,14,30,17,40)),a.areatype) as areatype,PCShopt_Srl
                                         from qcareat a join pcshopt p on p.srl = a.pcshopt_srl
                                         where a.srl in (select toareasrl from qcqctrt q where q.vin = '{0}' and q.passed=0)"
@@ -862,12 +862,42 @@ namespace Common.Utility
         {
             try
             {
-                string commandtext = string.Format(@"select  a.srl,a.areacode,a.areadesc,a.CheckDest,p.ptshopcode,
+                string commandtext = string.Format(@"select  a.srl,a.areacode,a.areadesc,a.CheckDest,p.ptshopcode,a.IsAuditArea,
                                         decode(a.areatype,35,(decode(p.shopcode,14,30,17,40)),a.areatype) as areatype,PCShopt_Srl
                                         from qcareat a join pcshopt p on p.srl = a.pcshopt_srl ");
                 DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                 List<Area> AreaList = new List<Area>();
                 AreaList = DBHelper.GetDBObjectByObj2(new Area(), null, commandtext, "inspector").Cast<Area>().ToList();
+                //---
+                if (AreaList.Count > 0)
+                {
+                    return AreaList;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LogFile(ex);
+                return null;
+            }
+        }
+
+        public static List<Area> GetGetUserAreaPermision(User _user)
+        {
+            try
+            {
+                string commandtext = string.Format(@"select distinct ar.srl,ar.pcshopt_srl,ar.areacode,ar.areadesc,ar.areacode,ar.checkdest ,ar.areatype,p.ptshopcode,ar.areatype,ar.IsAuditArea
+                                                  from qcusert ut join qcussft us  on ut.srl = us.qcusert_srl 
+                                                  join qcareat ar on us.parameter_srl = ar.srl
+                                                  join pcshopt p on p.srl = ar.pcshopt_srl 
+                                                  where ut.username = '{0}' and us.inuse = 1 and ut.inuse = 1 and ar.IsAuditArea <> 1
+                                                 order by ar.areacode desc ", _user.USERID);
+                DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
+                List<Area> AreaList = new List<Area>();
+                AreaList = DBHelper.GetDBObjectByObj2_OnLive(new Area(), null, commandtext, "inspector").Cast<Area>().ToList();
                 //---
                 if (AreaList.Count > 0)
                 {
@@ -1596,6 +1626,7 @@ namespace Common.Utility
                                                 (select a.CheckDest from qcareat a where areacode={2}) as CheckDest,
                                                 (select a.AreaType from qcareat a where areacode={2}) as AreaType,
                                                 (select a.AreaDesc from qcareat a where areacode={2}) as AreaDesc,
+                                                (select a.isauditarea from qcareat a where areacode=500) as IsAuditArea,
                                                 (select distinct  q.parameter_srl from qcussft q where
                                                     q.qcusert_srl in (select srl from qcusert u2 where u2.srl = u.srl)
                                                         and q.inuse=1
