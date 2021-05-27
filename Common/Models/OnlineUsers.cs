@@ -15,5 +15,7 @@
         public int DataType { get; set; } //0-login //1-GetTime //2-chat
         public string LoginDateTimeFa { get; set; }
         public int TimeFromLastOnline { get; set; }
+        public int IsOnline { get; set; }
+
     }
 }

@@ -1,6 +1,8 @@
 ﻿
+using Common.Actions;
 using Common.db;
 using Common.Models.General;
+using Common.Utility;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -134,6 +136,49 @@ namespace WebApi2.Controllers
             }
 
         }
+
+        [HttpPost]
+        [Authorize]
+        [Route("api/Message/SendSMessage")]
+        public List<SMessage> SendSMessage([FromBody] SMessage message) //[FromBody] SMessage message
+        {
+            NowDateTime ndt = new NowDateTime();
+            try
+            {
+                //SMessage message = new SMessage();
+                //message.SenderUserId = 493619;
+                //message.SendToUserId = 0;
+                //message.SenderUserDesc = "محمد رضا ابراهیمی";
+                message.CreatedDateTime = ndt.Now;
+                message.CreatedDateTimeFa = ndt.NowDateTimeFa;
+                message.Id = Guid.NewGuid().ToString();
+                //message.Message = "شماره شاسی صحیح نیست "+(new Random()).Next();
+                return SMessageUtility.SendSMessage(message);
+            }
+            catch (Exception e)
+            {
+                LogManager.SetCommonLog(e.Message.ToString());
+                return null;
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("api/Message/GetSMessages")]
+        public List<SMessage> GetSMessages() //[FromBody] SMessage message
+        {
+            NowDateTime ndt = new NowDateTime();
+            try
+            {
+                return SMessageUtility.GetSMessages();
+            }
+            catch (Exception e)
+            {
+                LogManager.SetCommonLog(e.Message.ToString());
+                return null;
+            }
+        }
+
 
 
     }

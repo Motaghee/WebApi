@@ -21,12 +21,12 @@ namespace GWSQC.saipacorp.com.Controllers
                     bool Login = Authentication.FindUser(_User.USERNAME, _User.PSW);
                     if (Login)
                     {
-                        LogManager.MethodCallLog("GetSaipaCitroenPDIData _ RequestByUser: " + _User.USERNAME + " _RequestVin: " + _User.Vin);
+                        //LogManager.MethodCallLog("GetSaipaCitroenPDIData _ RequestByUser: " + _User.USERNAME + " _RequestVin: " + _User.Vin);
                         return QccasttActs.GetSaipaCitroenPDIData(_User.Vin.ToUpper(), _User.SDate, _User.EDate);
                     }
                     else
                     {
-                        LogManager.MethodCallLog("GetSaipaCitroenPDIData _ RequestByUser: " + _User.USERNAME + "_ AuthenticationFail");
+                        //LogManager.MethodCallLog("GetSaipaCitroenPDIData _ RequestByUser: " + _User.USERNAME + "_ AuthenticationFail");
                         return null;
                     }
                 }

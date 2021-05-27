@@ -70,9 +70,16 @@ namespace WebApi2.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
+        [Route("api/users/GetStringUserProfileImage")]
         [Authorize]
-        [Route("api/users/GetUserProfileImage")]
+        public ResultMsg GetStringUserProfileImage([FromBody] Summary Summary)
+        {
+            ResultMsg r = new ResultMsg();
+            r.Message = GetUserProfileImage(Summary.UserId.ToString());
+            return r;
+        }
+
         public string GetUserProfileImage(string _UserId)
         {
             try

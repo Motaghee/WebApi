@@ -64,12 +64,6 @@ namespace WebApi2.Controllers.Utility
                 if (_ndt == null)
                 {
                     _ndt = new NowDateTime();
-                    _ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                    PersianCalendar pc = new PersianCalendar();
-                    DateTime dtN = DateTime.Now;
-                    _ndt.NowDateFa = pc.GetYear(dtN).ToString() + "/" + pc.GetMonth(dtN).ToString().PadLeft(2, '0') + "/" + pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
-                    _ndt.NowTime = dtN.ToString("HH:mm:ss");
-                    _ndt.NowDateTimeFa = _ndt.NowDateFa + " " + _ndt.NowTime;
                 }
                 DateTime dt = new DateTime();
                 dt = DateTime.Now;

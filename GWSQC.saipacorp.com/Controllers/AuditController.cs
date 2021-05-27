@@ -87,12 +87,12 @@ namespace GWSQC.saipacorp.com.Controllers
                 bool Login = Authentication.FindUser(_User.USERNAME, _User.PSW);
                 if (Login)
                 {
-                    LogManager.MethodCallLog("GetSaipaCitroenIVAAuditData _ RequestByUser: " + _User.USERNAME + " _RequestVin: " + _User.Vin + " _SDate: " + _User.SDate + " _EDate: " + _User.EDate);
+                    //LogManager.MethodCallLog("GetSaipaCitroenIVAAuditData _ RequestByUser: " + _User.USERNAME + " _RequestVin: " + _User.Vin + " _SDate: " + _User.SDate + " _EDate: " + _User.EDate);
                     return SVAActs.GetSaipaCitroenIVAAuditData(_User.Vin.ToUpper(), _User.SDate, _User.EDate);
                 }
                 else
                 {
-                    LogManager.MethodCallLog("GetSaipaCitroenIVAAuditData _ RequestByUser: " + _User.USERNAME + "_ AuthenticationFail");
+                    //LogManager.MethodCallLog("GetSaipaCitroenIVAAuditData _ RequestByUser: " + _User.USERNAME + "_ AuthenticationFail");
                     return null;
                 }
             }

@@ -9,6 +9,5 @@
         public string MessageTypeDesc { get; set; }
         public string InsDayFa { get; set; }
 
-
     }
 }

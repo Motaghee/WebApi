@@ -7,8 +7,12 @@ using Common.Utility;
 using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Web.Http;
 using WebApi.OutputCache.V2;
@@ -103,6 +107,8 @@ namespace WebApi2.Controllers
 
         [HttpGet]
         [Route("api/Public/GetOnlineUsers")]
+        [CacheOutput(ServerTimeSpan = 1)]
+        [Authorize]
         public List<OnlineUsers> GetOnlineUsers()
         {
             try
@@ -113,12 +119,18 @@ namespace WebApi2.Controllers
                 // get old ldb ps lst
                 List<OnlineUsers> lst = new List<OnlineUsers>();
                 LiteCollection<OnlineUsers> dbUD = db.GetCollection<OnlineUsers>("OnlineUsers");
-                lst = dbUD.FindAll().OrderByDescending(o => o.DateTimeFa).ToList<OnlineUsers>();
+                //lst = dbUD.FindAll().OrderByDescending(o => o.DateTimeFa.Substring(0,18)).ToList<OnlineUsers>();
+                lst = dbUD.FindAll().ToList<OnlineUsers>();
                 foreach (OnlineUsers item in lst)
                 {
                     TimeSpan diff = DateTime.Now - Convert.ToDateTime(item.DateTime);
                     item.TimeFromLastOnline = Convert.ToInt32(diff.TotalSeconds);
+                    if (item.TimeFromLastOnline < 10)
+                        item.IsOnline = 1;
+                    else
+                        item.IsOnline = 0;
                 }
+                lst.OrderByDescending(o => o.IsOnline);
                 return lst;
             }
             catch (Exception e)
@@ -172,8 +184,9 @@ namespace WebApi2.Controllers
             GeneralUtility.UpdateUserData(FoundUser, ndt, 0);
             return null;
         }
+
+
+
+
     }
-
-
-
 }
