@@ -22,7 +22,7 @@ namespace Common.Utility
                 db = new LiteDatabase(cn);
                 LiteCollection<SMessage> dbSMessage = db.GetCollection<SMessage>("SMessage");
                 dbSMessage.Insert(_smessage);
-                List <SMessage> lst = dbSMessage.FindAll().ToList<SMessage>();
+                List <SMessage> lst = dbSMessage.FindAll().Where(x => x.IsDeleted != 1).ToList<SMessage>();
                 return lst;
             }
             catch (Exception ex)
@@ -41,7 +41,7 @@ namespace Common.Utility
                 ConnectionString cn = ldbConfig.ldbSMessageConnectionString;
                 db = new LiteDatabase(cn);
                 LiteCollection<SMessage> dbSMessage = db.GetCollection<SMessage>("SMessage");
-                List<SMessage> lst = dbSMessage.FindAll().ToList<SMessage>();
+                List<SMessage> lst = dbSMessage.FindAll().Where(x => x.IsDeleted != 1).ToList<SMessage>();
                 return lst;
             }
             catch (Exception ex)
@@ -49,7 +49,32 @@ namespace Common.Utility
                 DBHelper.LogFile(ex);
                 return null;
             }
+        }
 
+        public static List<SMessage> DeleteSMessage(SMessage smessage)
+        {
+            LiteDatabase db = null;
+            try
+            {
+                ConnectionString cn = ldbConfig.ldbSMessageConnectionString;
+                db = new LiteDatabase(cn);
+                LiteCollection<SMessage> dbSMessage = db.GetCollection<SMessage>("SMessage");
+                //dbSMessage.Delete(Query.EQ("Id", smessage.Id));
+                //LiteCollection<SMessage> lst=dbSMessage.Where(x => x.Id == smessage.Id).ToList<SMessage>();
+                SMessage sm = dbSMessage.FindById(smessage.Id);
+                if (sm != null)
+                {
+                    sm.IsDeleted = 1;
+                }
+                dbSMessage.Update(sm);
+                List<SMessage> lst = dbSMessage.FindAll().Where(x => x.IsDeleted != 1).ToList<SMessage>();
+                return lst;
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LogFile(ex);
+                return null;
+            }
         }
     }
 }

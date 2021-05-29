@@ -9,6 +9,9 @@
         public string CreatedDateTimeFa { get; set; }
         public string Message { get; set; }
         public int SendToUserId { get; set; }
+        public string Image { get; set; }
+        public string Thumbnail { get; set; }
+        public int IsDeleted { get; set; }
 
     }
 }

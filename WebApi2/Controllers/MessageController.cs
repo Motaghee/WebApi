@@ -162,6 +162,41 @@ namespace WebApi2.Controllers
             }
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("api/Message/DeleteSMessage")]
+        public List<SMessage> DeleteSMessage([FromBody] SMessage message) //[FromBody] SMessage message
+        {
+            try
+            {
+                
+                return SMessageUtility.DeleteSMessage(message);
+            }
+            catch (Exception e)
+            {
+                LogManager.SetCommonLog(e.Message.ToString());
+                return null;
+            }
+        }
+
+        //[HttpGet]
+        //[Route("api/Message/tstDeleteSMessage")]
+        //public List<SMessage> DeleteSMessage() //[FromBody] SMessage message
+        //{
+        //    try
+        //    {
+        //        SMessage message = new SMessage();
+        //        message.Id = "e4cf84ef-b640-437c-bea4-5f9ab1e51f0a";
+        //        message.SenderUserId = 1000861;
+        //        return SMessageUtility.DeleteSMessage(message);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        LogManager.SetCommonLog(e.Message.ToString());
+        //        return null;
+        //    }
+        //}
+
         [HttpGet]
         [Authorize]
         [Route("api/Message/GetSMessages")]
