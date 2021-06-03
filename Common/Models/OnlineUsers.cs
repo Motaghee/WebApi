@@ -16,6 +16,6 @@
         public string LoginDateTimeFa { get; set; }
         public int TimeFromLastOnline { get; set; }
         public int IsOnline { get; set; }
-
+        public string ClientVersion { get; set; }
     }
 }

@@ -70,6 +70,7 @@ namespace WebApi2.Controllers
                 user.AREACODE = Convert.ToInt32(claims.FirstOrDefault(x => x.Type == "AreaCode").Value.ToString());
                 user.FNAME = claims.FirstOrDefault(x => x.Type == "FName").Value.ToString();
                 user.LNAME = claims.FirstOrDefault(x => x.Type == "LName").Value.ToString();
+                user.ClientVersion = claims.FirstOrDefault(x => x.Type == "ClientVersion").Value.ToString();
                 //---
                 // String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
                 //String mDateTime = DateUtils.formatDateTimeFromDate(DATE_FORMAT, Calendar.getInstance().getTime());

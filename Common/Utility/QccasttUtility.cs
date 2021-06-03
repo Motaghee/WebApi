@@ -157,10 +157,10 @@ namespace Common.Utility
                         Condition = strDateCondition + " And " + Condition;
                     }
 
-                    if ((qccastt.ActAreaSrl != 0))
-                    {
-                        Condition += string.Format(@" And q.qcareat_srl in '{0}'", qccastt.ActAreaSrl);
-                    }
+                    //if ((qccastt.ActAreaSrl != 0))
+                    //{
+                    //    Condition += string.Format(@" And q.qcareat_srl in ('{0}')", qccastt.ActAreaSrl);
+                    //}
                     #endregion
 
 

@@ -33,6 +33,7 @@ namespace WebApi2.Security
             int intClientVersion = Convert.ToInt32(strScope[2].Replace(".", ""));
             string LoginFromAppName = strScope[3];
             User FoundUser = QccasttUtility.FindUser(context.UserName, context.Password, strSecondPassword, strAreaCode, "");
+            FoundUser.ClientVersion = strScope[2].ToString();
             if (FoundUser != null)
             {
                 string QCAreatSrl = FoundUser.QCAREATSRL.ToString();

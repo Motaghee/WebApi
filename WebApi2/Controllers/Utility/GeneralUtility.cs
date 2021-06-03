@@ -84,13 +84,14 @@ namespace WebApi2.Controllers.Utility
                     ud.UserId = ud.Id = _user.USERID;
                     ud.UserSRL = _user.SRL;
                     ud.DataType = _UserDataType;
+                    ud.ClientVersion = _user.ClientVersion;
                     if (_UserDataType == 0)
                     {
                         ud.LoginDateTimeFa = ud.DateTimeFa;
                         ud.AreaCode = _user.AREACODE;
                         ud.UserDesc = _user.FNAME + " " + _user.LNAME;
+                        dbUD.Insert(ud);
                     }
-                    dbUD.Insert(ud);
                 }
                 else
                 {
@@ -99,9 +100,8 @@ namespace WebApi2.Controllers.Utility
                         old.LoginDateTimeFa = ud.DateTimeFa;
                         old.AreaCode = _user.AREACODE;
                         old.UserDesc = _user.FNAME + " " + _user.LNAME;
-
                     }
-                    // --
+                    old.ClientVersion = _user.ClientVersion;
                     old.DataType = _UserDataType;
                     old.DateFa = _ndt.NowDateFa;
                     old.DateTimeFa = _ndt.NowDateTimeFa;
@@ -109,6 +109,7 @@ namespace WebApi2.Controllers.Utility
                     old.DateTime = _ndt.Now;
                     dbUD.Update(old);
                 }
+                
             }
             catch (Exception e)
             {
