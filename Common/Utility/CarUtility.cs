@@ -143,8 +143,11 @@ namespace Common.Utility
                                                             c.grpname,c.comanyname as companyname,c.companycode,c.fitypename,c.clralias,c.gearboxtypedesc,c.prodenddate,substr(c.prodenddate_fa,0,16) as prodenddate_fa,substr(c.joinerydate_fa,0,16) as joinerydate_fa,substr(c.bodyshopproddate,0,16)as bodyshopproddate,substr(c.paintshopproddate,0,16) as paintshopproddate,substr(asmshopproddate,0,16) as asmshopproddate,
                                                             (select distinct (s.shopcode) from pt.cartrace ct join pt.station s on ct.stncode = s.stncode where ct.vin = c.vin and ct.passed=0) as PTCurrentShopCode,
                                                             {1} as ActAreaSrl,{2} as ActBy,
-                                                            (select count(srl) from qccastt t where t.qcareat_srl ={1} and t.vin = c.vin and t.isdefected=1 and t.inuse=1 and t.deletedby is null and t.recordowner=1 ) CurrentAreaDefCount
-                                                            from qccariddt c where c.vin ='{0}' "
+                                                            (select count(srl) from qccastt t where t.qcareat_srl ={1} and t.vin = c.vin and t.isdefected=1 and t.inuse=1 and t.deletedby is null and t.recordowner=1 ) CurrentAreaDefCount,
+                                                            TO_char(p.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as ProCreatedDateFa,
+                                                            u.fname ||' '|| u.lname as ProCreatedByDesc
+                                                            from qccariddt c left join qcprot p on c.vin = p.vin left join qcusert u on p.createdby = u.srl
+                                                            where c.vin ='{0}' "
                                                             , car.VinWithoutChar, car.ActAreaSrl, car.ActBy);
                         // 
                         carinfo = DBHelper.GetDBObjectByObj2_OnLive(new Car(), null, commandtext, "inspector").Cast<Car>().ToList();
@@ -160,8 +163,10 @@ namespace Common.Utility
                             q.VinWithoutChar = car.VinWithoutChar;
                             carinfo[0].lstQcqctrt = QccasttUtility.GetCarTrace(q);
                             carinfo[0].lstQccastt = QccasttUtility.GetCarDefect(q);
+                            carinfo[0].LastStopTime = QccasttUtility.GetLastStopTime(car.VinWithoutChar);
+                            carinfo[0].CurAreaDefectCount = QccasttUtility.GettCurrentAreaDefectCoun(car.VinWithoutChar, car.ActAreaSrl.ToString());
+                            //---
                             return carinfo[0];
-
                         }
                         else
                         {

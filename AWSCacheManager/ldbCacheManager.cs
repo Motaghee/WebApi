@@ -9,6 +9,8 @@ namespace AWSCacheManager
 {
     public partial class ldbCacheManager : ServiceBase
     {
+
+
         // - archive variables
         System.Timers.Timer _SetArchiveTimer;
         DateTime _scheduleTime;
@@ -43,7 +45,7 @@ namespace AWSCacheManager
                 PSInitialTimer.Start();
                 // ----
                 QuickOnLineJob = new Timer();
-                QuickOnLineJob.Interval = TimeSpan.FromMinutes(2).TotalMilliseconds; ;
+                QuickOnLineJob.Interval = TimeSpan.FromMinutes(4).TotalMilliseconds; ;
                 QuickOnLineJob.Elapsed += new ElapsedEventHandler(this.QuickOnLineTask);
                 QuickOnLineJob.Start();
 
@@ -116,6 +118,7 @@ namespace AWSCacheManager
                 PSInitialTimer.Stop();
                 bool RefQccasttTodaye = ldbRefresh.RefreshLdbASPQCCASTT(true);
                 bool refreshNonBrand = ldbRefresh.GenerateQCCaridDetailsNonBrand();
+
                 bool RefAuditToday = ldbRefresh.RefreshLdbAuditStatistics(true);
                 bool RefQCToday = ldbRefresh.RefreshLdbQCStatistics(true);
                 // --
@@ -144,7 +147,7 @@ namespace AWSCacheManager
                 bool RefQCArchive = ldbRefresh.RefreshLdbQCStatistics(false);
                 //bool result = ldbRefresh.GenerateQCMdDPU();
                 bool RefAuditMDTrendArchive = ldbRefresh.RefreshLdbAuditStatisticsMDTrend();
-                LogManager.SetWindowsServiceLog("OnPSInitialTimer_finish archives result RefreshLdb.RefreshLdbProductStatistics()ResultQC=" + refreshNonBrand);
+                LogManager.SetWindowsServiceLog("OnPSInitialTimer_finish archives result RefreshLdb.RefreshLdbProductStatistics" );
                 bool RefCarSatus = ldbRefresh.RefreshLdbCarStatus();
                 //LogManager.SetWindowsServiceLog("OnPSInitialTimer  Finished"+ RefCarSatus);
             }
@@ -156,7 +159,7 @@ namespace AWSCacheManager
             {
                 //---
                 PSCreatorTimer = new Timer();
-                PSCreatorTimer.Interval = TimeSpan.FromMinutes(20).TotalMilliseconds;
+                PSCreatorTimer.Interval = TimeSpan.FromMinutes(40).TotalMilliseconds;
                 PSCreatorTimer.Elapsed += new ElapsedEventHandler(this.OnPSCreatorTimer);
                 PSCreatorTimer.Start();
 
@@ -195,8 +198,9 @@ namespace AWSCacheManager
             bool RefQuickNewVinOnlineSync = false;
             try
             {
-                //run every 1 min 
+                //run every 4 min 
                 RefQuickNewVinOnlineSync = ldbRefresh.GenerateQCCaridDetailsOnlineSync(1);
+
                 trace += "1";
                 bool RefQccasttArchive = ldbRefresh.RefreshLdbASPQCCASTT(true);
                 //trace += "2->"+ RefQccasttArchive.ToString();
@@ -218,6 +222,7 @@ namespace AWSCacheManager
                     PSArchiveTimer.Start();
                     trace += "5";
                 }
+
             }
             catch (Exception ex)
             {

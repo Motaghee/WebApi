@@ -10,7 +10,7 @@ namespace Common.Utility
 {
     public static class SMessageUtility
     {
-        public static List<SMessage>  SendSMessage(SMessage _smessage)
+        public static SMessage  SendSMessage(SMessage _smessage)
         {
             LiteDatabase db = null;
             try
@@ -22,8 +22,9 @@ namespace Common.Utility
                 db = new LiteDatabase(cn);
                 LiteCollection<SMessage> dbSMessage = db.GetCollection<SMessage>("SMessage");
                 dbSMessage.Insert(_smessage);
-                List <SMessage> lst = dbSMessage.FindAll().Where(x => x.IsDeleted != 1).ToList<SMessage>();
-                return lst;
+                //List <SMessage> lst = dbSMessage.FindAll().Where(x => x.IsDeleted != 1).ToList<SMessage>();
+                SMessage sm = dbSMessage.FindById(_smessage.Id);
+                return sm;
             }
             catch (Exception ex)
             {
@@ -51,7 +52,7 @@ namespace Common.Utility
             }
         }
 
-        public static List<SMessage> DeleteSMessage(SMessage smessage)
+        public static SMessage DeleteSMessage(SMessage smessage)
         {
             LiteDatabase db = null;
             try
@@ -67,8 +68,8 @@ namespace Common.Utility
                     sm.IsDeleted = 1;
                 }
                 dbSMessage.Update(sm);
-                List<SMessage> lst = dbSMessage.FindAll().Where(x => x.IsDeleted != 1).ToList<SMessage>();
-                return lst;
+                //List<SMessage> lst = dbSMessage.FindAll().Where(x => x.IsDeleted != 1).ToList<SMessage>();
+                return sm;
             }
             catch (Exception ex)
             {

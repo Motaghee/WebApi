@@ -221,6 +221,7 @@
     <Compile Include="Controllers\AuditController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\PublicController.cs" />
+    <Compile Include="Controllers\ProtectionController.cs" />
     <Compile Include="Controllers\Utility\GeneralUtility.cs" />
     <Compile Include="Models\utility\clsCommon.cs" />
     <Compile Include="Security\AuthorizeAttribute.cs" />

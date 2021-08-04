@@ -140,7 +140,7 @@ namespace WebApi2.Controllers
         [HttpPost]
         [Authorize]
         [Route("api/Message/SendSMessage")]
-        public List<SMessage> SendSMessage([FromBody] SMessage message) //[FromBody] SMessage message
+        public SMessage SendSMessage([FromBody] SMessage message) //[FromBody] SMessage message
         {
             NowDateTime ndt = new NowDateTime();
             try
@@ -165,7 +165,7 @@ namespace WebApi2.Controllers
         [HttpPost]
         [Authorize]
         [Route("api/Message/DeleteSMessage")]
-        public List<SMessage> DeleteSMessage([FromBody] SMessage message) //[FromBody] SMessage message
+        public SMessage DeleteSMessage([FromBody] SMessage message) //[FromBody] SMessage message
         {
             try
             {

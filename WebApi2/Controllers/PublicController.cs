@@ -155,36 +155,36 @@ namespace WebApi2.Controllers
         }
 
 
-        [HttpGet]
-        [Route("api/Public/tstOnlineUsers")]
-        public List<OnlineUsers> tstOnlineUsers()
-        {
-            User FoundUser = QccasttUtility.FindUser("1000861", "0082397171", "1", "500", "");
-            // get instanse of ldb
-            //ConnectionString cn = ldbConfig.ldbOnlineUsersConnectionString;
-            //LiteDatabase db = new LiteDatabase(cn);
-            //// get old ldb ps lst
-            //List<OnlineUsers> lst = new List<OnlineUsers>();
-            //LiteCollection<OnlineUsers> dbUD = db.GetCollection<OnlineUsers>("OnlineUsers");
-            //lst = dbUD.FindAll().ToList<OnlineUsers>();
-            //return lst;
-            //OnlineUsers[] res = result.Cast<OnlineUsers>().ToList();
-            User user = new User();
-            user.SRL = 4314;
-            user.USERID = 1000861;
-            user.AREACODE = 500;
-            user.FNAME = "hamed";
-            user.LNAME = "motaghi";
-            NowDateTime ndt = new NowDateTime();
-            ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            PersianCalendar pc = new PersianCalendar();
-            DateTime dtN = DateTime.Now;
-            ndt.NowDateFa = pc.GetYear(dtN).ToString() + "/" + pc.GetMonth(dtN).ToString().PadLeft(2, '0') + "/" + pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
-            ndt.NowTime = dtN.ToString("HH:mm:ss");
-            ndt.NowDateTimeFa = ndt.NowDateFa + " " + ndt.NowTime;
-            GeneralUtility.UpdateUserData(FoundUser, ndt, 0);
-            return null;
-        }
+        //[HttpGet]
+        //[Route("api/Public/tstOnlineUsers")]
+        //public List<OnlineUsers> tstOnlineUsers()
+        //{
+        //    User FoundUser = QccasttUtility.FindUser("1000861", "0082397171", "1", "500", "");
+        //    // get instanse of ldb
+        //    //ConnectionString cn = ldbConfig.ldbOnlineUsersConnectionString;
+        //    //LiteDatabase db = new LiteDatabase(cn);
+        //    //// get old ldb ps lst
+        //    //List<OnlineUsers> lst = new List<OnlineUsers>();
+        //    //LiteCollection<OnlineUsers> dbUD = db.GetCollection<OnlineUsers>("OnlineUsers");
+        //    //lst = dbUD.FindAll().ToList<OnlineUsers>();
+        //    //return lst;
+        //    //OnlineUsers[] res = result.Cast<OnlineUsers>().ToList();
+        //    User user = new User();
+        //    user.SRL = 4314;
+        //    user.USERID = 1000861;
+        //    user.AREACODE = 500;
+        //    user.FNAME = "hamed";
+        //    user.LNAME = "motaghi";
+        //    NowDateTime ndt = new NowDateTime();
+        //    ndt.Now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        //    PersianCalendar pc = new PersianCalendar();
+        //    DateTime dtN = DateTime.Now;
+        //    ndt.NowDateFa = pc.GetYear(dtN).ToString() + "/" + pc.GetMonth(dtN).ToString().PadLeft(2, '0') + "/" + pc.GetDayOfMonth(dtN).ToString().PadLeft(2, '0');
+        //    ndt.NowTime = dtN.ToString("HH:mm:ss");
+        //    ndt.NowDateTimeFa = ndt.NowDateFa + " " + ndt.NowTime;
+        //    GeneralUtility.UpdateUserData(FoundUser, ndt, 0);
+        //    return null;
+        //}
 
 
 

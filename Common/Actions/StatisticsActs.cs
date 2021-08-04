@@ -473,13 +473,17 @@ namespace Common.Actions
                                                                a.areacode||' '||a.areadesc as AreaDesc,
                                                                u.lname as CreatedByDesc,q.CreatedBy,
                                                                ur.lname as RepairedByDesc,q.RepairedBy,
+                                                               ud.lname as DeletedByDesc,q.DeletedBy,
                                                                TO_char(q.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as createddateFa,
                                                                TO_char(q.repaireddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as repaireddateFa,
                                                                to_char(q.createddate,'yyyy/mm/dd','nls_calendar=persian') as CreatedDayFa,
+                                                               TO_char(q.deleteddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as DeleteddateFa,
+                                                        
                                                                q.isrepaired,c.bdmdlcode,a.areatype,bm.grpcode,p.shopcode,q.qcareat_srl,0 as ActAreaSrl,0 as ActBy
                                                           from qccastt q
                                                           join qcusert u on u.srl = q.createdby
                                                           left join qcusert ur on ur.srl = q.RepairedBy
+                                                          left join qcusert ud on ud.srl = q.deletedby
                                                           join carid c on c.vin = q.vin 
                                                           join bodymodel bm on bm.bdmdlcode=c.bdmdlcode
                                                           join qcareat a

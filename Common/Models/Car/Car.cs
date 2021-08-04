@@ -25,7 +25,7 @@ namespace Common.Models.Car
         public string GearBoxTypeDesc { get; set; }
         public double ShopCode { get; set; }
         public string ShopName { get; set; }
-        public double FinQcCode { get; set; }
+        public int FinQcCode { get; set; }
         public string ClrAlias { get; set; }
         public string JoinaryTeamDesc { get; set; }
         public string JoinaryTeam { get; set; }
@@ -51,10 +51,13 @@ namespace Common.Models.Car
         public int ActBy { get; set; }
         public int PTCurrentShopCode { get; set; }
         public int CurrentAreaDefCount { get; set; }
+        public int LastStopTime; //{ get; set; }
+        public int CurAreaDefectCount; //{ get; set; }
         public IEnumerable<Qcqctrt> lstQcqctrt { get; set; }
         public IEnumerable<Qccastt> lstQccastt { get; set; }
 
-
+        public string ProCreatedByDesc { get; set; }
+        public string ProCreatedDateFa { get; set; }
 
 
     }

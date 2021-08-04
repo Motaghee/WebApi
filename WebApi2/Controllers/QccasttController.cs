@@ -63,7 +63,7 @@ namespace WebApi2.Controllers
         [Route("api/Qccastt/TSTUserSammary")]
         public List<Summary> UserSammary2()
         {
-            return QccasttUtility.GetUserSammary(94, 4314, 0,"D");
+            return QccasttUtility.GetUserSammary(1483, 6017, 0,"D");
         }
 
         [HttpPost]

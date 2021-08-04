@@ -15,7 +15,12 @@ namespace Common.CacheManager
 {
     public class ldbRefresh
     {
-
+        //static int DTO = 24 - 4;   // 2 0
+        //static int DTO2 = 24 - 2;  // 2 2
+        //static int DTO3 = 24 - 5;  // 1 9
+        //static int DTO4 = 24 - 3;  // 2 1
+        static int DTO1 = 1;  // 1am
+        //static int DTO6 = 24-1;  //  2 3
         public static bool RefreshLiveLdbProductStatistics(string _Type)
         {
             try
@@ -505,18 +510,27 @@ namespace Common.CacheManager
         {
             try
             {
-                OracleCommand cmd = new OracleCommand();
-                OracleDataAdapter da = new OracleDataAdapter();
-                cmd.Connection = DBHelper.LiveDBConnectionIns;
-                if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
-                    DBHelper.LiveDBConnectionIns.Open();
-                da.SelectCommand = cmd;
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "sp_GenerateQCCaridDetailsNonBrand";
-                cmd.ExecuteNonQuery();
-                //l.ArchiveGenerateQCmdDPU = strToday;
-                //bool result = ldbRefresh.SetLdbUpdateStatus(l);
-                return true;
+                if (DateTime.Now.Hour != DTO1)
+                {
+                    OracleCommand cmd = new OracleCommand();
+                    OracleDataAdapter da = new OracleDataAdapter();
+                    cmd.Connection = DBHelper.LiveDBConnectionIns;
+                    if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
+                        DBHelper.LiveDBConnectionIns.Open();
+                    da.SelectCommand = cmd;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "sp_GenerateQCCaridDetailsNonBrand";
+                    cmd.ExecuteNonQuery();
+                    //l.ArchiveGenerateQCmdDPU = strToday;
+                    //bool result = ldbRefresh.SetLdbUpdateStatus(l);
+                    return true;
+                }
+                else
+                {
+                    //LogManager.SetCommonLog("GenerateQCCaridDetailsNonBrand= DisableExecute at: " + DateTime.Now.Hour.ToString());
+                    return false;
+                }
+                
 
             }
             catch (Exception ex)
@@ -534,26 +548,33 @@ namespace Common.CacheManager
         {
             try
             {
-                OracleCommand cmd = new OracleCommand();
-                OracleDataAdapter da = new OracleDataAdapter();
-                cmd.Connection = DBHelper.LiveDBConnectionIns;
-                if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
-                    DBHelper.LiveDBConnectionIns.Open();
-                da.SelectCommand = cmd;
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "sp_GenerateQCCaridDetailsOnlineSync";
-                cmd.Parameters.Add(new OracleParameter
+                if (DateTime.Now.Hour != DTO1)
                 {
-                    OracleDbType = OracleDbType.Int32,
-                    Direction = ParameterDirection.Input,
-                    ParameterName = "pQuickNewVinSync",
-                    Value = pQuickNewVinSync
-                });
-                cmd.ExecuteNonQuery();
-                //l.ArchiveGenerateQCmdDPU = strToday;
-                //bool result = ldbRefresh.SetLdbUpdateStatus(l);
-                return true;
-
+                    OracleCommand cmd = new OracleCommand();
+                    OracleDataAdapter da = new OracleDataAdapter();
+                    cmd.Connection = DBHelper.LiveDBConnectionIns;
+                    if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
+                        DBHelper.LiveDBConnectionIns.Open();
+                    da.SelectCommand = cmd;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "sp_GenerateQCCaridDetailsOnlineSync";
+                    cmd.Parameters.Add(new OracleParameter
+                    {
+                        OracleDbType = OracleDbType.Int32,
+                        Direction = ParameterDirection.Input,
+                        ParameterName = "pQuickNewVinSync",
+                        Value = pQuickNewVinSync
+                    });
+                    cmd.ExecuteNonQuery();
+                    //l.ArchiveGenerateQCmdDPU = strToday;
+                    //bool result = ldbRefresh.SetLdbUpdateStatus(l);
+                    return true;
+                }
+                else
+                {
+                    //LogManager.SetCommonLog("GenerateQCCaridDetailsOnlineSync= DisableExecute at: "+ DateTime.Now.Hour.ToString());
+                    return false;
+                }
             }
             catch (Exception ex)
             {
