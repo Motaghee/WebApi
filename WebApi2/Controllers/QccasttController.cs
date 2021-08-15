@@ -19,6 +19,7 @@ namespace WebApi2.Controllers
 
         [HttpPost]
         [Route("api/Qccastt/CarDefect")]
+        [Authorize]
         public List<Qccastt> CarDefect([FromBody] Qccastt qccastt)
         {
             return QccasttUtility.GetCarDefect(qccastt);
@@ -40,6 +41,7 @@ namespace WebApi2.Controllers
 
         [HttpPost]
         [Route("api/Qccastt/DeleteQccastt")]
+        [Authorize]
         public ResultMsg DeleteQccastt([FromBody] Qccastt qccastt)
         {
             return QccasttUtility.Delete_QCCASTT(qccastt);
@@ -47,12 +49,14 @@ namespace WebApi2.Controllers
 
         [HttpPost]
         [Route("api/Qccastt/DefectDetect")]
+        [Authorize]
         public ResultMsg DefectDetect([FromBody] Qccastt qccastt)
         {
             return QccasttUtility.QCCASTT_DefectDetect(qccastt);
         }
 
         [HttpPost]
+        [Authorize]
         [Route("api/Qccastt/UserSammary")]
         public List<Summary> UserSammary([FromBody] Qccastt qccastt)
         {

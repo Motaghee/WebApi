@@ -58,6 +58,7 @@ namespace Common.Models.Car
 
         public string ProCreatedByDesc { get; set; }
         public string ProCreatedDateFa { get; set; }
+        public int LocIsValid { get; set; }
 
 
     }

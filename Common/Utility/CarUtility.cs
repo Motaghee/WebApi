@@ -145,7 +145,7 @@ namespace Common.Utility
                                                             {1} as ActAreaSrl,{2} as ActBy,
                                                             (select count(srl) from qccastt t where t.qcareat_srl ={1} and t.vin = c.vin and t.isdefected=1 and t.inuse=1 and t.deletedby is null and t.recordowner=1 ) CurrentAreaDefCount,
                                                             TO_char(p.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as ProCreatedDateFa,
-                                                            u.fname ||' '|| u.lname as ProCreatedByDesc
+                                                            u.fname ||' '|| u.lname as ProCreatedByDesc,decode(p.LocIsValid,null,-1,p.LocIsValid) as LocIsValid
                                                             from qccariddt c left join qcprot p on c.vin = p.vin left join qcusert u on p.createdby = u.srl
                                                             where c.vin ='{0}' "
                                                             , car.VinWithoutChar, car.ActAreaSrl, car.ActBy);

@@ -35,5 +35,31 @@ namespace WebApi2.Controllers
             return ProtectionUtility.InsertQCProT(_qCProT);
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("api/Protections/GetQCProTOnAutomation")]
+        public QCProT GetQCProTOnAutomation([FromBody] QCProT _qCProT)//
+        {
+            try
+            {
+                DateTime Tthen = DateTime.Now;
+                QCProT p = new QCProT();
+                List<QCProT> lstp =ProtectionUtility.GetQCProT(p);
+                string[] s = new string[1];
+                s[0] = _qCProT.UserId.ToString();
+                int i = CommonUtility.SendAutomationAtachExcel("اطلاعات ثبتی حراست","باسلام و احترام",s,s, DBHelper.ToDataTable(lstp),"ثبت حراست");
+                return _qCProT;
+                //return RefQCToday;// (5,82);
+                //return l;
+                //return GetBonroAuditArchiveStatistics();
+
+            }
+            catch (Exception ex)
+            {
+                DBHelper.LogFile(ex);
+                return null;
+            }
+        }
+
     }
 }

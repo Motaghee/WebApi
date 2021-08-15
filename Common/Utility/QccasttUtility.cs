@@ -2045,6 +2045,7 @@ namespace Common.Utility
                     {
                         s = new Summary();
                         s.UserId = 0;
+                        s.SummaryType = "P";
                         s.SummaryTitle = "تعداد بازرسی حراست";
                         s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[0]["TotalDetectCarCount"].ToString());
                         lstSummary.Add(s);
@@ -2066,6 +2067,7 @@ namespace Common.Utility
                             s.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["UserId"].ToString());
                             s.FName = ds.Tables[0].Rows[i]["FName"].ToString();
                             s.LName = ds.Tables[0].Rows[i]["LName"].ToString();
+                            s.SummaryType = "P";
                             s.SummaryTitle = "تعداد شاسی بازرسی شده";
                             s.SummaryValue = Convert.ToInt32(ds.Tables[0].Rows[i]["DetectCarCount"].ToString());
                             lstSummary.Add(s);
