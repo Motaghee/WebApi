@@ -142,7 +142,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\QCSController.cs" />
+    <Compile Include="Controllers\QSCController.cs" />
     <Compile Include="Controllers\QccasttController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -387,7 +387,7 @@
     <Content Include="Views\Qccastt\QCReport.cshtml" />
     <Content Include="Scripts\popper.min.js.map" />
     <Content Include="Views\Qccastt\ReportShow2.cshtml" />
-    <Content Include="Views\QCS\QCSRequest.cshtml" />
+    <Content Include="Views\QSC\QSCRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

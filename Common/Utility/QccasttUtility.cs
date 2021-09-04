@@ -189,7 +189,8 @@ namespace Common.Utility
                                                                TO_char(q.deleteddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as DeleteddateFa,
                                                                to_char(q.createddate,'yyyy/mm/dd','nls_calendar=persian') as CreatedDayFa,
                                                                q.isrepaired,
-                                                               {0} as ActAreaSrl,{1} as ActBy
+                                                               (select count(*) from qceshoppert e where e.active=1 and e.qcmdult_srl=q.qcmdult_srl and e.qcbadft_srl=q.qcbadft_srl and e.grpcode=c.grpcode and shopcode = pt.FNI_GetAsmProdShopCodeByVin (q.vin) ) as HaveAsmExitPer 
+                                                               ,{0} as ActAreaSrl,{1} as ActBy
                                                           from qccastt q
                                                           join qcusert u on u.srl = q.createdby
                                                           left join qcusert ur on ur.srl = q.RepairedBy
@@ -830,11 +831,11 @@ namespace Common.Utility
         {
             try
             {
-                string commandtext = string.Format(@"select srl,defectcode,defectdesc from qcbadft d");
+                string commandtext = string.Format(@"select srl,defectcode,defectdesc,qcdftyt_srl,qccabdt_srl from qcbadft d");
                 DataSet ds = DBHelper.ExecuteMyQueryIns(commandtext);
                 List<Defect> DefectList = new List<Defect>();
                 DefectList = DBHelper.GetDBObjectByObj2(new Defect(), null, commandtext, "inspector").Cast<Defect>().ToList();
-                //---
+                // ---
                 if (DefectList.Count > 0)
                 {
                     return DefectList;
@@ -1182,6 +1183,21 @@ namespace Common.Utility
                             }
                         }
                         //--
+                        if ((_CarSend.FromAreaSrl == 94)&& (_CarSend.ToAreaSrl == 461))
+                        {
+                            if (DBHelper.LiveDBConnectionIns.State != ConnectionState.Open)
+                                DBHelper.LiveDBConnectionIns.Open();
+                            cmd = new OracleCommand();
+                            da = new OracleDataAdapter();
+                            cmd.Connection = DBHelper.LiveDBConnectionIns;
+                            da.SelectCommand = cmd;
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.CommandText = "sp_RandomChoice";
+                            cmd.Parameters.Clear();
+                            cmd.Parameters.Add("pvin", OracleDbType.Varchar2).Value = CarUtility.GetVinWithoutChar(_CarSend.Vin);
+                            cmd.ExecuteNonQuery();
+                        }
+                        //--
                         Qccastt q = new Qccastt();
                         q.Vin = _CarSend.Vin;
                         rm.lstQcqctrt = GetCarTrace(q);
@@ -1195,6 +1211,10 @@ namespace Common.Utility
                     else if (result.Equals("HaveSecurityConfirm"))
                     {
                         rm.MessageFa = "عدم ارسال خودرو به دلیل ثبت مجوز تایید حراست";
+                    }
+                    else if (result.Equals("CarAuditedAgo"))
+                    {
+                        rm.MessageFa = "خودرو قبلا به آدیت ارسال شده";
                     }
                     else
                         rm.MessageFa = "بروز خطا در ارسال خودرو";
@@ -1514,13 +1534,15 @@ namespace Common.Utility
             }
         }
 
-        public static ResultMsg QCCASTT_MultiDefectRepair3(List<Qccastt> LstQCcastt)
+        public static ResultMsg QCCASTT_MultiDefectRepair(List<Qccastt> LstQCcastt)
         {
+            LogManager.SetCommonLog("Start");
             ResultMsg rm = new ResultMsg();
             try
             {
                 for (int i = 0; i < LstQCcastt.Count; i++)
                 {
+                    LogManager.SetCommonLog("QCCASTT_DefectDetect_isrep:" + LstQCcastt[i].IsRepaired.ToString() + "_actby:" + LstQCcastt[i].ActBy.ToString() + "_actareasrl:" + LstQCcastt[i].ActAreaSrl.ToString() + "_QCSTRGT_SRL:" + LstQCcastt[i].QCSTRGT_SRL.ToString() + "_IsDefected:" + LstQCcastt[i].IsDefected.ToString() + "_QcmdultSrl:" + LstQCcastt[i].QCMdult_Srl.ToString() + "_Qcbadft:" + LstQCcastt[i].QCBadft_Srl.ToString() + "_Vin:" + LstQCcastt[i].Vin.ToString());
                     bool blnConsistency = false;
                     if (LstQCcastt[i].IsDefected == 1)
                     {

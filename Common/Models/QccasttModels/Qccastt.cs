@@ -40,5 +40,7 @@
         public string DateType;
         public int deletedby { get; set; }
         public string DeletedByDesc { get; set; }
+        public int HaveAsmExitPer { get; set; }
+        
     }
 }

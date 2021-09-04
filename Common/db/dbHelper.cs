@@ -61,6 +61,11 @@ namespace Common.db
     )  ) 
             ;User ID=pt; Password =laygi94";
 
+        public static string CnStrQSCLive = @"Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = saipaxtestscan.saipacorp.com)(PORT = 1521))   (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = prctl_test.saipacorp.com)
+    )  ) 
+            ;User ID=appqly; Password =appqly";
         //"Data Source = PRIPRCTL.SAIPACORP.COM; Persist Security Info = True; User ID = inspector; Password = fpvhk92";
 
         static DBHelper()
@@ -75,20 +80,24 @@ namespace Common.db
             DBConnectionIns = new OracleConnection(CnStrIns);
             DBConnectionStp = new OracleConnection(CnStrStp);
             DBConnectionPT = new OracleConnection(CnStrPT);
+            DBConnectionQsc = new OracleConnection(CnStrQSCLive);
             //--
             LiveDBConnectionIns = new OracleConnection(CnStrInsLive);
             LiveDBConnectionStp = new OracleConnection(CnStrStpLive);
             LiveDBConnectionPT = new OracleConnection(CnStrPTLive);
+            LiveDBConnectionQsc = new OracleConnection(CnStrQSCLive);
         }
 
 
         public static OracleConnection DBConnectionIns;
+        public static OracleConnection DBConnectionQsc;
         public static OracleConnection DBConnectionPT;
         public static OracleConnection DBConnectionStp;
 
         public static OracleConnection LiveDBConnectionIns;
         public static OracleConnection LiveDBConnectionPT;
         public static OracleConnection LiveDBConnectionStp;
+        public static OracleConnection LiveDBConnectionQsc;
 
         public static DataSet ExecuteMyQueryIns(string _CommandText)   // Execute Cmd
         {
@@ -129,6 +138,33 @@ namespace Common.db
                 OracleCommand cmd = new OracleCommand();
                 OracleDataAdapter da = new OracleDataAdapter();
                 cmd.Connection = LiveDBConnectionIns;
+                cmd.CommandText = _CommandText;
+                da.SelectCommand = cmd;
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                DataSet ds = new DataSet();
+                ds.Tables.Add(dt);
+                return ds;
+                //int i=ds.Tables[0].Rows.Count;
+            }
+            catch (Exception ex)
+            {
+                string strExceptMSG = ex.Message;
+                return null;
+            }
+        }
+        public static DataSet ExecuteMyQueryQSCOnLive(string _CommandText)   // Execute Cmd
+        {
+            try
+            {
+                if (LiveDBConnectionQsc.State == ConnectionState.Closed)
+                {
+                    LiveDBConnectionQsc.ConnectionString = CnStrQSCLive;
+                    LiveDBConnectionQsc.Open();
+                }
+                OracleCommand cmd = new OracleCommand();
+                OracleDataAdapter da = new OracleDataAdapter();
+                cmd.Connection = LiveDBConnectionQsc;
                 cmd.CommandText = _CommandText;
                 da.SelectCommand = cmd;
                 DataTable dt = new DataTable();
@@ -596,6 +632,8 @@ namespace Common.db
                         _ds = DBHelper.ExecuteMyQueryStpOnLive(_CommandText);
                     else if (strSchema.ToLower() == "pt")
                         _ds = DBHelper.ExecuteMyQueryPTOnLive(_CommandText);
+                    else if (strSchema.ToLower() == "qsc")
+                        _ds = DBHelper.ExecuteMyQueryQSCOnLive(_CommandText);
                     else
                         _ds = DBHelper.ExecuteMyQueryInsOnLive(_CommandText);
 

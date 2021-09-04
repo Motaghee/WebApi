@@ -381,22 +381,34 @@ namespace Common.CacheManager
 
         public static bool RefreshLdbCarStatus()
         {
+            int i = 0;
             try
             {
+                
                 //LogManager.SetCommonLog("RefreshLdbQCStatistics starting... just today="+ JustTodayStatistics);
                 // generate new statistic
                 List<CarStatus> lstNew = StatisticsActs.GetCarStatus();
                 // get instanse of ldb
-                if (lstNew != null)
+                i = 1;
+                if ((lstNew != null)&&(lstNew.Count>0))
                 {
+                    i = 2;
                     LiteDatabase db;
                     db = new LiteDatabase(ldbConfig.ldbCarStatusConnectionString);
                     // get old ldb ps lst
+                    i = 3;
                     LiteCollection<CarStatus> dbPS = db.GetCollection<CarStatus>("CarStatus");
+                    i = 4;
                     // delete old lst
-                    dbPS.Delete(Query.All());
+                    if (dbPS.Count() > 0)
+                    {
+                        i = 5;
+                        dbPS.Delete(Query.All());
+                    }
+                    i = 6;
                     // insetr new lst
                     dbPS.Insert(lstNew);
+                    i = 7;
                     //LogManager.SetCommonLog("RefreshLdbQCStatistics insert successfully" + lstNewPS.Count);
                     db.Dispose();
                     return true;
@@ -406,7 +418,7 @@ namespace Common.CacheManager
             }
             catch (Exception ex)
             {
-                LogManager.SetCommonLog("RefreshLdbCarStatus_err:" + ex.Message.ToString());
+                LogManager.SetCommonLog("RefreshLdbCarStatus_err: ->" +i.ToString()+ "_"+ex.Message.ToString());
                 return false;
             }
         }

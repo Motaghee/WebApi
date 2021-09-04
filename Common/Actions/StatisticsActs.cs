@@ -573,7 +573,7 @@ namespace Common.Actions
         {
             try
             {
-                string strFromDate = "1398/01/01";
+                string strFromDate = "1400/01/01";
 
                 string strDateCondition = "";
                 strDateCondition = string.Format(@" c.joinerydate >= to_date('{0}','yyyy/mm/dd','nls_calendar=persian') ", strFromDate);

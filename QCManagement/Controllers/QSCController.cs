@@ -7,7 +7,9 @@ using System.Web.Mvc;
 using Common;
 using Common.db;
 using Common.Models.Car;
+using Common.Models.General;
 using Common.Models.QccasttModels;
+using Common.Models.QSC;
 using Common.Utility;
 using QCManagement.Models;
 using Stimulsoft.Report;
@@ -17,7 +19,7 @@ using Stimulsoft.Report.Mvc;
 
 namespace QCManagement.Controllers
 {
-    public class QCSController : Controller
+    public class QSCController : Controller
     {
         [Authorize]
         public ActionResult Qccard(CarModels cm)
@@ -41,10 +43,10 @@ namespace QCManagement.Controllers
         {
             return View(cm);
         }
-        //public ActionResult ReportShow2(QccasttModels cm)
-        //{
-        //    return View(cm);
-        //}
+        public ActionResult ReportShow2(QccasttModels cm)
+        {
+            return View(cm);
+        }
 
         #region ReportLoad Methods
         [Authorize]
@@ -121,7 +123,7 @@ namespace QCManagement.Controllers
         #endregion
 
         //[Authorize]
-        public ActionResult QCSRequest(QccasttModels _qccastt)
+        public ActionResult QSCRequest(qscreqt _qscreqt)
         {
             //if ((cm.Vin == null) || (cm.Vin == ""))
             //{
@@ -129,21 +131,28 @@ namespace QCManagement.Controllers
             //}
             //_qccastt.SelectedItemIds = new[] { 2, 3 };
             //_qccastt.SelectedItemIds2 = new[] { 2, 3 };
-            _qccastt.Vin = "NAS411100G1205277";
-            _qccastt.Lstshop = QccasttUtility.GetShop().Cast<Pcshopt>().ToList();
-            _qccastt.LstArea = QccasttUtility.GetArea("").Cast<Area>().ToList();
-            _qccastt.LstCarGroup = CarUtility.GetBaseCarGroupList().Cast<CarGroup>().ToList();
-            _qccastt.LstBodyModel = CarUtility.GetBaseBodyModelList().Cast<BodyModel>().ToList();
-            _qccastt.LstStrength = QccasttUtility.GetBaseStrength().Cast<Strength>().ToList();
-            _qccastt.LstBodyStyle = CarUtility.GetBodyStyle("", "").Cast<BodyStyle>().ToList();
-            _qccastt.LstShift = new List<Shift>();
-            _qccastt.LstShift.Add(new Shift { ShiftName = "A" });
-            _qccastt.LstShift.Add(new Shift { ShiftName = "B" });
-            _qccastt.LstShift.Add(new Shift { ShiftName = "C" });
-            return View(_qccastt);
+            _qscreqt.LstQscapunt = qscapunt.Get().Cast<qscapunt>().ToList();
+            _qscreqt.LstQscreft = qscreft.Get().Cast<qscreft>().ToList();
+            _qscreqt.LstQSCDtstt = qscdtstt.Get().Cast<qscdtstt>().ToList();
+            _qscreqt.LstQscrqrsnt = qscrqrsnt.Get().Cast<qscrqrsnt>().ToList();
+            _qscreqt.LstQscscpt = qscscpt.Get().Cast<qscscpt>().ToList();
+            _qscreqt.LstQscrqtyt = qscrqtyt.Get().Cast<qscrqtyt>().ToList();
+            _qscreqt.LstQscUsers = Users.GetQSCUsers().Cast<Users>().ToList();
+            _qscreqt.Vin = "NAS411100G1205277";
+            //_qccastt.Lstshop = QccasttUtility.GetShop().Cast<Pcshopt>().ToList();
+            //_qccastt.LstArea = QccasttUtility.GetArea("").Cast<Area>().ToList();
+            //_qccastt.LstCarGroup = CarUtility.GetBaseCarGroupList().Cast<CarGroup>().ToList();
+            //_qccastt.LstBodyModel = CarUtility.GetBaseBodyModelList().Cast<BodyModel>().ToList();
+            //_qccastt.LstStrength = QccasttUtility.GetBaseStrength().Cast<Strength>().ToList();
+            //_qccastt.LstBodyStyle = CarUtility.GetBodyStyle("", "").Cast<BodyStyle>().ToList();
+            //_qccastt.LstShift = new List<Shift>();
+            //_qccastt.LstShift.Add(new Shift { ShiftName = "A" });
+            //_qccastt.LstShift.Add(new Shift { ShiftName = "B" });
+            //_qccastt.LstShift.Add(new Shift { ShiftName = "C" });
+            return View(_qscreqt);
         }
         [HttpPost]
-        public ActionResult ReportShow2(QccasttModels qcm)
+        public ActionResult ReportShow2(qscreqt qcm)
         {
 
             return View(qcm);
@@ -152,6 +161,16 @@ namespace QCManagement.Controllers
 
 
         #region ComboFillFromJavaCode
+
+        [HttpPost]
+        public ActionResult GetJCarInfo(string _Vin)
+        {
+            Car c = new Car();
+            c.Vin = _Vin;
+            c=CarUtility.GetCarInfo(c);
+            return Json(c, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         public ActionResult GetArea(string[] QCAreatSrls)
         {

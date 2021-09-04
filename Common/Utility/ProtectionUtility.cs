@@ -35,7 +35,7 @@ namespace Common.Utility
                 cmd.ExecuteNonQuery();
                 //---
                 string commandtext = string.Format(@"select TO_char(p.createddate,'YYYY/MM/DD HH24:MI:SS','nls_calendar=persian') as ProCreatedDateFa
-                                                                ,u.fname ||' '|| u.lname as ProCreatedByDesc
+                                                                ,u.UserId,u.fname ||' '|| u.lname as ProCreatedByDesc
                                                                 ,p.srl,p.vin,p.createdby,p.LocIsValid
                                                                 from qcprot p left join qcusert u on p.createdby = u.srl
                                                                 where vin ='{0}'", CarUtility.GetVinWithoutChar(_QCProT.Vin));

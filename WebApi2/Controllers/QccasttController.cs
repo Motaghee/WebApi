@@ -1,4 +1,5 @@
-﻿using Common.Models;
+﻿using Common.Actions;
+using Common.Models;
 using Common.Models.Car;
 using Common.Models.General;
 using Common.Models.PT;
@@ -53,6 +54,27 @@ namespace WebApi2.Controllers
         public ResultMsg DefectDetect([FromBody] Qccastt qccastt)
         {
             return QccasttUtility.QCCASTT_DefectDetect(qccastt);
+        }
+        [HttpPost]
+        [Route("api/Qccastt/MultiDefectRepair")]
+        [Authorize]
+        public ResultMsg MultiDefectRepair([FromBody] ResultMsg rms)
+        {
+            LogManager.SetCommonLog("Method Call");
+            //object lstQ = rms.lstQccastt;
+            List<Qccastt> lstQ = new List<Qccastt>((IEnumerable<Qccastt>)rms.lstQccastt);
+            return QccasttUtility.QCCASTT_MultiDefectRepair(lstQ);
+        }
+
+        [HttpPost]
+        [Route("api/Qccastt/MultiDefectRepair2")]
+        [Authorize]
+        public ResultMsg MultiDefectRepair2([FromBody] Qccastt qccastt)
+        {
+            LogManager.SetCommonLog("Method Call");
+            List<Qccastt> q = new List<Qccastt>();
+            q.Add(qccastt);
+            return QccasttUtility.QCCASTT_MultiDefectRepair(q);
         }
 
         [HttpPost]

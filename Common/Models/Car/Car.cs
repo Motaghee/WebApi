@@ -7,7 +7,8 @@ namespace Common.Models.Car
     public class Car
     {
         public string Vin { get; set; }
-        public double Prodno { get; set; }
+        public int EngineNo { get; set; }
+        public int Prodno { get; set; }
         public string VinWithoutChar;
         public bool ValidFormat = false;
         public bool AuditEditable = false;

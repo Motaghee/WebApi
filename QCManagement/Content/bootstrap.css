@@ -658,8 +658,9 @@ pre {
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    margin-right: -15px;
-    margin-left: -15px;
+/*    margin-right: -15px;
+    margin-left: -15px;*/
+    
 }
 
 .no-gutters {
@@ -2287,6 +2288,12 @@ pre {
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.MyInfoForm {
+    background-color: #fff9c0;
+    font-size: 14px;
+    text-align: right;
 }
 
 @media (prefers-reduced-motion: reduce) {

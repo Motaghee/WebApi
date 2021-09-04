@@ -138,7 +138,7 @@ namespace Common.Utility
                     if (car.ValidFormat)
                     {
                         List<Car> carinfo = new List<Car>();
-                        string commandtext = string.Format(@"select c.vin,c.prodno,c.joinerydate,c.bdmdlcode,c.bdstlcode,c.bdstlaliasname ,c.fitypecode,c.finqccode,c.clrcode, (select q.toareasrl from qcqctrt q where vin =c.vin and passed=0) as CurAreaSrl,
+                        string commandtext = string.Format(@"select c.vin,c.engineno,c.prodno,c.joinerydate,c.bdmdlcode,c.bdstlcode,c.bdstlaliasname ,c.fitypecode,c.finqccode,c.clrcode, (select q.toareasrl from qcqctrt q where vin =c.vin and passed=0) as CurAreaSrl,
                                                             c.JoinaryTeamDesc,c.nasvin,c.shopcode,c.shopname,c.joinaryteam,c.assmteamwork,c.assemblytypecode,c.gearboxtypecode,c.forexport,c.grpcode,c.bdmdlaliasname,
                                                             c.grpname,c.comanyname as companyname,c.companycode,c.fitypename,c.clralias,c.gearboxtypedesc,c.prodenddate,substr(c.prodenddate_fa,0,16) as prodenddate_fa,substr(c.joinerydate_fa,0,16) as joinerydate_fa,substr(c.bodyshopproddate,0,16)as bodyshopproddate,substr(c.paintshopproddate,0,16) as paintshopproddate,substr(asmshopproddate,0,16) as asmshopproddate,
                                                             (select distinct (s.shopcode) from pt.cartrace ct join pt.station s on ct.stncode = s.stncode where ct.vin = c.vin and ct.passed=0) as PTCurrentShopCode,

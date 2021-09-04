@@ -1,0 +1,316 @@
+﻿@{
+    ViewBag.Title = "درخواست خودروی درجه دو" + ViewBag.Vin;
+    //Layout = null;
+}
+
+@using Common.Models.QSC
+@model qscreqt
+
+<link href="~/Content/bootstrap-select.css" rel="stylesheet" />
+<body>
+    @using (Html.BeginForm("ReportShow2", "QSC", FormMethod.Post, new { @class = "form", role = "form" }))
+    {
+    <div class="row">
+        <div class="col-md-6">
+            <h6>شماره شاسی:</h6>
+            @Html.EditorFor(model => model.Vin, new { htmlAttributes = new { onkeydown = "return event.keyCode!=13", id = "Vin", @class = "form-control", style = "text-align::center ;background-color:#BBDEFB" } })
+        </div>
+        <div class="col-md-6">
+            <h6>کیلومتر کارکرد در زمان درخواست:</h6>
+            @Html.EditorFor(model => model.Mileage, new { htmlAttributes = new { onkeydown = "return event.keyCode!=13", id = "Mileage", @class = "form-control", style = "text-align::center ;background-color:#BBDEFB" } })
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <h6>مدل خودرو:</h6>
+                <p>
+                    @Html.EditorFor(model => model.bdmdlAliasName, new { htmlAttributes = new { onkeydown = "return event.keyCode!=13", id = "BodyModelAliasName", @class = "form-control MyInfoForm", disabled = "disabled" } })
+                </p>
+            </div>
+            <div class="col-md-3">
+                <h6>رنگ خودرو:</h6>
+                <p>
+                    @Html.EditorFor(model => model.bdmdlAliasName, new { htmlAttributes = new { onkeydown = "return event.keyCode!=13", id = "ClrAlias", @class = "form-control MyInfoForm", disabled = "disabled" } })
+                </p>
+            </div>
+            <div class="col-md-3">
+                <h6>شماره موتور:</h6>
+                <p>
+                    @Html.EditorFor(model => model.EngineNo, new { htmlAttributes = new { onkeydown = "return event.keyCode!=13", id = "EngineNo", @class = "form-control MyInfoForm", disabled = "disabled" } })
+                </p>
+            </div>
+            <div class="col-md-3">
+                <h6>شماره ساخت:</h6>
+                <p>
+                    @Html.EditorFor(model => model.Prodno, new { htmlAttributes = new { onkeydown = "return event.keyCode!=13", id = "Prodno", @class = "form-control MyInfoForm", disabled = "disabled" } })
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h6>واحد درخواست کننده:</h6>
+            @Html.DropDownListFor(v => v.QSCapunt_Srl, new SelectList(@Model.LstQscapunt, "Srl", "AppunitName"),
+            new
+            {
+                id = "ddQSCapunt",
+                title = "واحد درخواست کننده را انتخاب نمایید ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+
+        <div class="col-md-6">
+            <h6>ارجاع به مدیریت:</h6>
+            @Html.DropDownListFor(v => v.QSCReft_Srl, new SelectList(@Model.LstQscreft, "Srl", "RefName"),
+            new
+            {
+                id = "ddQSCReft",
+                title = " مدیریت ارجاع جهت بررسی را انتخاب نمایید ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+
+        <div class="col-md-6">
+            <h6>مرحله شناسایی:</h6>
+            @Html.DropDownListFor(v => v.QSCDtstt_Ssrl, new SelectList(@Model.LstQSCDtstt, "Srl", "DetectionStepName"),
+            new
+            {
+                id = "ddQSCDtstt",
+                title = " مرحله ی شناسایی را انتخاب نمایید ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+
+        <div class="col-md-6">
+            <h6>دلایل درخواست:</h6>
+            @Html.DropDownListFor(v => v.Sel_qscrqrsnt_Srl, new MultiSelectList(@Model.LstQscrqrsnt, "Srl", "ReqReasonDesc"),
+            new
+            {
+                id = "cklQscrqrsnt",
+                     title = "دلایل درخواست مورد نظر را انتخاب نمایید ",
+                     multiple = "multiple",
+                     data_live_search = "true",
+                     @class = "selectpicker form-control",
+                     data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                     data_placeholder = "Choose a Property Group",
+                     data_actions_box = "true"
+            })
+        </div>
+
+        <div class="col-md-6">
+            <h6>درخواست مرتبط با حوزه ی :</h6>
+            @Html.DropDownListFor(v => v.Qscscpt_srl, new SelectList(@Model.LstQscscpt, "Srl", "ScopeDesc"),
+            new
+            {
+                id = "ddScopeDesc",
+                title = " حوزه ی مورد نظر را انتخاب نمایید ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+
+        <div class="col-md-6">
+            <h6>نوع درخواست :</h6>
+            @Html.DropDownListFor(v => v.Qscrqtyt_srl, new SelectList(@Model.LstQscrqtyt, "Srl", "RequestTypeName"),
+            new
+            {
+                id = "ddScopeDesc",
+                title = " حوزه ی مورد نظر را انتخاب نمایید ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+
+        
+            <div class="col-md-6">
+                <h6>کارشناس درخواست:</h6>
+                @Html.DropDownListFor(v => v.ReqBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
+                new
+                {
+                    id = "ddReqBy",
+                    title = "  کارشناس شناسایی  ",
+                    data_live_search = "true",
+                    @class = "selectpicker form-control",
+                    data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                    data_placeholder = "Choose a Property Group",
+                    data_actions_box = "true"
+                })
+            </div>
+            <div class="col-md-6">
+                <h6>درخواست کننده(رییس):</h6>
+                @Html.DropDownListFor(v => v.ReqBossBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
+                new
+                {
+                    id = "ddReqBossBy",
+                    title = " درخواست کننده(رییس) ",
+                    data_live_search = "true",
+                    @class = "selectpicker form-control",
+                    data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                    data_placeholder = "Choose a Property Group",
+                    data_actions_box = "true"
+                })
+            </div>
+            <div class="col-md-6">
+                <h6>تایید درخواست(مدیر):</h6>
+                @Html.DropDownListFor(v => v.ReqMngBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
+                new
+                {
+                    id = "ddReqMngBy",
+                    title = " تایید درخواست(مدیر) ",
+                    data_live_search = "true",
+                    @class = "selectpicker form-control",
+                    data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                    data_placeholder = "Choose a Property Group",
+                    data_actions_box = "true"
+                })
+            </div>
+            <div class="col-md-6">
+                <h6>تایید نهایی (معاون):</h6>
+                @Html.DropDownListFor(v => v.ReqConfirmBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
+                new
+                {
+                    id = "ddReqConfirmBy",
+                    title = " تایید نهایی (معاون) ",
+                    data_live_search = "true",
+                    @class = "selectpicker form-control",
+                    data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                    data_placeholder = "Choose a Property Group",
+                    data_actions_box = "true"
+                })
+            </div>
+        
+        @*<button id="BtnRun" name="BtnRun" type="submit" value="اجرای گزارش" class="Mybutton" style="color:black" />*@
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="row" style="padding:30px;font-family:vaziri-bold">
+
+            <div class="col-md-6" align="center">
+                <button id="BtnRun" type="submit" class="btn btn-outline-primary">اجرای گزارش</button>
+            </div>
+            <div class="col-md-6" align="center">
+                <button id="BtnDisplay" type="button" class="btn btn-outline-primary">شناسنامه کیفی</button>
+            </div>
+        </div>
+
+        <div>
+            @* <table id="table1" class="table table-light table-bordered table-responsive-sm table-hover">*@
+            <table id="table2" class="table table-striped table-bordered" width="100%">
+                <thead style="font-family:vaziri;font-size:14px;text-align:center">
+                    <tr>
+                        @*<th>Id</th>*@
+                        <th>شاسی</th>
+                        <th>زمان</th>
+                        <th>ناحیه</th>
+                        <th>موقعیت</th>
+                        <th>عیب</th>
+                        <th>شدت</th>
+                        <th>بازرس</th>
+                    </tr>
+                </thead>
+                <tbody style="font-family: vaziri; font-size: 14px">
+                    <tr>
+                        <th></th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+        </div>
+    }
+</body>
+
+<script src="~/scripts/jquery.dataTables.min.js"></script>
+<script src="~/scripts/dataTables.bootstrap4.min.js"></script>
+<link href="~/Content/dataTables.bootstrap4.min.css" rel="stylesheet" />
+<link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" />
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#Vin').keydown(function (e) {
+            if (e.keyCode == 13) {
+                var _EnterVin = $("#Vin").val();
+                //alert("Enter vin: " + _EnterVin);
+                //--
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetJCarInfo", "QSC")',
+                    data: { _Vin: _EnterVin }
+
+                }).done(
+                    function (data) {
+                        if (data.EngineNo != 0) {
+                            //alert(data.Prodno);
+                            $("#BodyModelAliasName").val(data.bdmdlAliasName);
+                            $("#ClrAlias").val(data.ClrAlias);
+                            $("#EngineNo").val(data.EngineNo);
+                            $("#Prodno").val(data.Prodno);
+                        }
+                        else {
+                            $("#BodyModelAliasName").val("");
+                            $("#ClrAlias").val("");
+                            $("#EngineNo").val("");
+                            $("#Prodno").val("");
+                            alert("شماره شاسی وارد شه معتبر نمی باشد");
+                            
+
+                        }
+
+                    }
+                )
+                    ;
+                //--
+            }
+        });
+
+        //----
+    //    $('#Vin').on("focusout",function () {
+    //            var _EnterVin = $("#Vin").val();
+    //            //alert("Enter vin: " + _EnterVin);
+    //    });
+    });
+
+
+
+
+
+
+</script>
