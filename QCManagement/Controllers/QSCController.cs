@@ -138,6 +138,9 @@ namespace QCManagement.Controllers
             _qscreqt.LstQscscpt = qscscpt.Get().Cast<qscscpt>().ToList();
             _qscreqt.LstQscrqtyt = qscrqtyt.Get().Cast<qscrqtyt>().ToList();
             _qscreqt.LstQscUsers = Users.GetQSCUsers().Cast<Users>().ToList();
+            _qscreqt.LstQscordet = qscordet.Get().Cast<qscordet>().ToList();
+            _qscreqt.LstQscdebat = qscdebat.Get().Cast<qscdebat>().ToList();
+            _qscreqt.LstQscbdmdt = qscbdmdt.Get().Cast<qscbdmdt>().ToList();
             _qscreqt.Vin = "NAS411100G1205277";
             //_qccastt.Lstshop = QccasttUtility.GetShop().Cast<Pcshopt>().ToList();
             //_qccastt.LstArea = QccasttUtility.GetArea("").Cast<Area>().ToList();

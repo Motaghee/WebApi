@@ -138,64 +138,112 @@
             })
         </div>
 
-        
-            <div class="col-md-6">
-                <h6>کارشناس درخواست:</h6>
-                @Html.DropDownListFor(v => v.ReqBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
-                new
-                {
-                    id = "ddReqBy",
-                    title = "  کارشناس شناسایی  ",
-                    data_live_search = "true",
-                    @class = "selectpicker form-control",
-                    data_style = "bg-gray rounded px-1 py-1 shadow-sm",
-                    data_placeholder = "Choose a Property Group",
-                    data_actions_box = "true"
-                })
-            </div>
-            <div class="col-md-6">
-                <h6>درخواست کننده(رییس):</h6>
-                @Html.DropDownListFor(v => v.ReqBossBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
-                new
-                {
-                    id = "ddReqBossBy",
-                    title = " درخواست کننده(رییس) ",
-                    data_live_search = "true",
-                    @class = "selectpicker form-control",
-                    data_style = "bg-gray rounded px-1 py-1 shadow-sm",
-                    data_placeholder = "Choose a Property Group",
-                    data_actions_box = "true"
-                })
-            </div>
-            <div class="col-md-6">
-                <h6>تایید درخواست(مدیر):</h6>
-                @Html.DropDownListFor(v => v.ReqMngBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
-                new
-                {
-                    id = "ddReqMngBy",
-                    title = " تایید درخواست(مدیر) ",
-                    data_live_search = "true",
-                    @class = "selectpicker form-control",
-                    data_style = "bg-gray rounded px-1 py-1 shadow-sm",
-                    data_placeholder = "Choose a Property Group",
-                    data_actions_box = "true"
-                })
-            </div>
-            <div class="col-md-6">
-                <h6>تایید نهایی (معاون):</h6>
-                @Html.DropDownListFor(v => v.ReqConfirmBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
-                new
-                {
-                    id = "ddReqConfirmBy",
-                    title = " تایید نهایی (معاون) ",
-                    data_live_search = "true",
-                    @class = "selectpicker form-control",
-                    data_style = "bg-gray rounded px-1 py-1 shadow-sm",
-                    data_placeholder = "Choose a Property Group",
-                    data_actions_box = "true"
-                })
-            </div>
-        
+
+        <div class="col-md-6">
+            <h6>کارشناس درخواست:</h6>
+            @Html.DropDownListFor(v => v.ReqBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
+            new
+            {
+                id = "ddReqBy",
+                title = "  کارشناس شناسایی  ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+        <div class="col-md-6">
+            <h6>درخواست کننده(رییس):</h6>
+            @Html.DropDownListFor(v => v.ReqBossBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
+            new
+            {
+                id = "ddReqBossBy",
+                title = " درخواست کننده(رییس) ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+        <div class="col-md-6">
+            <h6>تایید درخواست(مدیر):</h6>
+            @Html.DropDownListFor(v => v.ReqMngBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
+            new
+            {
+                id = "ddReqMngBy",
+                title = " تایید درخواست(مدیر) ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+        <div class="col-md-6">
+            <h6>تایید نهایی (معاون):</h6>
+            @Html.DropDownListFor(v => v.ReqConfirmBy, new SelectList(@Model.LstQscUsers, "Srl", "UserDesc"),
+            new
+            {
+                id = "ddReqConfirmBy",
+                title = " تایید نهایی (معاون) ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+
+
+        <div class="col-md-6">
+            <h6>علل شناسایی در زمان بررسی کیفیت:</h6>
+            @Html.DropDownListFor(v => v.Sel_Qscordet_Srl, new MultiSelectList(@Model.LstQscordet, "Srl", "OriginDesc"),
+            new
+            {
+                id = "cklQscordet",
+                     title = "علل شناسایی مورد نظر را انتخاب نمایید ",
+                     multiple = "multiple",
+                     data_live_search = "true",
+                     @class = "selectpicker form-control",
+                     data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                     data_placeholder = "Choose a Property Group",
+                     data_actions_box = "true"
+            })
+        </div>
+
+        <div class="col-md-6">
+            <h6>تصمیم گیری وضعیت نهایی بر اساس:</h6>
+            @Html.DropDownListFor(v => v.Qscdebat_Srl, new SelectList(@Model.LstQscdebat, "Srl", "DecisionsDesc"),
+            new
+            {
+                id = "ddDecisionsDesc",
+                title = " تصمیم گیری وضعیت نهایی بر اساس ",
+                data_live_search = "true",
+                @class = "selectpicker form-control",
+                data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                data_placeholder = "Choose a Property Group",
+                data_actions_box = "true"
+            })
+        </div>
+
+        <div class="col-md-6">
+            <h6>قطعات ناسالم را انتخاب نمایید:</h6>
+            @Html.DropDownListFor(v => v.Sel_Qscbdmdt_Srl, new MultiSelectList(@Model.LstQscbdmdt, "Srl", "ModuleName"),
+            new
+            {
+                id = "cklQscbdmdt",
+                     title = "قطعه ای انتخاب نشده است ",
+                     multiple = "multiple",
+                     data_live_search = "true",
+                     @class = "selectpicker form-control",
+                     data_style = "bg-gray rounded px-1 py-1 shadow-sm",
+                     data_placeholder = "Choose a Property Group",
+                     data_actions_box = "true"
+            })
+        </div>
+
         @*<button id="BtnRun" name="BtnRun" type="submit" value="اجرای گزارش" class="Mybutton" style="color:black" />*@
     </div>
 

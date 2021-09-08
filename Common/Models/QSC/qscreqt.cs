@@ -1,4 +1,6 @@
-﻿using Common.Models.General;
+﻿using Common.db;
+using Common.Models.General;
+using System;
 using System.Collections.Generic;
 
 namespace Common.Models.QSC
@@ -16,7 +18,8 @@ namespace Common.Models.QSC
         public int ReqBy { get; set; } 
         public int ReqBossBy { get; set; } 
         public int ReqMngBy { get; set; } 
-        public int ReqConfirmBy { get; set; } 
+        public int ReqConfirmBy { get; set; }
+        public int Qscdebat_Srl { get; set; }
 
         //-------
         public string bdmdlAliasName { get; set; }
@@ -30,8 +33,14 @@ namespace Common.Models.QSC
         public List<qscscpt> LstQscscpt { get; set; }
         public List<qscrqtyt> LstQscrqtyt { get; set; }
         public List<Users> LstQscUsers { get; set; }
+        public List<qscordet> LstQscordet { get; set; }
+        public List<qscdebat> LstQscdebat { get; set; }
+        public List<qscbdmdt> LstQscbdmdt { get; set; }
+        
         //---
         public IEnumerable<int> Sel_qscrqrsnt_Srl { get; set; }
+        public IEnumerable<int> Sel_Qscordet_Srl { get; set; }
+        public IEnumerable<int> Sel_Qscbdmdt_Srl { get; set; }
 
 
         //select srl, scopedesc, inuse from qscscpt; --حوزه ی درخواست
