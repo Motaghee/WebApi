@@ -1,0 +1,72 @@
+﻿@{
+    ViewBag.Title = "درخواست خودروی درجه دو" + ViewBag.Vin;
+    //Layout = null;
+}
+
+@using Common.Models.QSC
+@model qscreqt
+
+<link href="~/Content/bootstrap-select.css" rel="stylesheet" />
+<body>
+   
+</body>
+
+<script src="~/scripts/jquery.dataTables.min.js"></script>
+<script src="~/scripts/dataTables.bootstrap4.min.js"></script>
+<link href="~/Content/dataTables.bootstrap4.min.css" rel="stylesheet" />
+<link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" />
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#Vin').keydown(function (e) {
+            if (e.keyCode == 13) {
+                var _EnterVin = $("#Vin").val();
+                //alert("Enter vin: " + _EnterVin);
+                //--
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetJCarInfo", "QSC")',
+                    data: { _Vin: _EnterVin }
+
+                }).done(
+                    function (data) {
+                        if (data.EngineNo != 0) {
+                            //alert(data.Prodno);
+                            $("#BodyModelAliasName").val(data.bdmdlAliasName);
+                            $("#ClrAlias").val(data.ClrAlias);
+                            $("#EngineNo").val(data.EngineNo);
+                            $("#Prodno").val(data.Prodno);
+                        }
+                        else {
+                            $("#BodyModelAliasName").val("");
+                            $("#ClrAlias").val("");
+                            $("#EngineNo").val("");
+                            $("#Prodno").val("");
+                            alert("شماره شاسی وارد شه معتبر نمی باشد");
+                            
+
+                        }
+
+                    }
+                )
+                    ;
+                //--
+            }
+        });
+
+        //----
+    //    $('#Vin').on("focusout",function () {
+    //            var _EnterVin = $("#Vin").val();
+    //            //alert("Enter vin: " + _EnterVin);
+    //    });
+    });
+
+
+
+
+
+
+</script>

@@ -5048,6 +5048,8 @@ input[type="button"].btn-block {
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 0.25rem;
+    padding-right: 0px;
+    padding-left: 0px
 }
 
     .card > hr {
@@ -5105,6 +5107,7 @@ input[type="button"].btn-block {
     margin-bottom: 0;
     background-color: rgba(0, 0, 0, 0.03);
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    font-family:Vaziri-bold;
 }
 
     .card-header:first-child {
@@ -7124,6 +7127,22 @@ button.bg-danger:focus {
 
 .bg-light {
     background-color: #f8f9fa !important;
+}
+
+.bg-LightYellow {
+    background-color: #fff0d5 !important;
+}
+.bg-LightBlue {
+    background-color: #90caf9 !important;
+}
+.bg-LightOrange {
+    background-color: #ffccbc !important;
+}
+.bg-LightGreen {
+    background-color: #adebb0 !important;
+}
+.bg-LightGreen2 {
+    background-color: #8fdba5 !important;
 }
 
 a.bg-light:hover, a.bg-light:focus,

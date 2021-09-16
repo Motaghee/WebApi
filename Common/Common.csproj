@@ -169,7 +169,7 @@
     <Compile Include="Models\QSC\qscreqt.cs" />
     <Compile Include="Models\QSC\qscscpt.cs" />
     <Compile Include="Models\QSC\qscrqtyt.cs" />
-    <Compile Include="Models\QSC\qscrqrsnt.cs" />
+    <Compile Include="Models\QSC\qscrsnt.cs" />
     <Compile Include="Models\QSC\qscdtstt.cs" />
     <Compile Include="Models\QSC\qscreft.cs" />
     <Compile Include="Models\QSC\qscapunt.cs" />
@@ -187,6 +187,7 @@
     <Compile Include="Utility\AuditUtility.cs" />
     <Compile Include="Utility\CarUtility.cs" />
     <Compile Include="Utility\CommonUtility.cs" />
+    <Compile Include="Utility\QSCUtility.cs" />
     <Compile Include="Utility\ProtectionUtility.cs" />
     <Compile Include="Utility\SMessageUtility.cs" />
     <Compile Include="Utility\MessageUtility.cs" />

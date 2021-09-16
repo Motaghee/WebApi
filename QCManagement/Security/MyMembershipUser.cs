@@ -31,9 +31,11 @@ namespace System.Web.Security
             UserName = lstUserModel2[0].USERNAME;
             FName = lstUserModel2[0].FNAME;
             LName = lstUserModel2[0].LNAME;
+            SRL = lstUserModel2[0].SRL;
 
         }
 
+        public Decimal? SRL { get; }
         public string FName { get; }
         public string LName { get; }
         public string USERID { get; }

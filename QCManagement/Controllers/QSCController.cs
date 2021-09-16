@@ -43,7 +43,7 @@ namespace QCManagement.Controllers
         {
             return View(cm);
         }
-        public ActionResult ReportShow2(QccasttModels cm)
+        public ActionResult ReportShow2(qscreqt cm)
         {
             return View(cm);
         }
@@ -134,14 +134,17 @@ namespace QCManagement.Controllers
             _qscreqt.LstQscapunt = qscapunt.Get().Cast<qscapunt>().ToList();
             _qscreqt.LstQscreft = qscreft.Get().Cast<qscreft>().ToList();
             _qscreqt.LstQSCDtstt = qscdtstt.Get().Cast<qscdtstt>().ToList();
-            _qscreqt.LstQscrqrsnt = qscrqrsnt.Get().Cast<qscrqrsnt>().ToList();
+            _qscreqt.LstQscrqrsnt = qscrsnt.Get().Cast<qscrsnt>().ToList();
             _qscreqt.LstQscscpt = qscscpt.Get().Cast<qscscpt>().ToList();
             _qscreqt.LstQscrqtyt = qscrqtyt.Get().Cast<qscrqtyt>().ToList();
             _qscreqt.LstQscUsers = Users.GetQSCUsers().Cast<Users>().ToList();
             _qscreqt.LstQscordet = qscordet.Get().Cast<qscordet>().ToList();
             _qscreqt.LstQscdebat = qscdebat.Get().Cast<qscdebat>().ToList();
             _qscreqt.LstQscbdmdt = qscbdmdt.Get().Cast<qscbdmdt>().ToList();
+            _qscreqt.LstQscrqfistt = qscrqfistt.Get().Cast<qscrqfistt>().ToList();
+            _qscreqt.LstQsccocet = qsccocet.Get().Cast<qsccocet>().ToList();
             _qscreqt.Vin = "NAS411100G1205277";
+            _qscreqt.FinQCCode = 85;
             //_qccastt.Lstshop = QccasttUtility.GetShop().Cast<Pcshopt>().ToList();
             //_qccastt.LstArea = QccasttUtility.GetArea("").Cast<Area>().ToList();
             //_qccastt.LstCarGroup = CarUtility.GetBaseCarGroupList().Cast<CarGroup>().ToList();
@@ -154,12 +157,16 @@ namespace QCManagement.Controllers
             //_qccastt.LstShift.Add(new Shift { ShiftName = "C" });
             return View(_qscreqt);
         }
-        [HttpPost]
-        public ActionResult ReportShow2(qscreqt qcm)
-        {
 
+        [HttpPost]
+        public ActionResult RequestInsert(qscreqt qcm)
+        {
+            qcm.CreatedBy= Convert.ToInt32(Session["SRL"].ToString());
+            QSCUtility.InsertQscreqt(qcm);
             return View(qcm);
         }
+
+
 
 
 

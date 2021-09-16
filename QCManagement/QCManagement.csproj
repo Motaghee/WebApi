@@ -388,6 +388,8 @@
     <Content Include="Scripts\popper.min.js.map" />
     <Content Include="Views\Qccastt\ReportShow2.cshtml" />
     <Content Include="Views\QSC\QSCRequest.cshtml" />
+    <Content Include="Views\QSC\RequestInsert.cshtml" />
+    <Content Include="Views\QSC\ReportShow2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

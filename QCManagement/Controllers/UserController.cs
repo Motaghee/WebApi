@@ -31,6 +31,8 @@ namespace QCManagement.Controllers
                     Session["USERNAME"] = msUser.UserName;
                     Session["FNAME"] = msUser.FName;
                     Session["LNAME"] = msUser.LName;
+                    Session["SRL"] = msUser.SRL;
+
                     if (Url.IsLocalUrl(ReturnUrl))
                     {
                         ModelState.Remove("Password");

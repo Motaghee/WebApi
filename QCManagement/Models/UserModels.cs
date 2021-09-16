@@ -12,7 +12,7 @@ namespace QCManagement.Models
     {
         [Key]
         //[ReadOnly(true)]
-        public Decimal? SRL { get; set; }  // AutoNumber with Seq.
+        public int SRL { get; set; }  // AutoNumber with Seq.
         public Decimal USERID { get; set; }
         [MaxLength(15, ErrorMessage = "حداکثر طول مجاز برای نام 10 کاراکتر می باشد")]
         [StringLength(15)]
